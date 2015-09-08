@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 /*trecho adicionado para o irc server - EP1*/
+#include <dirent.h>
 #define TESTE_NIVEL_1 1
 #define TESTE_NIVEL_2 0
 #define MSGMAX 512
@@ -42,7 +43,11 @@
 #define NICKMAX 50
 #define MIDMAX 10
 #define PATHMAX 256 
-#define PATHCHAT "chat/"
+#define PATHCHAT "users/"
+#define PATHCHAN "chan/"
+#define CHAN1 "ircserv"
+#define CHAN2 "ircnaoserv"
+
 typedef struct {
     char msgv[RCMDMAX][MSGMAX];
     int n;
@@ -50,6 +55,7 @@ typedef struct {
 
 Mensagens* parser(const char *entrada);
 int isNickValid(char *entrada);
+int isChanValid(char *entrada);
 int flagLogged = 0; 
 int flagNickInicial = 0; 
 
@@ -76,6 +82,17 @@ int main (int argc, char **argv) {
 	char	recvline[MAXLINE + 1];
    /* Armazena o tamanho da string lida do cliente */
    ssize_t  n;
+
+   /*trecho adicionado para a criacao dos canais hardcoded*/
+   char chanpath[PATHMAX];
+   
+   strcpy(chanpath, PATHCHAN);
+   strcat(chanpath, CHAN1);
+   fclose(fopen(chanpath, "w"));
+   strcpy(chanpath, PATHCHAN);
+   strcat(chanpath, CHAN2);
+   fclose(fopen(chanpath, "w"));
+   /*final do trecho*/
    
 	if (argc != 2) {
       fprintf(stderr,"Uso: %s <Porta>\n",argv[0]);
@@ -250,10 +267,13 @@ Mensagens* parser(const char *entrada){
     char *tmp;
     int nmids;
     char filename1[PATHMAX], filename2[PATHMAX];
+    DIR *dir;
+    struct dirent *ent;
     /*controle*/
     int i;
 
     retorno = (Mensagens*)malloc(sizeof(*retorno));
+    retorno->n = 0;
     
     /***/
     if(TESTE_NIVEL_1){
@@ -269,10 +289,10 @@ Mensagens* parser(const char *entrada){
     if(sulfixo[0] == ':'){
         strtok(sulfixo , " ");
         printf("aqui==> \"%s\"\n", sulfixo);
-        cmd = strtok(NULL, " ");
+        cmd = strtok(NULL, " \r\n\0");
     }
     else
-        cmd = strtok(sulfixo, " ");
+        cmd = strtok(sulfixo, " \r\n\0");
 
     tmp = strtok(NULL, ":\r\n\0");
     /*trail*/
@@ -339,7 +359,6 @@ Mensagens* parser(const char *entrada){
             else{
                 printf("nick ja existe: %s \n", middle[0]);
                 retorno->n = 1;
-
                 strcpy(retorno->msgv[0], ":ircserv 433");
                 strcat(retorno->msgv[0], middle[0]);
                 strcat(retorno->msgv[0], " :Nickname is already in use\n");
@@ -367,7 +386,60 @@ Mensagens* parser(const char *entrada){
            fprintf(fp, " %s", trail);
         fprintf(fp, "\n");
         fclose(fp);
+        retorno->n = 1;
+        strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Welcome...\n");
     }
+    /*LIST*/
+    else if(!strcmp(cmd,"LIST") && flagLogged){
+        if(nmids > 0){
+            if(middle[0][0] == '#'){
+            }
+        }
+        else { 
+            if ((dir = opendir (PATHCHAN)) != NULL) {
+                  /* print all the files and directories within directory */
+                  while ((ent = readdir (dir)) != NULL) {
+                      if(isalpha(ent->d_name[0]))
+                          printf ("%s\n", ent->d_name);
+                  }
+                  closedir (dir);
+            } else {
+                  /* could not open directory */
+            }
+        }
+    }
+    /*JOIN*/
+    else if(!strcmp(cmd,"JOIN") && flagLogged){
+        if(isChanValid(middle[0])){
+            printf("chan valido\n");
+            /*verificar se ja tinha chan*/
+            strcpy(filename1, PATHCHAN);
+            strcat(filename1, &middle[0][1]);
+            printf("chan name : \"%s\"\n", filename1);
+            if((fp = fopen(filename1,"r")) == NULL){
+                /*cria arquivos*/
+                fp = fopen(filename1, "w");
+                fprintf(fp, "%s\n", nick);
+                fclose(fp);
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Canal Criado...\n");
+                /*criar resposta*/
+            }
+            else{
+                /*adicionar nick no filename1*/
+                fprintf(fp, "%s\n", nick);
+                fclose(fp);
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Adicionado ao Canal...\n");
+                /*criar resposta*/
+            }
+        }
+        else{
+            /*retornar codigo de badChan*/
+            printf("Chan invalido\n");
+        }
+    }
+    
     /*QUIT*/
     else if(!strcmp(cmd,"QUIT") && flagLogged){
     }
@@ -385,9 +457,23 @@ int isNickValid(char *entrada){
         if(!isalnum(c) && c != '-' && c != '[' && c != ']' 
                 && c != 92 && c != '`' && c != '^' 
                 && c != '{' && c != '}'){
-            printf("==>%c\n", c);
             return 0;
         }
+    }
+    return 1;
+}
+int isChanValid(char *entrada){
+    int i;
+    char c;
+    if(entrada[0] != '#' && entrada[0] != '&')
+        return 0;
+    for(i = 1; i < strlen(entrada); i++){
+        c = entrada[i];
+        if(c == ' ' || c == ',' || c == '\n' 
+                || c == '\r' || c == 7){
+            printf("==>%c\n", c);
+            return 0;
+            }
     }
     return 1;
 }
