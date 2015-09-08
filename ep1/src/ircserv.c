@@ -46,6 +46,7 @@ typedef struct {
 } Mensagens;
 
 Mensagens* parser(const char *entrada);
+int isNickValid(char *entrada);
 
 /*variaveis globais*/
 char nick[NICKMAX];
@@ -168,7 +169,9 @@ int main (int argc, char **argv) {
          /* TODO: É esta parte do código que terá que ser modificada
           * para que este servidor consiga interpretar comandos IRC   */
          /*iniciando conexao - definindo nick e user*/
-         int idValido = 0;
+         /*inicializacao*/
+         nick[0] = '9';
+         
          /*controle*/
          int i = 0;
 
@@ -236,6 +239,7 @@ Mensagens* parser(const char *entrada){
     Mensagens *retorno;
     char sulfixo[MSGMAX + 1];
     char *cmd;
+    FILE *fp;
     char *middle[MIDMAX];
     char *trail;
     char *tmp;
@@ -252,7 +256,7 @@ Mensagens* parser(const char *entrada){
         sulfixo[i] = '\0';
 
     strcpy(sulfixo, entrada);
-    printf("aqui==> \"%s\"\n", sulfixo);
+
     /*remove prefixo e recebe comando*/
     if(sulfixo[0] == ':'){
         strtok(sulfixo , " ");
@@ -262,15 +266,17 @@ Mensagens* parser(const char *entrada){
     else
         cmd = strtok(sulfixo, " ");
 
-    tmp = strtok(NULL, ":\0");
+    tmp = strtok(NULL, ":\r\n\0");
     /*trail*/
-    trail = strtok(NULL, "\0");
+    trail = strtok(NULL, "\r\n\0");
     
     /*mids*/
-    middle[nmids++] = strtok(tmp, " \0");
+    printf("tmp = \"%s\"\n", tmp);
+    nmids = 0;
+    middle[nmids] = strtok(tmp, " \r\n\0");
     while(middle[nmids] != NULL){
-        middle[nmids] = strtok(NULL, " \0");
         nmids++;
+        middle[nmids] = strtok(NULL, " \r\n\0 ");
     }
 
     /***/
@@ -281,10 +287,55 @@ Mensagens* parser(const char *entrada){
         printf("Parser: trail = \"%s\"\n", trail);
     }
     /***/
-    
+
+    /*parsing cmd*/
+    if(!strcmp(cmd, "NICK")){
+        printf("entrou no CDM = NICK\n");
+        if(isNickValid(middle[0])){
+            printf("nick valido\n");
+            /*verificar se ja tinha Nick*/
+            /*criar arquivo de Nick se nao colidir*/
+            if((fp = fopen(middle[0],"r")) == NULL){
+                /*User ja tinha nick*/
+                /*sim - muda o nome do arquivo*/
+                /*nao - cria arquivo*/
+                    fp = fopen(middle[0],"w");
+                    strcpy(nick, middle[0]);
+                /*criar resposta*/
+            }
+            else{
+                printf("nick ja existe: %s \n", middle[0]);
+                /*criar resposta*/
+            }
+            fclose(fp);
+        }
+        else{
+            /*retornar codigo de badnick*/
+            printf("Nick invalido\n");
+        }
+    }
+
+       
     retorno = (Mensagens*)malloc(sizeof(*retorno));
     strcpy(retorno->msgv[0], entrada);
     strcpy(retorno->msgv[1], "esta certo ne?\n");
     retorno->n = 2;
     return retorno;
+}
+
+int isNickValid(char *entrada){
+    int i;
+    char c;
+    if(!isalpha(entrada[0]))
+            return 0;
+    for(i = 1; i < strlen(entrada); i++){
+        c = entrada[i];
+        if(!isalnum(c) && c != '-' && c != '[' && c != ']' 
+                && c != 92 && c != '`' && c != '^' 
+                && c != '{' && c != '}'){
+            printf("==>%c\n", c);
+            return 0;
+        }
+    }
+    return 1;
 }
