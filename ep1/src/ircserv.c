@@ -34,12 +34,28 @@
 #include <unistd.h>
 
 /*trecho adicionado para o irc server - EP1*/
-#include "ircserv.tab.h"
+#define TESTE_NIVEL_1 1
+#define TESTE_NIVEL_2 0
+#define MSGMAX 512
+#define RCMDMAX 10
+#define NICKMAX 50
+#define MIDMAX 10
+typedef struct {
+    char msgv[RCMDMAX][MSGMAX];
+    int n;
+} Mensagens;
+
+Mensagens* parser(const char *entrada);
+
+/*variaveis globais*/
+char nick[NICKMAX];
+
 /*final deste trecho*/
 
 #define LISTENQ 1
 #define MAXDATASIZE 100
 #define MAXLINE 4096
+
 
 int main (int argc, char **argv) {
    /* Os sockets. Um que será o socket que vai escutar pelas conexões
@@ -153,6 +169,10 @@ int main (int argc, char **argv) {
           * para que este servidor consiga interpretar comandos IRC   */
          /*iniciando conexao - definindo nick e user*/
          int idValido = 0;
+         /*controle*/
+         int i = 0;
+
+         Mensagens* resps;
          if(1){
             const char *MOTDSTART = "375 :- SERVSERV Mensagem do dia - \n";
             const char *MOTD1 = "372 :- Bom dia1 - \n";
@@ -169,19 +189,7 @@ int main (int argc, char **argv) {
          }
          /*enviar user/server count*/
          /*enviar nome e versao do server*/
-
          
-         while ((n=read(connfd, recvline, MAXLINE)) > 0 && idValido == 0) {
-            recvline[n]=0;
-            printf("[Cliente conectado no processo filho %d enviou:] ",
-                    getpid());
-            if ((fputs(recvline,stdout)) == EOF) {
-               perror("fputs :( \n");
-               exit(6);
-            }
-            write(connfd, recvline, strlen(recvline));
-         }
-         /*conexao estabelecida*/
          while ((n=read(connfd, recvline, MAXLINE)) > 0) {
             recvline[n]=0;
             printf("[Cliente conectado no processo filho %d enviou:] ",
@@ -190,7 +198,18 @@ int main (int argc, char **argv) {
                perror("fputs :( \n");
                exit(6);
             }
-            write(connfd, recvline, strlen(recvline));
+            resps = parser(recvline);
+            if(resps != NULL){
+                for( i = 0; i < resps->n; i++){ 
+                    /***/
+                    if(TESTE_NIVEL_2){
+                        printf("entrou no loop i = %d e msg \"%s\"\n", i, resps->msgv[i]);
+                    }
+                    /***/
+                    write(connfd, resps->msgv[i], strlen(resps->msgv[i]));
+                }
+                free(resps);
+            }
          }
          /* ========================================================= */
          /* ========================================================= */
@@ -211,4 +230,61 @@ int main (int argc, char **argv) {
 		close(connfd);
 	}
 	exit(0);
+}
+
+Mensagens* parser(const char *entrada){
+    Mensagens *retorno;
+    char sulfixo[MSGMAX + 1];
+    char *cmd;
+    char *middle[MIDMAX];
+    char *trail;
+    char *tmp;
+    int nmids;
+    /*controle*/
+    int i;
+    
+    /***/
+    if(TESTE_NIVEL_1){
+        printf("Parser: Entrada = \"%s\"\n", entrada);
+    }
+    /***/
+    for(i = 0; i <= MSGMAX; i++)
+        sulfixo[i] = '\0';
+
+    strcpy(sulfixo, entrada);
+    printf("aqui==> \"%s\"\n", sulfixo);
+    /*remove prefixo e recebe comando*/
+    if(sulfixo[0] == ':'){
+        strtok(sulfixo , " ");
+        printf("aqui==> \"%s\"\n", sulfixo);
+        cmd = strtok(NULL, " ");
+    }
+    else
+        cmd = strtok(sulfixo, " ");
+
+    tmp = strtok(NULL, ":\0");
+    /*trail*/
+    trail = strtok(NULL, "\0");
+    
+    /*mids*/
+    middle[nmids++] = strtok(tmp, " \0");
+    while(middle[nmids] != NULL){
+        middle[nmids] = strtok(NULL, " \0");
+        nmids++;
+    }
+
+    /***/
+    if(TESTE_NIVEL_1){
+        printf("Parser: cmd = \"%s\"\n", cmd);
+        for(i = 0; i < nmids; i++)
+            printf("Parser: middle[%d] = \"%s\"\n",i, middle[i]);
+        printf("Parser: trail = \"%s\"\n", trail);
+    }
+    /***/
+    
+    retorno = (Mensagens*)malloc(sizeof(*retorno));
+    strcpy(retorno->msgv[0], entrada);
+    strcpy(retorno->msgv[1], "esta certo ne?\n");
+    retorno->n = 2;
+    return retorno;
 }
