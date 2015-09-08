@@ -1,4 +1,5 @@
 /* Evandro Ausgusto Nunes Sanches <evnsanches@ig.com.br>
+ * Pedro Ferreira Alexandre <pedro.alexandre@usp.br>
  * Em 03/09/2015
  * 
  * Codigo desenvolvido como projeto da disciplina MAC0448 - Programa-
@@ -40,6 +41,8 @@
 #define RCMDMAX 10
 #define NICKMAX 50
 #define MIDMAX 10
+#define PATHMAX 256 
+#define PATHCHAT "chat/"
 typedef struct {
     char msgv[RCMDMAX][MSGMAX];
     int n;
@@ -47,6 +50,8 @@ typedef struct {
 
 Mensagens* parser(const char *entrada);
 int isNickValid(char *entrada);
+int flagLogged = 0; 
+int flagNickInicial = 0; 
 
 /*variaveis globais*/
 char nick[NICKMAX];
@@ -244,8 +249,11 @@ Mensagens* parser(const char *entrada){
     char *trail;
     char *tmp;
     int nmids;
+    char filename1[PATHMAX], filename2[PATHMAX];
     /*controle*/
     int i;
+
+    retorno = (Mensagens*)malloc(sizeof(*retorno));
     
     /***/
     if(TESTE_NIVEL_1){
@@ -289,22 +297,52 @@ Mensagens* parser(const char *entrada){
     /***/
 
     /*parsing cmd*/
+    /*NICK*/
     if(!strcmp(cmd, "NICK")){
         printf("entrou no CDM = NICK\n");
         if(isNickValid(middle[0])){
             printf("nick valido\n");
             /*verificar se ja tinha Nick*/
             /*criar arquivo de Nick se nao colidir*/
-            if((fp = fopen(middle[0],"r")) == NULL){
+            strcpy(filename1, PATHCHAT);
+            strcat(filename1,middle[0]);
+            if((fp = fopen(filename1,"r")) == NULL){
                 /*User ja tinha nick*/
-                /*sim - muda o nome do arquivo*/
-                /*nao - cria arquivo*/
-                    fp = fopen(middle[0],"w");
+                if(nick[0] != '9'){
+                /*sim - muda o nome dos arquivos*/
+                    strcpy(filename2, PATHCHAT);
+                    strcat(filename2,nick);
+                    rename(filename2, filename1);
+                    strcat(filename1,".chan");
+                    strcat(filename2,".chan");
+                    rename(filename2, filename1);
+                    fp = fopen(filename1, "r");
                     strcpy(nick, middle[0]);
+                    retorno->n = 2;
+                    strcpy(retorno->msgv[0], ":ircserv NOTICE * :***Changing your nick...\n");
+                    strcpy(retorno->msgv[1], ":ircserv NOTICE * :***DONE...\n");
+                }
+                else{
+                /*nao - cria arquivos*/
+                    printf("path: %s\n", filename1);
+                    fp = fopen(filename1,"w");
+                    fclose(fp);
+                    strcat(filename1,".chan");
+                    fp = fopen(filename1,"w");
+                    strcpy(nick, middle[0]);
+                    flagNickInicial = 1;
+                    retorno->n = 1;
+                    strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Looking up your hostname...\n");
                 /*criar resposta*/
+                }
             }
             else{
                 printf("nick ja existe: %s \n", middle[0]);
+                retorno->n = 1;
+
+                strcpy(retorno->msgv[0], ":ircserv 433");
+                strcat(retorno->msgv[0], middle[0]);
+                strcat(retorno->msgv[0], " :Nickname is already in use\n");
                 /*criar resposta*/
             }
             fclose(fp);
@@ -314,12 +352,26 @@ Mensagens* parser(const char *entrada){
             printf("Nick invalido\n");
         }
     }
+    /*USER*/
+    else if(!strcmp(cmd, "USER") && flagNickInicial){
+        flagNickInicial = 0;
+        flagLogged = 1;
+        strcpy(filename1, PATHCHAT);
+        strcat(filename1, nick);
+        fp = fopen(filename1, "w");
+        fprintf(fp, "%s", cmd);
+        for(i = 0; i < nmids; i++){
+            fprintf(fp, " %s", middle[i]);
+        }
+        if(trail != NULL)
+           fprintf(fp, " %s", trail);
+        fprintf(fp, "\n");
+        fclose(fp);
+    }
+    /*QUIT*/
+    else if(!strcmp(cmd,"QUIT") && flagLogged){
+    }
 
-       
-    retorno = (Mensagens*)malloc(sizeof(*retorno));
-    strcpy(retorno->msgv[0], entrada);
-    strcpy(retorno->msgv[1], "esta certo ne?\n");
-    retorno->n = 2;
     return retorno;
 }
 
