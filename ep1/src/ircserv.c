@@ -36,11 +36,16 @@
 
 /*trecho adicionado para o irc server - EP1*/
 #include <dirent.h>
+#include <sys/stat.h>
+#include <ctype.h>
+
 #define TESTE_NIVEL_1 1
 #define TESTE_NIVEL_2 0
 #define MSGMAX 512
 #define RCMDMAX 10
 #define NICKMAX 50
+#define FILENAMEMAX 50
+#define TAMLINEMAX 51
 #define MIDMAX 10
 #define PATHMAX 256 
 #define PATHCHAT "users/"
@@ -52,17 +57,21 @@ typedef struct {
     char msgv[RCMDMAX][MSGMAX];
     int n;
 } Mensagens;
-
+/*Comandos*/
+int cmdPart(char *channel);
+/*Auxiliares*/
 Mensagens* parser(const char *entrada);
 int isNickValid(char *entrada);
 int isChanValid(char *entrada);
-int flagLogged = 0; 
-int flagNickInicial = 0; 
+int existFile(char* filepath);
+int removeLineFromFile(char* linein, char* filename);
 
 /*variaveis globais*/
 char nick[NICKMAX];
+int flagLogged = 0; 
+int flagNickInitial = 0; 
 
-/*final deste trecho*/
+/*Final deste trecho*/
 
 #define LISTENQ 1
 #define MAXDATASIZE 100
@@ -261,9 +270,9 @@ int main (int argc, char **argv) {
 
 Mensagens* parser(const char *entrada){
     Mensagens *retorno;
+    FILE *fp;
     char sulfixo[MSGMAX + 1];
     char *cmd;
-    FILE *fp;
     char *middle[MIDMAX];
     char *trail;
     char *tmp;
@@ -352,7 +361,7 @@ Mensagens* parser(const char *entrada){
                     strcat(filename1,".chan");
                     fp = fopen(filename1,"w");
                     strcpy(nick, middle[0]);
-                    flagNickInicial = 1;
+                    flagNickInitial = 1;
                     retorno->n = 1;
                     strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Looking up your hostname...\n");
                 /*criar resposta*/
@@ -374,8 +383,8 @@ Mensagens* parser(const char *entrada){
         }
     }
     /*USER*/
-    else if(!strcmp(cmd, "USER") && flagNickInicial){
-        flagNickInicial = 0;
+    else if(!strcmp(cmd, "USER") && flagNickInitial){
+        flagNickInitial = 0;
         flagLogged = 1;
         strcpy(filename1, PATHCHAT);
         strcat(filename1, nick);
@@ -413,12 +422,12 @@ Mensagens* parser(const char *entrada){
     /*JOIN*/
     else if(!strcmp(cmd,"JOIN") && flagLogged){
         if(isChanValid(middle[0])){
-            printf("chan valido\n");
+            printf("JOIN: chan valido\n");
             /*verificar se ja tinha chan*/
             strcpy(filename1, PATHCHAN);
             strcat(filename1, &middle[0][1]);
-            printf("chan name : \"%s\"\n", filename1);
-            if((fp = fopen(filename1,"r")) == NULL){
+            printf("JOIN: chan name : \"%s\"\n", filename1);
+            if(!existFile(filename1)){
                 /*cria arquivos*/
                 fp = fopen(filename1, "w");
                 fprintf(fp, "%s\n", nick);
@@ -429,6 +438,7 @@ Mensagens* parser(const char *entrada){
             }
             else{
                 /*adicionar nick no filename1*/
+                fp = fopen(filename1, "a");
                 fprintf(fp, "%s\n", nick);
                 fclose(fp);
                 retorno->n = 1;
@@ -438,16 +448,51 @@ Mensagens* parser(const char *entrada){
         }
         else{
             /*retornar codigo de badChan*/
-            printf("Chan invalido\n");
+            printf("JOIN: Chan invalido\n");
         }
     }
     
     /*QUIT*/
     else if(!strcmp(cmd,"QUIT") && flagLogged){
     }
+    
+    /*PART*/
+    else if(!strcmp(cmd,"PART") && flagLogged){
+        if(isChanValid(middle[0])){
+            printf("PART: chan valido\n");
+            /*verificar se ja tinha chan*/
+            cmdPart(&middle[0][1]);
+        }
+        else
+            /*retornar codigo de badChan*/
+            printf("PART: Chan invalido\n");
+    }
 
     return retorno;
 }
+/***************COMANDOS**************/
+/**NICK**/
+/**USER**/
+/**LIST**/
+/**JOIN**/
+/**PART**/
+int cmdPart(char *channel){
+    char filename[FILENAMEMAX];
+    char line[TAMLINEMAX];
+
+    printf("CMDPART: recebeu channel: \"%s\"\n", channel);
+    strcpy(filename, PATHCHAN);
+    strcat(filename, channel);
+    
+    strcpy(line, nick);
+    strcat(line, "\n");
+
+    removeLineFromFile(line, filename);
+
+    return 0;
+}
+
+/**********FUNCOES AUXILIARES*********/
 
 int isNickValid(char *entrada){
     int i;
@@ -479,3 +524,59 @@ int isChanValid(char *entrada){
     }
     return 1;
 }
+
+int existFile(char* filepath){
+    if(access(filepath, F_OK) != -1)
+        return 1;
+    else
+        return 0;
+}
+
+int removeLineFromFile(char *linein, char* filename){
+    FILE *fp1, *fp2;
+    char *line;
+    size_t len;
+    ssize_t read;
+    char filenamebkp[FILENAMEMAX];
+
+    if(existFile(filename)){
+        if((fp1 = fopen(filename, "r+")) != NULL){
+            strcpy(filenamebkp, filename);
+            strcat(filenamebkp, "BKP");
+            if((fp2 = fopen(filenamebkp, "w")) != NULL){
+                line = malloc(TAMLINEMAX * sizeof(char));
+                while((read = getline(&line, &len, fp1)) != -1){
+                    printf("REMOVEFROMLINE: entrou no while e linha é \"%s\"\n",line);
+                    if(strcmp(linein, line))
+                        fprintf(fp2, line);
+                }
+                printf("REMOVEFROMLINE: passou do while\n");
+                if(line) free(line);
+                if(ftell(fp2)){
+                    fclose(fp2);
+                    fclose(fp1);
+                    remove(filename);
+                    rename(filenamebkp, filename);
+                }
+                else{
+                    fclose(fp2);
+                    fclose(fp1);
+                    remove(filename);
+                    remove(filenamebkp);
+
+                }
+
+            }
+            else{
+                return -3; /* ERRO - nao pode criar fileBKP */
+                fclose(fp1);
+            }
+        }
+        else
+            return -2; /* ERRO - file em uso */
+
+
+    }
+    return -1; /* ERRO - file nao existe */
+}
+    
