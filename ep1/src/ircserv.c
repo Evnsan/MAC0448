@@ -83,9 +83,11 @@ int main (int argc, char **argv) {
    /* Armazena o tamanho da string lida do cliente */
    ssize_t  n;
 
-   /*trecho adicionado para a criacao dos canais hardcoded*/
+   /*trecho adicionado para a criacao dos canais hardcoded e eestrutura de arquivos*/
    char chanpath[PATHMAX];
    
+   mkdir(PATHCHAN, 0755);
+   mkdir(PATHCHAT, 0755);
    strcpy(chanpath, PATHCHAN);
    strcat(chanpath, CHAN1);
    fclose(fopen(chanpath, "w"));
