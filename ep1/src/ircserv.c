@@ -280,14 +280,12 @@ int main (int argc, char **argv) {
 
 Mensagens* parser(const char *entrada){
     Mensagens *retorno;
-    FILE *fp;
     char sulfixo[MSGMAX + 1];
     char *cmd;
     char *middle[MIDMAX];
     char *trail;
     char *tmp;
     int nmids;
-    char filename1[PATHMAX];
     DIR *dir;
     struct dirent *ent;
     /*controle*/
@@ -558,16 +556,13 @@ int cmdUser(char *middle[],int nmids, char *trail){
        fprintf(fp, " %s", trail);
     fprintf(fp, "\n");
     fclose(fp);
-<<<<<<< HEAD
-    
-=======
+
     fp = fopen(path, "a");
     strcpy(nickNewLine, nick);
     strcat(nickNewLine, "\n");
     fprintf(fp, "%s", nickNewLine);
 
     fclose(fp);
->>>>>>> comando users refatorado
     return 0;
 }
 
@@ -715,7 +710,7 @@ int removeLineFromFile(char *entrada, char* filename){
                 while((read = getline(&line, &len, fp1)) != -1){
                     printf("REMOVEFROMLINE: entrou no while e linha é \"%s\"\n",line);
                     if(strcmp(linein, line))
-                        fprintf(fp2, line);
+                        fprintf(fp2,"%s", line);
                 }
                 printf("REMOVEFROMLINE: passou do while\n");
                 if(line) free(line);
