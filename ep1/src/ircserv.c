@@ -50,8 +50,10 @@
 #define PATHMAX 256 
 #define PATHCHAT "users/"
 #define PATHCHAN "chan/"
+#define PATHSERVER "server/"
+#define USERSFILE "users"
 #define CHAN1 "ircserv"
-#define CHAN2 "ircnaoserv"
+#define CHAN2 "ircnserv"
 
 typedef struct {
     char msgv[RCMDMAX][MSGMAX];
@@ -92,17 +94,21 @@ int main (int argc, char **argv) {
    /* Armazena o tamanho da string lida do cliente */
    ssize_t  n;
 
-   /*trecho adicionado para a criacao dos canais hardcoded e eestrutura de arquivos*/
-   char chanpath[PATHMAX];
+   /*trecho adicionado para a criacao dos canais hardcoded e estrutura de arquivos*/
+   char path[PATHMAX];
    
    mkdir(PATHCHAN, 0755);
    mkdir(PATHCHAT, 0755);
-   strcpy(chanpath, PATHCHAN);
-   strcat(chanpath, CHAN1);
-   fclose(fopen(chanpath, "w"));
-   strcpy(chanpath, PATHCHAN);
-   strcat(chanpath, CHAN2);
-   fclose(fopen(chanpath, "w"));
+   mkdir(PATHSERVER, 0755);
+   strcpy(path, PATHSERVER);
+   strcat(path, USERSFILE);
+   fclose(fopen(path, "w"));
+   strcpy(path, PATHCHAN);
+   strcat(path, CHAN1);
+   fclose(fopen(path, "w"));
+   strcpy(path, PATHCHAN);
+   strcat(path, CHAN2);
+   fclose(fopen(path, "w"));
    /*final do trecho*/
    
 	if (argc != 2) {
@@ -299,7 +305,11 @@ Mensagens* parser(const char *entrada){
     /*remove prefixo e recebe comando*/
     if(sulfixo[0] == ':'){
         strtok(sulfixo , " ");
-        printf("aqui==> \"%s\"\n", sulfixo);
+        /***/
+        if(TESTE_NIVEL_1){
+            printf("Parser aqui==> \"%s\"\n", sulfixo);
+        }
+        /***/
         cmd = strtok(NULL, " \r\n\0");
     }
     else
@@ -330,57 +340,11 @@ Mensagens* parser(const char *entrada){
     /*parsing cmd*/
     /*NICK*/
     if(!strcmp(cmd, "NICK")){
-        printf("entrou no CDM = NICK\n");
-        if(isNickValid(middle[0])){
-            printf("nick valido\n");
-            /*verificar se ja tinha Nick*/
-            /*criar arquivo de Nick se nao colidir*/
-            strcpy(filename1, PATHCHAT);
-            strcat(filename1,middle[0]);
-            if((fp = fopen(filename1,"r")) == NULL){
-                /*User ja tinha nick*/
-                if(nick[0] != '9'){
-                /*sim - muda o nome dos arquivos*/
-                    strcpy(filename2, PATHCHAT);
-                    strcat(filename2,nick);
-                    rename(filename2, filename1);
-                    strcat(filename1,".chan");
-                    strcat(filename2,".chan");
-                    rename(filename2, filename1);
-                    fp = fopen(filename1, "r");
-                    strcpy(nick, middle[0]);
-                    retorno->n = 2;
-                    strcpy(retorno->msgv[0], ":ircserv NOTICE * :***Changing your nick...\n");
-                    strcpy(retorno->msgv[1], ":ircserv NOTICE * :***DONE...\n");
-                }
-                else{
-                /*nao - cria arquivos*/
-                    printf("path: %s\n", filename1);
-                    fp = fopen(filename1,"w");
-                    fclose(fp);
-                    strcat(filename1,".chan");
-                    fp = fopen(filename1,"w");
-                    strcpy(nick, middle[0]);
-                    flagNickInitial = 1;
-                    retorno->n = 1;
-                    strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Looking up your hostname...\n");
-                /*criar resposta*/
-                }
-            }
-            else{
-                printf("nick ja existe: %s \n", middle[0]);
-                retorno->n = 1;
-                strcpy(retorno->msgv[0], ":ircserv 433");
-                strcat(retorno->msgv[0], middle[0]);
-                strcat(retorno->msgv[0], " :Nickname is already in use\n");
-                /*criar resposta*/
-            }
-            fclose(fp);
+        /***/
+        if(TESTE_NIVEL_1){
+            printf("Parser: entrou no CDM = NICK\n");
         }
-        else{
-            /*retornar codigo de badnick*/
-            printf("Nick invalido\n");
-        }
+        /***/
     }
     /*USER*/
     else if(!strcmp(cmd, "USER") && flagNickInitial){
@@ -473,6 +437,62 @@ Mensagens* parser(const char *entrada){
 /***************COMANDOS**************/
 /**NICK**/
 /**USER**/
+int cmdNick(char* nick){
+    if(isNickValid(middle[0])){
+    /***/
+    if(TESTE_NIVEL_1){
+        printf("Parser: nick valido\n");
+    }
+    /***/
+        /*verificar se ja tinha Nick*/
+        /*criar arquivo de Nick se nao colidir*/
+        strcpy(filename1, PATHCHAT);
+        strcat(filename1,middle[0]);
+        if((fp = fopen(filename1,"r")) == NULL){
+            /*User ja tinha nick*/
+            if(nick[0] != '9'){
+            /*sim - muda o nome dos arquivos*/
+                strcpy(filename2, PATHCHAT);
+                strcat(filename2,nick);
+                rename(filename2, filename1);
+                strcat(filename1,".chan");
+                strcat(filename2,".chan");
+                rename(filename2, filename1);
+                fp = fopen(filename1, "r");
+                strcpy(nick, middle[0]);
+                retorno->n = 2;
+                strcpy(retorno->msgv[0], ":ircserv NOTICE * :***Changing your nick...\n");
+                strcpy(retorno->msgv[1], ":ircserv NOTICE * :***DONE...\n");
+            }
+            else{
+            /*nao - cria arquivos*/
+                printf("path: %s\n", filename1);
+                fp = fopen(filename1,"w");
+                fclose(fp);
+                strcat(filename1,".chan");
+                fp = fopen(filename1,"w");
+                strcpy(nick, middle[0]);
+                flagNickInitial = 1;
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Looking up your hostname...\n");
+            /*criar resposta*/
+            }
+        }
+        else{
+            printf("nick ja existe: %s \n", middle[0]);
+            retorno->n = 1;
+            strcpy(retorno->msgv[0], ":ircserv 433");
+            strcat(retorno->msgv[0], middle[0]);
+            strcat(retorno->msgv[0], " :Nickname is already in use\n");
+            /*criar resposta*/
+        }
+        fclose(fp);
+    }
+    else{
+        /*retornar codigo de badnick*/
+        printf("Nick invalido\n");
+    }
+}
 /**LIST**/
 /**JOIN**/
 /**PART**/
