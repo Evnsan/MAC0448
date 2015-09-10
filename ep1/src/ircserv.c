@@ -647,6 +647,7 @@ int cmdPart(char *channel){
     char filename[FILENAMEMAX];
     char line[TAMLINEMAX];
 
+
     printf("CMDPART: recebeu channel: \"%s\"\n", channel);
     strcpy(filename, PATHCHAN);
     strcat(filename, channel);
@@ -654,8 +655,13 @@ int cmdPart(char *channel){
     strcpy(line, nick);
     strcat(line, "\n");
 
-    removeLineFromFile(line, filename);
 
+    removeLineFromFile(line, filename);
+    filename[0] = '\0';
+    strcpy(filename, PATHCHAT);
+    strcat(filename, nick);
+    strcat(filename, ".chan");
+    removeLineFromFile(channel,filename);
     return 0;
 }
 
@@ -754,7 +760,6 @@ int removeLineFromFile(char *entrada, char* filename){
                     return 1;
 
                 }
-
             }
             else{
                 return -3; /* ERRO - nao pode criar fileBKP */
