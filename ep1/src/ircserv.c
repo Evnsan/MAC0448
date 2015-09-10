@@ -62,6 +62,7 @@ typedef struct {
 /*Comandos*/
 int cmdPart(char *channel);
 int cmdNick(char *entrada);
+int cmdJoin(char *channel);
 /*Auxiliares*/
 Mensagens* parser(const char *entrada);
 int isNickValid(char *entrada);
@@ -413,34 +414,24 @@ Mensagens* parser(const char *entrada){
     }
     /*JOIN*/
     else if(!strcmp(cmd,"JOIN") && flagLogged){
-        if(isChanValid(middle[0])){
-            printf("JOIN: chan valido\n");
-            /*verificar se ja tinha chan*/
-            strcpy(filename1, PATHCHAN);
-            strcat(filename1, &middle[0][1]);
-            printf("JOIN: chan name : \"%s\"\n", filename1);
-            if(!existFile(filename1)){
-                /*cria arquivos*/
-                fp = fopen(filename1, "w");
-                fprintf(fp, "%s\n", nick);
-                fclose(fp);
-                retorno->n = 1;
-                strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Canal Criado...\n");
-                /*criar resposta*/
-            }
-            else{
-                /*adicionar nick no filename1*/
-                fp = fopen(filename1, "a");
-                fprintf(fp, "%s\n", nick);
-                fclose(fp);
+        switch(cmdJoin(middle[0])){
+            case 1:
+                /*criar resposta de ok - ja tinha canal-> adicionou*/
                 retorno->n = 1;
                 strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Adicionado ao Canal...\n");
-                /*criar resposta*/
-            }
-        }
-        else{
-            /*retornar codigo de badChan*/
-            printf("JOIN: Chan invalido\n");
+            case 0:
+                /*criar resposta de ok - nao tinha canal-> criou/adicionou*/
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Canal Criado...\n");
+                break;
+            case -1:
+                /*criar resposta de canal protejido*/
+                break;
+            case -2:
+                /*criar resposta de badchan*/
+                break;
+            default: ;
+                /*deu merda*/
         }
     }
     
@@ -466,11 +457,16 @@ Mensagens* parser(const char *entrada){
 /**NICK**/
 int cmdNick(char *entrada){
     char filename1[PATHMAX], filename2[PATHMAX];
+    char chanpath[PATHMAX];
+    FILE *fp;
+    char *line;
+    size_t len;
+    ssize_t read;
 
     if(isNickValid(entrada)){
     /***/
     if(TESTE_NIVEL_1){
-        printf("Parser: nick valido\n");
+        printf("NICK: nick valido\n");
     }
     /***/
         /*verificar se ja tinha Nick*/
@@ -487,8 +483,30 @@ int cmdNick(char *entrada){
                 strcat(filename1,".chan");
                 strcat(filename2,".chan");
                 rename(filename2, filename1);
-                strcpy(nick, entrada);
-                return 1;
+                /*verifica se ja esta logado*/
+                if(flagLogged){
+                    /*sim - muda o nick nos canais*/
+                    if((fp = fopen(filename1, "r")) != NULL){
+                        line = malloc(TAMLINEMAX * sizeof(char));
+                        while((read = getline(&line, &len, fp)) != -1){
+                            line[strlen(line) - 1] = '\0';
+                            printf("NICK: line: \"%s\"\n", line);
+                            strcpy(chanpath, PATHCHAN);
+                            strcat(chanpath, line);
+                            printf("NICK: chanpath: \"%s\"\n", chanpath);
+                            removeLineFromFile(entrada,chanpath);
+                            cmdJoin(line);
+                        }
+                        if(line) free(line);
+                    }
+                    strcpy(nick, entrada);
+                    return 1;
+                }
+                else{
+                    strcpy(nick, entrada);
+                    return 1;
+                }
+
             }
             else{
             /*nao - cria arquivos*/
@@ -524,6 +542,61 @@ int cmdNick(char *entrada){
 /**USER**/
 /**LIST**/
 /**JOIN**/
+int cmdJoin(char *channel){
+    char filename1[FILENAMEMAX], filename2[FILENAMEMAX];
+    FILE *fp;
+
+    if(isChanValid(channel)){
+        /***/
+        if(TESTE_NIVEL_1){
+            printf("JOIN: chan valido\n");
+        }
+        /***/
+        /*verificar se ja tinha chan*/
+        strcpy(filename1, PATHCHAN);
+        strcat(filename1, &channel[1]);
+        strcpy(filename2, PATHCHAT);
+        strcat(filename2, nick);
+        strcat(filename2, ".chan");
+        /***/
+        if(TESTE_NIVEL_1){
+            printf("JOIN: chan name : \"%s\"\n", filename1);
+        }
+        /***/
+        if(!existFile(filename1)){
+            /*cria arquivos*/
+            fp = fopen(filename1, "w");
+            fprintf(fp, "%s\n", nick);
+            fclose(fp);
+            fp = fopen(filename2, "a");
+            fprintf(fp, "%s\n", &channel[1]);
+            fclose(fp);
+            return 0;
+        }
+        else{
+            /*adicionar nick no filename1*/
+            removeLineFromFile(nick, filename1);
+            fp = fopen(filename1, "a");
+            fprintf(fp, "%s\n", nick);
+            fclose(fp);
+            removeLineFromFile(&channel[1], filename2);
+            fp = fopen(filename2, "a");
+            fprintf(fp, "%s\n", &channel[1]);
+            fclose(fp);
+            return 1;
+            /*criar resposta*/
+        }
+    }
+    else{
+        /*retornar codigo de badChan*/
+        /***/
+        if(TESTE_NIVEL_1){
+            printf("JOIN: chan invalido\n");
+        }
+        /***/
+        return -2;
+    }
+}
 /**PART**/
 int cmdPart(char *channel){
     char filename[FILENAMEMAX];
@@ -581,12 +654,26 @@ int existFile(char* filepath){
         return 0;
 }
 
-int removeLineFromFile(char *linein, char* filename){
+int removeLineFromFile(char *entrada, char* filename){
     FILE *fp1, *fp2;
     char *line;
     size_t len;
     ssize_t read;
     char filenamebkp[FILENAMEMAX];
+    char linein[TAMLINEMAX];
+    int lineinTam;
+
+    strcpy(linein, entrada);
+    lineinTam = strlen(linein);
+    if(linein[lineinTam - 1] != '\n'){
+        linein[lineinTam] = '\n';
+        linein[lineinTam + 1] = '\0';
+    }
+    /***/
+    if(TESTE_NIVEL_1){
+        printf("REMOVELINEFROMFILE: line in = \"%s\"\n", linein);
+    }
+    /***/
 
     if(existFile(filename)){
         if((fp1 = fopen(filename, "r+")) != NULL){
