@@ -42,8 +42,9 @@
 #define TESTE_NIVEL_1 1
 #define TESTE_NIVEL_2 0
 #define MSGMAX 512
-#define RCMDMAX 10
+#define RCMDMAX 100
 #define NICKMAX 50
+#define CHANMAX 50
 #define FILENAMEMAX 50
 #define TAMLINEMAX 51
 #define MIDMAX 10
@@ -453,6 +454,8 @@ Mensagens* parser(const char *entrada){
 int cmdNick(char *entrada){
     char filename1[PATHMAX], filename2[PATHMAX];
     char chanpath[PATHMAX];
+    char oldnick[NICKMAX];
+    char chan[CHANMAX];
     FILE *fp;
     char *line;
     size_t len;
@@ -482,6 +485,9 @@ int cmdNick(char *entrada){
                 if(flagLogged){
                     /*sim - muda o nick nos canais*/
                     if((fp = fopen(filename1, "r")) != NULL){
+                        strcpy(oldnick, nick);
+                        strcpy(nick, entrada);
+                        /*atualizar nos canais*/
                         line = malloc(TAMLINEMAX * sizeof(char));
                         while((read = getline(&line, &len, fp)) != -1){
                             line[strlen(line) - 1] = '\0';
@@ -489,12 +495,25 @@ int cmdNick(char *entrada){
                             strcpy(chanpath, PATHCHAN);
                             strcat(chanpath, line);
                             printf("NICK: chanpath: \"%s\"\n", chanpath);
-                            removeLineFromFile(entrada,chanpath);
-                            cmdJoin(line);
+                            removeLineFromFile(oldnick,chanpath);
+                            strcpy(chan, "#");
+                            strcat(chan, line);
+                            cmdJoin(chan);
                         }
                         if(line) free(line);
+                        fclose(fp);
+                        /*atualizar em server/users*/
+                        strcpy(filename1, PATHSERVER);
+                        strcat(filename1, USERSFILE);
+                        removeLineFromFile(oldnick,filename1);
+                        if((fp = fopen(filename1, "a")) != NULL){
+                            fprintf(fp, "%s\n", nick);
+                            fclose(fp);
+                        }
                     }
-                    strcpy(nick, entrada);
+                    else{
+                        strcpy(nick, entrada);
+                    }
                     return 1;
                 }
                 else{
