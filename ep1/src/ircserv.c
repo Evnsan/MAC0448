@@ -738,12 +738,20 @@ int removeLineFromFile(char *entrada, char* filename){
                     fclose(fp1);
                     remove(filename);
                     rename(filenamebkp, filename);
+                    return 0;
                 }
                 else{
+                    /***/
+                    if(TESTE_NIVEL_1){
+                        printf("REMOVEFROMLINE: arquivo ficou vazio\n");
+                    }
+                    /***/
                     fclose(fp2);
                     fclose(fp1);
                     remove(filename);
-                    remove(filenamebkp);
+                    rename(filenamebkp, filename);
+                    /*remove(filenamebkp);*/
+                    return 1;
 
                 }
 
