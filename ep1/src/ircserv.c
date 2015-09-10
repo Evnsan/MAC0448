@@ -59,10 +59,12 @@ typedef struct {
     char msgv[RCMDMAX][MSGMAX];
     int n;
 } Mensagens;
+
 /*Comandos*/
 int cmdPart(char *channel);
 int cmdNick(char *entrada);
 int cmdJoin(char *channel);
+int cmdUser(char *middle[],int nmids, char *trail);
 /*Auxiliares*/
 Mensagens* parser(const char *entrada);
 int isNickValid(char *entrada);
@@ -379,7 +381,8 @@ Mensagens* parser(const char *entrada){
     else if(!strcmp(cmd, "USER") && flagNickInitial){
         flagNickInitial = 0;
         flagLogged = 1;
-        strcpy(filename1, PATHCHAT);
+        cmdUser(middle, nmids, trail);
+        /*strcpy(filename1, PATHCHAT);
         strcat(filename1, nick);
         fp = fopen(filename1, "w");
         fprintf(fp, "%s", cmd);
@@ -391,7 +394,7 @@ Mensagens* parser(const char *entrada){
         fprintf(fp, "\n");
         fclose(fp);
         retorno->n = 1;
-        strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Welcome...\n");
+        strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Welcome...\n");*/
     }
     /*LIST*/
     else if(!strcmp(cmd,"LIST") && flagLogged){
@@ -540,6 +543,26 @@ int cmdNick(char *entrada){
     }
 }
 /**USER**/
+int cmdUser(char *middle[],int nmids, char *trail){
+    FILE *fp;
+    int i;
+    char filename1[FILENAMEMAX];
+    strcpy(filename1, PATHCHAT);
+    strcat(filename1, nick);
+
+    fp = fopen(filename1, "w");
+    fprintf(fp, "%s", "USER");
+    for(i = 0; i < nmids; i++){
+        fprintf(fp, " %s", middle[i]);
+    }
+    if(trail != NULL)
+       fprintf(fp, " %s", trail);
+    fprintf(fp, "\n");
+    fclose(fp);
+    
+    return 0;
+}
+
 /**LIST**/
 /**JOIN**/
 int cmdJoin(char *channel){
