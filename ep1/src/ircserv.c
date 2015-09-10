@@ -381,20 +381,14 @@ Mensagens* parser(const char *entrada){
     else if(!strcmp(cmd, "USER") && flagNickInitial){
         flagNickInitial = 0;
         flagLogged = 1;
-        cmdUser(middle, nmids, trail);
-        /*strcpy(filename1, PATHCHAT);
-        strcat(filename1, nick);
-        fp = fopen(filename1, "w");
-        fprintf(fp, "%s", cmd);
-        for(i = 0; i < nmids; i++){
-            fprintf(fp, " %s", middle[i]);
+        switch(cmdUser(middle, nmids, trail)){
+          case 0:
+              retorno->n = 1;
+              strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Welcome...\n");
+              break;
+          default: ;
+              /*deu merda*/
         }
-        if(trail != NULL)
-           fprintf(fp, " %s", trail);
-        fprintf(fp, "\n");
-        fclose(fp);
-        retorno->n = 1;
-        strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Welcome...\n");*/
     }
     /*LIST*/
     else if(!strcmp(cmd,"LIST") && flagLogged){
@@ -545,11 +539,16 @@ int cmdNick(char *entrada){
 /**USER**/
 int cmdUser(char *middle[],int nmids, char *trail){
     FILE *fp;
+
     int i;
+    char path[PATHMAX];
+    char nickNewLine[NICKMAX];
     char filename1[FILENAMEMAX];
     strcpy(filename1, PATHCHAT);
     strcat(filename1, nick);
-
+    strcpy(path, PATHSERVER);
+    strcat(path, USERSFILE);
+    nickNewLine[0] ='\0';
     fp = fopen(filename1, "w");
     fprintf(fp, "%s", "USER");
     for(i = 0; i < nmids; i++){
@@ -559,7 +558,16 @@ int cmdUser(char *middle[],int nmids, char *trail){
        fprintf(fp, " %s", trail);
     fprintf(fp, "\n");
     fclose(fp);
+<<<<<<< HEAD
     
+=======
+    fp = fopen(path, "a");
+    strcpy(nickNewLine, nick);
+    strcat(nickNewLine, "\n");
+    fprintf(fp, "%s", nickNewLine);
+
+    fclose(fp);
+>>>>>>> comando users refatorado
     return 0;
 }
 
