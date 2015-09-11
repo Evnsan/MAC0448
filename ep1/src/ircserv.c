@@ -68,8 +68,10 @@ int cmdNick(char *entrada);
 int cmdJoin(char *channel);
 int cmdUser(char *middle[],int nmids, char *trail);
 int cmdPrivmsg(char *target, char *trail);
+int cmdNames(char saida[MSGMAX][NICKMAX], char* channel);
 /*Auxiliares*/
 Mensagens* parser(const char *entrada);
+Mensagens* recebemsg();
 int isNickValid(char *entrada);
 int isChanValid(char *entrada);
 int existFile(char* filepath);
@@ -249,12 +251,12 @@ int main (int argc, char **argv) {
          
          while ((n=read(connfd, recvline, MAXLINE)) > 0) {
             recvline[n]=0;
-            printf("[Cliente conectado no processo filho %d enviou:] ",
+            /*printf("[Cliente conectado no processo filho %d enviou:] ",
                     getpid());
             if ((fputs(recvline,stdout)) == EOF) {
                perror("fputs :( \n");
                exit(6);
-            }
+            }*/
             resps = NULL;
             
             nlines = 0;            
@@ -278,6 +280,18 @@ int main (int argc, char **argv) {
                     }
                     free(resps);
                 }
+            }
+            resps = recebemsg();
+            if(resps != NULL){
+                for(j = 0; j < resps->n; j++){ 
+                    /***/
+                    if(TESTE_NIVEL_2){
+                        printf("entrou no loop j = %d e msg \"%s\"\n", j, resps->msgv[j]);
+                    }
+                    /***/
+                    write(connfd, resps->msgv[j], strlen(resps->msgv[j]));
+                }
+                free(resps);
             }
         }
          /* ========================================================= */
@@ -306,13 +320,15 @@ Mensagens* parser(const char *entrada){
     char sulfixo[MSGMAX + 1];
     char *cmd;
     char *middle[MIDMAX];
+    char lista[MSGMAX][NICKMAX];
     char *trail;
     char *tmp;
     int nmids;
     DIR *dir;
+    int itens;
     struct dirent *ent;
     /*controle*/
-    int i;
+    int i, j;
 
     retorno = (Mensagens*)malloc(sizeof(*retorno));
     retorno->n = 0;
@@ -558,6 +574,36 @@ Mensagens* parser(const char *entrada){
         }
     }
 
+    /*NAMES*/
+    else if(!strcmp(cmd, "NAMES") && flagLogged){
+        retorno->n = 0;
+        for(i = 0; i < nmids; i++){
+            itens = cmdNames(lista, middle[i]);
+            switch(itens){
+                case -1:
+                    break;
+                case -2:
+                    break;
+                default:
+                    /*tudo certo*/
+                    for(j = 0; j < itens; j++){
+                        strcpy(retorno->msgv[retorno->n + j], ":ircserv 353 ");
+                        strcat(retorno->msgv[retorno->n + j], nick);
+                        strcat(retorno->msgv[retorno->n + j], " = ");
+                        strcat(retorno->msgv[retorno->n + j], middle[i]);
+                        strcat(retorno->msgv[retorno->n + j], " :");
+                        strcat(retorno->msgv[retorno->n + j], lista[j]);
+                        strcat(retorno->msgv[retorno->n + j], "\n");
+
+                        printf("===>%s\n", lista[j]);
+                    }
+                    retorno->n += itens;
+            }
+        }
+    }
+
+
+
 
     return retorno;
 }
@@ -638,12 +684,9 @@ int cmdNick(char *entrada){
             else{
             /*nao - cria arquivos*/
                 if(flagInitialUser){
-                    printf("path: %s\n", filename1);
                     strcpy(filename2, PATHCHAT);
                     strcat(filename2,pid);
                     rename(filename2, filename1);
-                    printf("pid = %s\n", pid);
-                    printf("path: %s\n", filename2);
                     strcat(filename1,".chan");
                     fclose(fopen(filename1,"w"));
                     strcpy(nick, entrada);
@@ -657,7 +700,6 @@ int cmdNick(char *entrada){
                     return 0;
                 }
                 else{
-                    printf("path: %s\n", filename1);
                     fclose(fopen(filename1,"w"));
                     strcat(filename1,".chan");
                     fclose(fopen(filename1,"w"));
@@ -701,8 +743,6 @@ int cmdUser(char *middle[],int nmids, char *trail){
         strcat(filename1, nick);
     else{
         strcat(filename1,pid);
-        printf("USER: pid = %s\n", pid);
-        printf("USER: pathh = %s\n", filename1);
     }
     strcpy(path, PATHSERVER);
     strcat(path, USERSFILE);
@@ -787,21 +827,73 @@ int cmdJoin(char *channel){
 }
 /**PART**/
 int cmdPart(char *channel){
-    char filename[FILENAMEMAX];
+    char filename1[FILENAMEMAX];
+    char filename2[FILENAMEMAX];
+    FILE *fp1, *fp2;
+    char *line;
+    size_t len;
+    ssize_t read;
 
     if(isChanValid(channel)){
-        printf("CMDPART: recebeu channel: \"%s\"\n", channel);
-        strcpy(filename, PATHCHAN);
-        strcat(filename, &channel[1]);
-    
-        removeLineFromFile(nick, filename);
-        filename[0] = '\0';
-        strcpy(filename, PATHCHAT);
-        strcat(filename, nick);
-        strcat(filename, ".chan");
-        removeLineFromFile(&channel[1],filename);
+        /***/
+        if(TESTE_NIVEL_2){
+            printf("CMDPART: recebeu channel: \"%s\"\n", channel);
+        }
+        /***/
+        /*filename[0] = '\0';*/
+        strcpy(filename1, PATHCHAT);
+        strcat(filename1, nick);
+        strcat(filename1, ".chan");
+        removeLineFromFile(&channel[1],filename1);
+        strcpy(filename1, PATHCHAN);
+        strcat(filename1, &channel[1]);
+        removeLineFromFile(nick, filename1);
+        
+        if(existFile(filename1)){
+            /***/
+            if(TESTE_NIVEL_2){
+                printf("PART: existe canal\n");
+                printf("PART: tentando abrir canal \"%s\"\n", filename1);
+            }
+            /***/
+            if((fp1 = fopen(filename1, "r+")) != NULL){
+                line = malloc(TAMLINEMAX * sizeof(char));
+                /***/
+                if(TESTE_NIVEL_2){
+                    printf("PART: lendo do canal %s\n", filename1);
+                    }
+                /***/
+                while((read = getline(&line, &len, fp1)) != -1){
+                    /***/
+                    if(TESTE_NIVEL_2){
+                        printf("PART: linha lida : \"%s\"\n", line);
+                    }
+                    /***/
+                    line[strlen(line) - 1] = '\0';
+                    strcpy(filename2, PATHCHAT);
+                    strcat(filename2, line);
+                    /***/
+                    if(TESTE_NIVEL_2){
+                        printf("PART: path encontrado %s\n", filename2);
+                    }
+                        /***/
+                    if((fp2 = fopen(filename2, "a")) != NULL){
+                        /***/
+                        if(TESTE_NIVEL_2){
+                            printf("PART: escrevendo no arquivo de %s\n", line);
+                            printf("Mensagem => :%s PART %s\n", nick, channel);
+                        }
+                        /***/
+                        fprintf(fp2,":%s PART %s\n", nick, channel);
+                        fclose(fp2);
+                    }
+                }
+                fclose(fp1);
+                if(line) free(line);
+            }
+        }
         return 0;
-    }
+}
     return -1;
 }
 /*PRIVMSG*/
@@ -830,20 +922,20 @@ int cmdPrivmsg(char *target, char *trail){
     else{
         if(isChanValid(target)){
             /***/
-            if(TESTE_NIVEL_1){
+            if(TESTE_NIVEL_2){
                 printf("PRIVMSG: é canal valido\n");
             }
             /***/
             strcpy(filename1, PATHCHAN);
             strcat(filename1, &target[1]);
             /***/
-            if(TESTE_NIVEL_1){
+            if(TESTE_NIVEL_2){
                 printf("PRIVMSG: canal path %s\n", filename1);
             }
             /***/
             if(existFile(filename1)){
                 /***/
-                if(TESTE_NIVEL_1){
+                if(TESTE_NIVEL_2){
                     printf("PRIVMSG: existe canal\n");
                     printf("PRIVMSG: tentando abrir canal \"%s\"\n", filename1);
                 }
@@ -851,13 +943,13 @@ int cmdPrivmsg(char *target, char *trail){
                 if((fp1 = fopen(filename1, "r+")) != NULL){
                     line = malloc(TAMLINEMAX * sizeof(char));
                     /***/
-                    if(TESTE_NIVEL_1){
+                    if(TESTE_NIVEL_2){
                         printf("PRIVMSG: lendo do canal\n");
                     }
                     /***/
                     while((read = getline(&line, &len, fp1)) != -1){
                         /***/
-                        if(TESTE_NIVEL_1){
+                        if(TESTE_NIVEL_2){
                             printf("PRIVMSG: linha lida : \"%s\"\n", line);
                         }
                         /***/
@@ -865,13 +957,13 @@ int cmdPrivmsg(char *target, char *trail){
                         strcpy(filename2, PATHCHAT);
                         strcat(filename2, line);
                         /***/
-                        if(TESTE_NIVEL_1){
+                        if(TESTE_NIVEL_2){
                             printf("CMDPRIVMSG: path encontrado %s\n", filename2);
                         }
                             /***/
                         if((fp2 = fopen(filename2, "a")) != NULL){
                             /***/
-                            if(TESTE_NIVEL_1){
+                            if(TESTE_NIVEL_2){
                                 printf("CMDPRIVMSG: escrvendo no arquivo de %s\n", line);
                             }
                             /***/
@@ -887,6 +979,41 @@ int cmdPrivmsg(char *target, char *trail){
         }
         return 0;
     }
+}
+
+/*NAMES*/
+int cmdNames(char saida[MSGMAX][NICKMAX], char* channel){
+    int nlinhas;
+    char filename[FILENAMEMAX];
+    FILE *fp;
+    char *line;
+    size_t len;
+    ssize_t read;
+    
+    if(isChanValid(channel)){
+        strcpy(filename, PATHCHAN);
+        strcat(filename, &channel[1]);
+        if(existFile(filename)){
+            if((fp = fopen(filename, "r+")) != NULL){
+                line = malloc(TAMLINEMAX * sizeof(char));
+                /***/
+                if(TESTE_NIVEL_2){
+                    printf("NAMES: lendo do canal \"%s\"\n", filename);
+                }
+                /***/
+                nlinhas = 0;
+                while((read = getline(&line, &len, fp)) != -1){
+                    line[strlen(line) - 1] = '\0';
+                    strcpy(saida[nlinhas], line);
+                    nlinhas++;
+                }
+                return nlinhas;
+
+            }
+        }
+        return -1;
+    }
+    return -2;
 }
 
 /**********FUNCOES AUXILIARES*********/
@@ -995,4 +1122,47 @@ int removeLineFromFile(char *entrada, char* filename){
     }
     return -1; /* ERRO - file nao existe */
 }
+Mensagens *recebemsg(){
+    char filename[FILENAMEMAX];
+    char filenamebkp[FILENAMEMAX];
+    FILE *fp1, *fp2;
+    Mensagens *retorno;
+    int i;
+    char *line;
+    size_t len;
+    ssize_t read;
     
+    retorno = (Mensagens*)malloc(sizeof(*retorno));
+    retorno->n = 0;
+    i = 0;
+    if(flagLogged){
+        strcpy(filename, PATHCHAT);
+        strcat(filename, nick);
+        if((fp1 = fopen(filename, "r+")) != NULL){
+            strcpy(filenamebkp, filename);
+            strcat(filenamebkp, "BKP");
+            if((fp2 = fopen(filenamebkp, "w")) != NULL){
+                line = malloc(TAMLINEMAX * sizeof(char));
+               if((read = getline(&line, &len, fp1)) != -1){
+                        fprintf(fp2,"%s", line);
+               }
+               while((read = getline(&line, &len, fp1)) != -1){
+                   sprintf(retorno->msgv[i],"%s", line);
+                   i++;
+               }
+               fclose(fp2);
+               fclose(fp1);
+               remove(filename);
+               rename(filenamebkp, filename);
+               retorno->n = i;
+            }
+        }
+    }
+    sleep(1);
+    strcpy(retorno->msgv[i], "PING :ircserv\n");
+    i++;
+    retorno->n = i;
+
+    return retorno;
+}    
+
