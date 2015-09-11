@@ -67,6 +67,7 @@ int cmdPart(char *channel);
 int cmdNick(char *entrada);
 int cmdJoin(char *channel);
 int cmdUser(char *middle[],int nmids, char *trail);
+int cmdPrivmsg(char *target, char *trail);
 /*Auxiliares*/
 Mensagens* parser(const char *entrada);
 int isNickValid(char *entrada);
@@ -317,7 +318,7 @@ Mensagens* parser(const char *entrada){
     retorno->n = 0;
     
     /***/
-    if(TESTE_NIVEL_1){
+    if(TESTE_NIVEL_2){
         printf("Parser: Entrada = \"%s\"\n", entrada);
     }
     /***/
@@ -330,7 +331,7 @@ Mensagens* parser(const char *entrada){
     if(sulfixo[0] == ':'){
         strtok(sulfixo , " ");
         /***/
-        if(TESTE_NIVEL_1){
+        if(TESTE_NIVEL_2){
             printf("Parser aqui==> \"%s\"\n", sulfixo);
         }
         /***/
@@ -344,7 +345,11 @@ Mensagens* parser(const char *entrada){
     trail = strtok(NULL, "\r\n\0");
     
     /*mids*/
-    printf("tmp = \"%s\"\n", tmp);
+    /***/
+    if(TESTE_NIVEL_2){
+        printf("Parser: tmp = \"%s\"\n", tmp);
+    }
+    /***/
     nmids = 0;
     middle[nmids] = strtok(tmp, " \r\n\0");
     while(middle[nmids] != NULL){
@@ -353,7 +358,7 @@ Mensagens* parser(const char *entrada){
     }
 
     /***/
-    if(TESTE_NIVEL_1){
+    if(TESTE_NIVEL_2){
         printf("Parser: cmd = \"%s\"\n", cmd);
         for(i = 0; i < nmids; i++)
             printf("Parser: middle[%d] = \"%s\"\n",i, middle[i]);
@@ -365,7 +370,7 @@ Mensagens* parser(const char *entrada){
     /*NICK*/
     if(!strcmp(cmd, "NICK")){
         /***/
-        if(TESTE_NIVEL_1){
+        if(TESTE_NIVEL_2){
             printf("Parser: entrou no CDM = NICK\n");
         }
         /***/
@@ -538,6 +543,22 @@ Mensagens* parser(const char *entrada){
         }
     }
 
+    /*PRIVMSG*/
+    else if(!strcmp(cmd, "PRIVMSG") && flagLogged){
+        for(i = 0; i < nmids; i++){
+            switch(cmdPrivmsg(middle[i], trail)){
+                case 0:
+                    /*tudo certo*/
+                    retorno->n = 0;
+                    break;
+                case 1:
+                    break;
+                default: ;
+            }
+        }
+    }
+
+
     return retorno;
 }
 /***************COMANDOS**************/
@@ -555,7 +576,7 @@ int cmdNick(char *entrada){
 
     if(isNickValid(entrada)){
     /***/
-    if(TESTE_NIVEL_1){
+    if(TESTE_NIVEL_2){
         printf("NICK: nick valido\n");
     }
     /***/
@@ -649,7 +670,7 @@ int cmdNick(char *entrada){
         else{
             /*retornar codigo de nick em uso*/
             /***/
-            if(TESTE_NIVEL_1){
+            if(TESTE_NIVEL_2){
                 printf("nick ja existe: %s \n", entrada);
             }
             /***/
@@ -659,7 +680,7 @@ int cmdNick(char *entrada){
     else{
         /*retornar codigo de badnick*/
         /***/
-        if(TESTE_NIVEL_1){
+        if(TESTE_NIVEL_2){
             printf("Nick invalido\n");
         }
         /***/
@@ -715,7 +736,7 @@ int cmdJoin(char *channel){
 
     if(isChanValid(channel)){
         /***/
-        if(TESTE_NIVEL_1){
+        if(TESTE_NIVEL_2){
             printf("JOIN: chan valido\n");
         }
         /***/
@@ -726,7 +747,7 @@ int cmdJoin(char *channel){
         strcat(filename2, nick);
         strcat(filename2, ".chan");
         /***/
-        if(TESTE_NIVEL_1){
+        if(TESTE_NIVEL_2){
             printf("JOIN: chan name : \"%s\"\n", filename1);
         }
         /***/
@@ -757,7 +778,7 @@ int cmdJoin(char *channel){
     else{
         /*retornar codigo de badChan*/
         /***/
-        if(TESTE_NIVEL_1){
+        if(TESTE_NIVEL_2){
             printf("JOIN: chan invalido\n");
         }
         /***/
@@ -782,6 +803,90 @@ int cmdPart(char *channel){
         return 0;
     }
     return -1;
+}
+/*PRIVMSG*/
+int cmdPrivmsg(char *target, char *trail){
+    char filename1[FILENAMEMAX];
+    char filename2[FILENAMEMAX];
+    FILE *fp1, *fp2;
+    char *line;
+    size_t len;
+    ssize_t read;
+    
+    if(target[0] != '#'){
+        if(isNickValid(target)){
+            strcpy(filename1, PATHCHAT);
+            strcat(filename1, target);
+            if(existFile(filename1)){
+                if((fp1 = fopen(filename1, "a")) != NULL){
+                    fprintf(fp1,":%s PRIVMSG %s :%s\n", nick, target, trail);
+                    fclose(fp1);
+                }
+            }
+            return -1;
+        }
+        return -1;
+    }
+    else{
+        if(isChanValid(target)){
+            /***/
+            if(TESTE_NIVEL_1){
+                printf("PRIVMSG: é canal valido\n");
+            }
+            /***/
+            strcpy(filename1, PATHCHAN);
+            strcat(filename1, &target[1]);
+            /***/
+            if(TESTE_NIVEL_1){
+                printf("PRIVMSG: canal path %s\n", filename1);
+            }
+            /***/
+            if(existFile(filename1)){
+                /***/
+                if(TESTE_NIVEL_1){
+                    printf("PRIVMSG: existe canal\n");
+                    printf("PRIVMSG: tentando abrir canal \"%s\"\n", filename1);
+                }
+                /***/
+                if((fp1 = fopen(filename1, "r+")) != NULL){
+                    line = malloc(TAMLINEMAX * sizeof(char));
+                    /***/
+                    if(TESTE_NIVEL_1){
+                        printf("PRIVMSG: lendo do canal\n");
+                    }
+                    /***/
+                    while((read = getline(&line, &len, fp1)) != -1){
+                        /***/
+                        if(TESTE_NIVEL_1){
+                            printf("PRIVMSG: linha lida : \"%s\"\n", line);
+                        }
+                        /***/
+                        line[strlen(line) - 1] = '\0';
+                        strcpy(filename2, PATHCHAT);
+                        strcat(filename2, line);
+                        /***/
+                        if(TESTE_NIVEL_1){
+                            printf("CMDPRIVMSG: path encontrado %s\n", filename2);
+                        }
+                            /***/
+                        if((fp2 = fopen(filename2, "a")) != NULL){
+                            /***/
+                            if(TESTE_NIVEL_1){
+                                printf("CMDPRIVMSG: escrvendo no arquivo de %s\n", line);
+                            }
+                            /***/
+                            fprintf(fp2,":%s PRIVMSG %s :%s\n", nick, target, trail);
+                            fclose(fp2);
+                        }
+                    }
+                    fclose(fp1);
+                    if(line) free(line);
+                }
+            }
+            return -1;
+        }
+        return 0;
+    }
 }
 
 /**********FUNCOES AUXILIARES*********/
@@ -840,7 +945,7 @@ int removeLineFromFile(char *entrada, char* filename){
         linein[lineinTam + 1] = '\0';
     }
     /***/
-    if(TESTE_NIVEL_1){
+    if(TESTE_NIVEL_2){
         printf("REMOVELINEFROMFILE: line in = \"%s\"\n", linein);
     }
     /***/
@@ -852,11 +957,9 @@ int removeLineFromFile(char *entrada, char* filename){
             if((fp2 = fopen(filenamebkp, "w")) != NULL){
                 line = malloc(TAMLINEMAX * sizeof(char));
                 while((read = getline(&line, &len, fp1)) != -1){
-                    printf("REMOVEFROMLINE: entrou no while e linha é \"%s\"\n",line);
                     if(strcmp(linein, line))
                         fprintf(fp2,"%s", line);
                 }
-                printf("REMOVEFROMLINE: passou do while\n");
                 if(line) free(line);
                 if(ftell(fp2)){
                     fclose(fp2);
@@ -867,7 +970,7 @@ int removeLineFromFile(char *entrada, char* filename){
                 }
                 else{
                     /***/
-                    if(TESTE_NIVEL_1){
+                    if(TESTE_NIVEL_2){
                         printf("REMOVEFROMLINE: arquivo ficou vazio\n");
                     }
                     /***/
