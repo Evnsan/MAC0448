@@ -43,6 +43,7 @@
 #define TESTE_NIVEL_2 0
 #define MSGMAX 512
 #define RCMDMAX 100
+#define READLINESMAX 100
 #define NICKMAX 50
 #define CHANMAX 50
 #define FILENAMEMAX 50
@@ -75,8 +76,10 @@ int removeLineFromFile(char* linein, char* filename);
 
 /*variaveis globais*/
 char nick[NICKMAX];
+char pid[NICKMAX];
 int flagLogged = 0; 
-int flagNickInitial = 0; 
+int flagInitialNick = 0; 
+int flagInitialUser = 0; 
 
 /*Final deste trecho*/
 
@@ -218,8 +221,14 @@ int main (int argc, char **argv) {
          
          /*controle*/
          int i = 0;
-
+         int j = 0;
+         int nlines = 0;
+         char *lines[READLINESMAX];
+         char *recvptr;
          Mensagens* resps;
+
+         sprintf(pid, "%d", getpid()); 
+
          if(1){
             const char *MOTDSTART = "375 :- SERVSERV Mensagem do dia - \n";
             const char *MOTD1 = "372 :- Bom dia1 - \n";
@@ -245,19 +254,31 @@ int main (int argc, char **argv) {
                perror("fputs :( \n");
                exit(6);
             }
-            resps = parser(recvline);
-            if(resps != NULL){
-                for( i = 0; i < resps->n; i++){ 
-                    /***/
-                    if(TESTE_NIVEL_2){
-                        printf("entrou no loop i = %d e msg \"%s\"\n", i, resps->msgv[i]);
-                    }
-                    /***/
-                    write(connfd, resps->msgv[i], strlen(resps->msgv[i]));
-                }
-                free(resps);
+            resps = NULL;
+            
+            nlines = 0;            
+            recvptr = strtok(recvline, "\n");
+            lines[nlines++] = recvptr;
+            while(recvptr != NULL){
+                recvptr = strtok(NULL, "\n");
+                lines[nlines++] = recvptr;
             }
-         }
+            nlines--;
+            for(i = 0; i < nlines; i++){
+                resps = parser(lines[i]);
+                if(resps != NULL){
+                    for(j = 0; j < resps->n; j++){ 
+                        /***/
+                        if(TESTE_NIVEL_2){
+                            printf("entrou no loop j = %d e msg \"%s\"\n", j, resps->msgv[j]);
+                        }
+                        /***/
+                        write(connfd, resps->msgv[j], strlen(resps->msgv[j]));
+                    }
+                    free(resps);
+                }
+            }
+        }
          /* ========================================================= */
          /* ========================================================= */
          /*                         EP1 FIM                           */
@@ -357,33 +378,58 @@ Mensagens* parser(const char *entrada){
                 break;
             case 0:
                 /*criar resposta de ok - nao tinha nick -> criou*/
-                retorno->n = 3;
-                strcpy(retorno->msgv[0], ":ircserv NOTICE * :***Setting your nick...\n");
-                strcpy(retorno->msgv[1], ":ircserv NOTICE * :***DONE...\n");
-                strcpy(retorno->msgv[3], ":ircserv NOTICE * :*** Looking up your hostname...\n");
+                if(flagInitialUser){
+                    retorno->n = 3;
+                    strcpy(retorno->msgv[0], ":ircserv NOTICE * :***Setting your nick...\n");
+                    strcpy(retorno->msgv[1], ":ircserv NOTICE * :***DONE...\n");
+                    strcpy(retorno->msgv[2], ":ircserv NOTICE * :***Welcome...\n");
+                    flagLogged = 1;
+                    flagInitialNick = 1;
+                }
+                else{
+                    retorno->n = 3;
+                    strcpy(retorno->msgv[0], ":ircserv NOTICE * :***Setting your nick...\n");
+                    strcpy(retorno->msgv[1], ":ircserv NOTICE * :***DONE...\n");
+                    strcpy(retorno->msgv[3], ":ircserv NOTICE * :***Waiting USER command...\n");
+                    flagInitialNick = 1;
+                }
+
                 break;
             case -1:
                 /*criar resposta de nick em uso*/
                 retorno->n = 1;
-                strcpy(retorno->msgv[0], ":ircserv 433");
+                strcpy(retorno->msgv[0], ":ircserv 433 * ");
                 strcat(retorno->msgv[0], middle[0]);
                 strcat(retorno->msgv[0], " :Nickname is already in use\n");
                 break;
             case -2:
                 /*criar resposta de badnick*/
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":ircserv 432 * ");
+                strcat(retorno->msgv[0], middle[0]);
+                strcat(retorno->msgv[0], " :Erroneous Nickname\n");                
                 break;
             default: ;
                 /*deu merda*/
         }
     }
     /*USER*/
-    else if(!strcmp(cmd, "USER") && flagNickInitial){
-        flagNickInitial = 0;
-        flagLogged = 1;
+    else if(!strcmp(cmd, "USER") && !flagInitialUser){
         switch(cmdUser(middle, nmids, trail)){
           case 0:
-              retorno->n = 1;
-              strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Welcome...\n");
+              if(flagInitialNick){
+                  retorno->n = 2;
+                  strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Registred...\n");
+                  strcpy(retorno->msgv[1], ":ircserv NOTICE * :*** Welcome...\n");
+                  flagLogged = 1;
+                  flagInitialUser = 1;
+              }
+              else{
+                  retorno->n = 1;
+                  strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Registred...\n");
+                  flagInitialUser = 1;
+              }
+
               break;
           default: ;
               /*deu merda*/
@@ -413,18 +459,50 @@ Mensagens* parser(const char *entrada){
         switch(cmdJoin(middle[0])){
             case 1:
                 /*criar resposta de ok - ja tinha canal-> adicionou*/
-                retorno->n = 1;
+                retorno->n = 3;
                 strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Adicionado ao Canal...\n");
+                strcpy(retorno->msgv[1], ":blah JOIN ");
+                strcat(retorno->msgv[1], middle[0]);
+                strcat(retorno->msgv[1], "\n");
+                strcpy(retorno->msgv[2], ":blah 353 ");
+                strcat(retorno->msgv[2], nick);
+                strcat(retorno->msgv[2], " = ");
+                strcat(retorno->msgv[2], middle[0]);
+                strcat(retorno->msgv[2], "\n");                
             case 0:
                 /*criar resposta de ok - nao tinha canal-> criou/adicionou*/
-                retorno->n = 1;
+                retorno->n = 4;
                 strcpy(retorno->msgv[0], ":ircserv NOTICE * :*** Canal Criado...\n");
+                strcpy(retorno->msgv[1], ":");
+                strcat(retorno->msgv[1], nick);
+                strcat(retorno->msgv[1], " JOIN ");
+                strcat(retorno->msgv[1], middle[0]);
+                strcat(retorno->msgv[1], "\n");
+                strcpy(retorno->msgv[2], ":ircserv 353 ");
+                strcat(retorno->msgv[2], nick);
+                strcat(retorno->msgv[2], " = ");
+                strcat(retorno->msgv[2], middle[0]);
+                strcat(retorno->msgv[2], " :@");
+                strcat(retorno->msgv[2], nick);
+                strcat(retorno->msgv[2], "\n");
+                strcpy(retorno->msgv[3], ":ircserv 366 ");
+                strcat(retorno->msgv[3], nick);
+                strcat(retorno->msgv[3], " ");
+                strcat(retorno->msgv[3], middle[0]);
+                strcat(retorno->msgv[3], " :End of NAMES list");
+                strcat(retorno->msgv[3], "\n");                
                 break;
             case -1:
                 /*criar resposta de canal protejido*/
                 break;
             case -2:
                 /*criar resposta de badchan*/
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":ircserv 403 ");
+                strcat(retorno->msgv[0], nick);
+                strcat(retorno->msgv[0], " ");
+                strcat(retorno->msgv[0], middle[0]);
+                strcat(retorno->msgv[0], " :No such channel\n");
                 break;
             default: ;
                 /*deu merda*/
@@ -437,14 +515,27 @@ Mensagens* parser(const char *entrada){
     
     /*PART*/
     else if(!strcmp(cmd,"PART") && flagLogged){
-        if(isChanValid(middle[0])){
-            printf("PART: chan valido\n");
-            /*verificar se ja tinha chan*/
-            cmdPart(&middle[0][1]);
+        switch(cmdPart(middle[0])){
+            case 0:
+               /*Chan valido*/
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":");
+                strcat(retorno->msgv[0], nick);
+                strcat(retorno->msgv[0], " PART ");
+                strcat(retorno->msgv[0], middle[0]);
+                strcat(retorno->msgv[0], "\n");
+                break;
+            case -1:
+               /*Chan invalido*/
+                retorno->n = 1;
+                strcpy(retorno->msgv[0], ":ircserv 403 ");
+                strcat(retorno->msgv[0], nick);
+                strcat(retorno->msgv[0], " ");
+                strcat(retorno->msgv[0], middle[0]);
+                strcat(retorno->msgv[0], " :No such channel\n");
+                break;
+            default: ;
         }
-        else
-            /*retornar codigo de badChan*/
-            printf("PART: Chan invalido\n");
     }
 
     return retorno;
@@ -460,6 +551,7 @@ int cmdNick(char *entrada){
     char *line;
     size_t len;
     ssize_t read;
+
 
     if(isNickValid(entrada)){
     /***/
@@ -524,13 +616,34 @@ int cmdNick(char *entrada){
             }
             else{
             /*nao - cria arquivos*/
-                printf("path: %s\n", filename1);
-                fclose(fopen(filename1,"w"));
-                strcat(filename1,".chan");
-                fclose(fopen(filename1,"w"));
-                strcpy(nick, entrada);
-                flagNickInitial = 1;
-                return 0;
+                if(flagInitialUser){
+                    printf("path: %s\n", filename1);
+                    strcpy(filename2, PATHCHAT);
+                    strcat(filename2,pid);
+                    rename(filename2, filename1);
+                    printf("pid = %s\n", pid);
+                    printf("path: %s\n", filename2);
+                    strcat(filename1,".chan");
+                    fclose(fopen(filename1,"w"));
+                    strcpy(nick, entrada);
+                    flagInitialNick = 1;
+                    strcpy(filename1, PATHSERVER);
+                    strcat(filename1, USERSFILE);
+                    if((fp = fopen(filename1, "a")) != NULL){
+                        fprintf(fp, "%s\n", nick);
+                        fclose(fp);
+                    }
+                    return 0;
+                }
+                else{
+                    printf("path: %s\n", filename1);
+                    fclose(fopen(filename1,"w"));
+                    strcat(filename1,".chan");
+                    fclose(fopen(filename1,"w"));
+                    strcpy(nick, entrada);
+                    flagInitialNick = 1;
+                    return 0;
+                }
             }
         }
         else{
@@ -561,8 +674,15 @@ int cmdUser(char *middle[],int nmids, char *trail){
     char path[PATHMAX];
     char nickNewLine[NICKMAX];
     char filename1[FILENAMEMAX];
+    
     strcpy(filename1, PATHCHAT);
-    strcat(filename1, nick);
+    if(flagInitialNick)
+        strcat(filename1, nick);
+    else{
+        strcat(filename1,pid);
+        printf("USER: pid = %s\n", pid);
+        printf("USER: pathh = %s\n", filename1);
+    }
     strcpy(path, PATHSERVER);
     strcat(path, USERSFILE);
     nickNewLine[0] ='\0';
@@ -576,12 +696,14 @@ int cmdUser(char *middle[],int nmids, char *trail){
     fprintf(fp, "\n");
     fclose(fp);
 
-    fp = fopen(path, "a");
-    strcpy(nickNewLine, nick);
-    strcat(nickNewLine, "\n");
-    fprintf(fp, "%s", nickNewLine);
-
-    fclose(fp);
+    if(flagInitialNick){
+        fp = fopen(path, "a");
+        strcpy(nickNewLine, nick);
+        strcat(nickNewLine, "\n");
+        fprintf(fp, "%s", nickNewLine);
+        fclose(fp);
+    }
+    
     return 0;
 }
 
@@ -645,24 +767,21 @@ int cmdJoin(char *channel){
 /**PART**/
 int cmdPart(char *channel){
     char filename[FILENAMEMAX];
-    char line[TAMLINEMAX];
 
-
-    printf("CMDPART: recebeu channel: \"%s\"\n", channel);
-    strcpy(filename, PATHCHAN);
-    strcat(filename, channel);
+    if(isChanValid(channel)){
+        printf("CMDPART: recebeu channel: \"%s\"\n", channel);
+        strcpy(filename, PATHCHAN);
+        strcat(filename, &channel[1]);
     
-    strcpy(line, nick);
-    strcat(line, "\n");
-
-
-    removeLineFromFile(line, filename);
-    filename[0] = '\0';
-    strcpy(filename, PATHCHAT);
-    strcat(filename, nick);
-    strcat(filename, ".chan");
-    removeLineFromFile(channel,filename);
-    return 0;
+        removeLineFromFile(nick, filename);
+        filename[0] = '\0';
+        strcpy(filename, PATHCHAT);
+        strcat(filename, nick);
+        strcat(filename, ".chan");
+        removeLineFromFile(&channel[1],filename);
+        return 0;
+    }
+    return -1;
 }
 
 /**********FUNCOES AUXILIARES*********/
@@ -676,7 +795,7 @@ int isNickValid(char *entrada){
         c = entrada[i];
         if(!isalnum(c) && c != '-' && c != '[' && c != ']' 
                 && c != 92 && c != '`' && c != '^' 
-                && c != '{' && c != '}'){
+                && c != '{' && c != '}' && c != '_'){
             return 0;
         }
     }
