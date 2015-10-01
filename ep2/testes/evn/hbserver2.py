@@ -71,7 +71,7 @@ class ReceiverTCP(threading.Thread):
     """Receive TCP connections and call thread ConnTCP to handle each one"""
 
     def __init__(self, goOnEvent, heartbeats):
-        super(ReceiverUDP, self).__init__()
+        super(ReceiverTCP, self).__init__()
         self.goOnEvent = goOnEvent
         self.heartbeats = heartbeats
         self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -89,8 +89,9 @@ class ReceiverTCP(threading.Thread):
                     self.heartbeats[addr[0]].ipTime = time.time()
                 else:
                     print "ERRO: ip ja esta no Dic"
-                    clisocket.shutdown()
-                    clisocket.close()
+                    cliSocket.send("ERRO: ip ja esta em uso\n")
+                    cliSocket.shutdown(1)
+                    cliSocket.close()
 
             except socket.timeout:
                 pass
@@ -107,7 +108,7 @@ def main():
     receiverUDP = ReceiverUDP(goOnEvent = receiverUDPEvent,
             heartbeats = heartbeats)
     receiverUDP.start()
-#receiverUDP.setDaemon(True)
+# receiverUDP.setDaemon(True)
     print ('Threaded heartbeat server listening on port UDP %d\n'
         'press Ctrl-C to stop\n') % UDP_PORT
     
