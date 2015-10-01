@@ -43,7 +43,7 @@ class Heartbeats(dict):
         self._lock.release()
         return silent
 
-###Trhead1###
+###TrheadUDP###
 class ReceiverUDP(threading.Thread):
     """Receive UDP packets and log them in the heartbeats dictionary"""
 
@@ -87,8 +87,8 @@ class ReceiverTCP(threading.Thread):
                     self.heartbeats[addr[0]] = Estado()
                     self.heartbeats[addr[0]].connfd = cliSocket 
                     self.heartbeats[addr[0]].ipTime = time.time()
-                else
-                    print "ERRO: ip já esta no Dic"
+                else:
+                    print "ERRO: ip ja esta no Dic"
                     clisocket.shutdown()
                     clisocket.close()
 
@@ -98,23 +98,40 @@ class ReceiverTCP(threading.Thread):
 
 ###Thread do verificador de beats (feito no main)###
 def main():
-    receiverEvent = threading.Event()
-    receiverEvent.set()
+    receiverUDPEvent = threading.Event()
+    receiverUDPEvent.set()
+    receiverTCPEvent = threading.Event()
+    receiverTCPEvent.set()
     heartbeats = Heartbeats()
-    receiver = ReceiverUDP(goOnEvent = receiverEvent, heartbeats = heartbeats)
-    receiver.start()
-    print ('Threaded heartbeat server listening on port %d\n'
+    
+    receiverUDP = ReceiverUDP(goOnEvent = receiverUDPEvent,
+            heartbeats = heartbeats)
+    receiverUDP.start()
+#receiverUDP.setDaemon(True)
+    print ('Threaded heartbeat server listening on port UDP %d\n'
         'press Ctrl-C to stop\n') % UDP_PORT
+    
+    
+    receiverTCP = ReceiverTCP(goOnEvent = receiverTCPEvent,
+            heartbeats = heartbeats)
+    receiverTCP.start()
+#receiverTCP.setDaemon(True)
+    print ('Threaded heartbeat server listening on port TCP %d\n'
+        'press Ctrl-C to stop\n') % TCP_PORT
+    
     try:
         while True:
             silent = heartbeats.getSilent()
             print 'Silent clients: %s' % silent
             time.sleep(CHECK_PERIOD)
             for ip, estado in silent:
+                print 'ip = %s e estado = %s' % ip ,estado
     except KeyboardInterrupt:
         print 'Exiting, please wait...'
-        receiverEvent.clear()
-        receiver.join()
+        receiverUDPEvent.clear()
+        receiverTCPEvent.clear()
+        receiverUDP.join()
+        receiverTCP.join()
         print 'Finished.'
 
 if __name__ == '__main__':
