@@ -3,7 +3,7 @@
 # Filename: ThreadedBeatServer.py
 """Threaded heartbeat server"""
 
-UDP_PORT = 43278; CHECK_PERIOD = 20; CHECK_TIMEOUT = 15
+UDP_PORT = 43278; CHECK_PERIOD = 10; CHECK_TIMEOUT = 5
 TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time
@@ -13,6 +13,7 @@ class Estado():
         self.ipTime = 0
         self.connfd = None
         self.gameFile = None
+        self.port = 0
     
     def __str__(self):
         return str((str(self.ipTime) , str(self.connfd), str(self.gameFile)))
@@ -63,6 +64,7 @@ class ReceiverUDP(threading.Thread):
                     if not self.heartbeats.has_key(addr[0]):
                         self.heartbeats[addr[0]] = Estado()
                         self.heartbeats[addr[0]].connfd = None
+                        self.heartbeats[addr[0]].porta = addr[1]
                     self.heartbeats[addr[0]].ipTime = time.time()
             except socket.timeout:
                 pass
@@ -99,14 +101,19 @@ class ReceiverTCP(threading.Thread):
 
 ###Thread do verificador de beats (feito no main)###
 def main():
+    recSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    recSocket.settimeout(CHECK_TIMEOUT)
+    recSocket.bind(('', UDP_PORT + 1))
+
     receiverUDPEvent = threading.Event()
     receiverUDPEvent.set()
     receiverTCPEvent = threading.Event()
     receiverTCPEvent.set()
-    heartbeats = Heartbeats()
+    hbUDP = Heartbeats()
+    hbTCP = Heartbeats()
     
     receiverUDP = ReceiverUDP(goOnEvent = receiverUDPEvent,
-            heartbeats = heartbeats)
+            heartbeats = hbUDP)
     receiverUDP.start()
 # receiverUDP.setDaemon(True)
     print ('Threaded heartbeat server listening on port UDP %d\n'
@@ -114,7 +121,7 @@ def main():
     
     
     receiverTCP = ReceiverTCP(goOnEvent = receiverTCPEvent,
-            heartbeats = heartbeats)
+            heartbeats = hbTCP)
     receiverTCP.start()
 #receiverTCP.setDaemon(True)
     print ('Threaded heartbeat server listening on port TCP %d\n'
@@ -122,11 +129,19 @@ def main():
     
     try:
         while True:
-            silent = heartbeats.getSilent()
-            print 'Silent clients: %s' % silent
-            time.sleep(CHECK_PERIOD)
+            silent = hbUDP.getSilent()
+            print 'Silent clients UDP: %s' % silent
             for ip, estado in silent:
-                print 'ip = %s e estado = %s' % ip ,estado
+                recSocket.sendto("Silencioso\n", (ip, estado.porta))
+                del hbTCP[ip]
+            silent = hbTCP.getSilent()
+            print 'Silent clientsTCP: %s' % silent
+            for ip, estado in silent:
+                estado.connfd.send("Silencioso\n")
+                estado.connfd.shutdown(1)
+                estado.connfd.close()
+                del hbTCP[ip]
+            time.sleep(CHECK_PERIOD)
     except KeyboardInterrupt:
         print 'Exiting, please wait...'
         receiverUDPEvent.clear()
