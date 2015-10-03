@@ -10,8 +10,9 @@ SERVER_IP = '127.0.0.1'; SERVER_PORT = 43278; BEAT_PERIOD = 11
 
 class lstUDP(threading.Thread):
     def __init__(self, sock):
-        self.sock = sock
         super(lstUDP, self).__init__()
+        self.sock = sock
+    
     def run(self):
         try:
             # Receive response

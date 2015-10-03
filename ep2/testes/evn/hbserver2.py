@@ -3,7 +3,7 @@
 # Filename: ThreadedBeatServer.py
 """Threaded heartbeat server"""
 
-UDP_PORT = 43278; CHECK_PERIOD = 10; CHECK_TIMEOUT = 5
+UDP_PORT = 43278; CHECK_PERIOD = 8; CHECK_TIMEOUT = 5;
 TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time
@@ -60,12 +60,12 @@ class ReceiverUDP(threading.Thread):
         while self.goOnEvent.isSet():
             try:
                 data, addr = self.recSocket.recvfrom(1024)
-                if data == 'PyHB':
-                    if not self.heartbeats.has_key(addr[0]):
-                        self.heartbeats[addr[0]] = Estado()
-                        self.heartbeats[addr[0]].connfd = None
-                        self.heartbeats[addr[0]].porta = addr[1]
-                    self.heartbeats[addr[0]].ipTime = time.time()
+                self.recSocket.sendto(data, addr)
+                if not self.heartbeats.has_key(addr[0]):
+                    self.heartbeats[addr[0]] = Estado()
+                    self.heartbeats[addr[0]].connfd = None
+                    self.heartbeats[addr[0]].porta = addr[1]
+                self.heartbeats[addr[0]].ipTime = time.time()
             except socket.timeout:
                 pass
 ###ThreadTCP###
@@ -89,16 +89,38 @@ class ReceiverTCP(threading.Thread):
                     self.heartbeats[addr[0]] = Estado()
                     self.heartbeats[addr[0]].connfd = cliSocket 
                     self.heartbeats[addr[0]].ipTime = time.time()
+                    ConnTCP(connfd = cliSocket,
+                                heartbeats = self.heartbeats, ip = addr[0]).start()
+                    
                 else:
                     print "ERRO: ip ja esta no Dic"
-                    cliSocket.send("ERRO: ip ja esta em uso\n")
+                    cliSocket.sendall("ERRO: ip ja esta em uso\n")
                     cliSocket.shutdown(1)
                     cliSocket.close()
 
             except socket.timeout:
                 pass
 
-
+###ThreadTCP-CLI###                                                                                
+class ConnTCP(threading.Thread):                                                           
+    """Manage TCP connections"""                   
+                                                                                               
+    def __init__(self, connfd, heartbeats, ip):
+        super(ConnTCP, self).__init__()
+        self.heartbeats = heartbeats
+        self.recSocket = connfd
+        self.ip = ip
+                                                                                               
+    def run(self):                                                                             
+        try:
+            data = self.recSocket.recv(1024)
+            while data != '':
+                self.heartbeats[self.ip].ipTime = time.time()
+                self.recSocket.sendall('OK...' + data)
+                data = self.recSocket.recv(1024)
+                
+        except socket.timeout:
+            pass
 ###Thread do verificador de beats (feito no main)###
 def main():
     recSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -112,6 +134,7 @@ def main():
     hbUDP = Heartbeats()
     hbTCP = Heartbeats()
     
+    #UDP#
     receiverUDP = ReceiverUDP(goOnEvent = receiverUDPEvent,
             heartbeats = hbUDP)
     receiverUDP.start()
@@ -120,6 +143,7 @@ def main():
         'press Ctrl-C to stop\n') % UDP_PORT
     
     
+    #TCP#
     receiverTCP = ReceiverTCP(goOnEvent = receiverTCPEvent,
             heartbeats = hbTCP)
     receiverTCP.start()
@@ -129,11 +153,16 @@ def main():
     
     try:
         while True:
+            
+            #UDP - Beats#
             silent = hbUDP.getSilent()
             print 'Silent clients UDP: %s' % silent
             for ip, estado in silent:
+                print '=>Silencioso ip: %s' % ip
                 recSocket.sendto("Silencioso\n", (ip, estado.porta))
-                del hbTCP[ip]
+                del hbUDP[ip]
+
+            #TCP - Beats#
             silent = hbTCP.getSilent()
             print 'Silent clientsTCP: %s' % silent
             for ip, estado in silent:
