@@ -8,7 +8,7 @@ TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time
 ###Classe com as informacoes da conexao###
-class Estado():
+class Cliente():
     def __init__(self):
         self.ipTime = 0
         self.connfd = None
@@ -39,7 +39,7 @@ class Heartbeats(dict):
         """Return a list of clients with heartbeat older than CHECK_TIMEOUT"""
         limit = time.time() - CHECK_TIMEOUT
         self._lock.acquire()
-        silent = [(ip, estado) for (ip, estado) in self.items() if estado.ipTime < limit]
+        silent = [(ip, cliente) for (ip, cliente) in self.items() if cliente.ipTime < limit]
         self._lock.release()
         return silent
 
@@ -48,7 +48,7 @@ class CommandParser():
     def __init__(self, dic):
         self.dic = dic
 
-    def parse(msg):
+# def parse(msg):
         #tokenizar(ORG CMD [ARG] :TRAIL)
             #ORG -> username
             #CMD -> (NEWUSER | USER | QUIT | PLAYREQ | PLAYACC | LIST | PLAY)
@@ -102,7 +102,7 @@ class ReceiverTCP(threading.Thread):
                     self.heartbeats[addr[0]].connfd = cliSocket 
                     self.heartbeats[addr[0]].ipTime = time.time()
                     ConnTCP(connfd = cliSocket,
-                                heartbeats = self.heartbeats, ip = addr[0]).start()
+                        heartbeats = self.heartbeats, ip = addr[0]).start()
                     
                 else:
                     print "ERRO: ip ja esta no Dic"
@@ -169,18 +169,18 @@ def main():
             #UDP - Beats#
             silent = hbUDP.getSilent()
             print 'Silent clients UDP: %s' % silent
-            for ip, estado in silent:
+            for ip, cliente in silent:
                 print '=>Silencioso ip: %s' % ip
-                recSocket.sendto("Silencioso\n", (ip, estado.porta))
+                recSocket.sendto("Silencioso\n", (ip, cliente.porta))
                 del hbUDP[ip]
 
             #TCP - Beats#
             silent = hbTCP.getSilent()
             print 'Silent clientsTCP: %s' % silent
-            for ip, estado in silent:
-                estado.connfd.send("Silencioso\n")
-                estado.connfd.shutdown(1)
-                estado.connfd.close()
+            for ip, cliente in silent:
+                cliente.connfd.send("Silencioso\n")
+                cliente.connfd.shutdown(1)
+                cliente.connfd.close()
                 del hbTCP[ip]
             time.sleep(CHECK_PERIOD)
     except KeyboardInterrupt:
