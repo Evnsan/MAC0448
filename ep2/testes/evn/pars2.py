@@ -1,8 +1,5 @@
 #! /usr/bin/env python
 
-import pyparsing as pp
-import sys
-
 class LineParse(object):
     def __init__(self):
         pass

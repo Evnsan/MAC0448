@@ -6,46 +6,15 @@
 UDP_PORT = 43278; CHECK_PERIOD = 5; CHECK_TIMEOUT = 3;
 TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
-import socket, threading, time, sys, select
-from pprint import pprint
-
-###Maquina de estados para o cliente###
-def exit(cliente, args):
-    print "encerrando conexao"
-    cliente.connfd.sendto("QUIT\n", (cliente.ip, cliente.porta))
-
-def quit(cliente, args):
-    print "saindo do jogo"
-
-estados = {
-    'CONECTADO': {'LOGIN': None, 'REGISTRO': None, 'EXIT': exit },
-    'LOGADO': { },
-    'REGISTRANDO': { },
-    'ESPERANDO': { 'EXIT': exit },
-    'JOGANDO': {'QUIT': quit, 'EXIT': exit },
-}
-
+import socket, threading, time
 ###Classe com as informacoes da conexao###
 class Cliente():
-    def __init__(self, ip, porta):
+    def __init__(self):
         self.ipTime = 0
-        self.login = None
-        self.ip = ip
-        self.porta = porta
         self.connfd = None
         self.gameFile = None
-        self.estado = "CONECTADO"
+        self.port = 0
     
-    def getMsg(self, msg):
-        global estados
-        msg = msg.split()
-        cmd = msg[0]
-        del msg[0]
-        args = msg
-        try:
-            estados[self.estado][cmd](self, args)
-        except KeyError:
-            self.connfd.sendto("COMMAND %s INVALID!\n" % cmd, (self.ip, self.porta))
     def __str__(self):
         return str((str(self.ipTime) , str(self.connfd), str(self.gameFile)))
 
@@ -105,10 +74,10 @@ class ReceiverUDP(threading.Thread):
                 data, addr = self.recSocket.recvfrom(1024)
                 self.recSocket.sendto(data, addr)
                 if not self.heartbeats.has_key((addr[0], addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1])
-                    self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
+                    self.heartbeats[(addr[0],addr[1])] = Cliente()
+                    self.heartbeats[(addr[0],addr[1])].connfd = None
+                    self.heartbeats[(addr[0],addr[1])].porta = addr[1]
                 self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
-                self.heartbeats[(addr[0], addr[1])].getMsg(data)
             except socket.timeout:
                 pass
 ###ThreadTCP###
@@ -129,7 +98,7 @@ class ReceiverTCP(threading.Thread):
             try:
                 cliSocket, addr = self.recSocket.accept()
                 if not self.heartbeats.has_key((addr[0],addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1])
+                    self.heartbeats[(addr[0],addr[1])] = Cliente()
                     self.heartbeats[(addr[0],addr[1])].connfd = cliSocket 
                     self.heartbeats[(addr[0],addr[1])].ipTime = time.time()
                     ConnTCP(connfd = cliSocket,
@@ -168,12 +137,14 @@ class ConnTCP(threading.Thread):
             pass
 ###Thread do verificador de beats (feito no main)###
 def main():
+    recSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    recSocket.settimeout(CHECK_TIMEOUT)
+    recSocket.bind(('', UDP_PORT + 1))
+
     receiverUDPEvent = threading.Event()
     receiverUDPEvent.set()
-    
     receiverTCPEvent = threading.Event()
     receiverTCPEvent.set()
-    
     hbUDP = Heartbeats()
     hbTCP = Heartbeats()
     
@@ -196,20 +167,13 @@ def main():
     
     try:
         while True:
-            if select.select([sys.stdin,],[],[],0.0)[0]:
-                print "\nTCP"
-                pprint(hbTCP)
-                print "\nUDP"
-                pprint(hbUDP)
-                raw_input()
-
             
             #UDP - Beats#
             silent = hbUDP.getSilent()
             print 'Silent clients UDP: %s' % silent
             for ip, cliente in silent:
                 print '=>Silencioso ip: %s' % str(ip)
-                cliente.connfd.sendto("Silencioso\n", (ip[0], ip[1]))
+                recSocket.sendto("Silencioso\n", (ip[0], ip[1]))
                 del hbUDP[ip]
 
             #TCP - Beats#
