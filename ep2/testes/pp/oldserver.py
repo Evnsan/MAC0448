@@ -3,7 +3,7 @@
 # Filename: ThreadedBeatServer.py
 """Threaded heartbeat server"""
 
-UDP_PORT = 43278; CHECK_PERIOD = 200; CHECK_TIMEOUT = 100
+UDP_PORT = 43278; CHECK_PERIOD = 10; CHECK_TIMEOUT = 5;
 TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time, sys, select
@@ -11,24 +11,23 @@ from pprint import pprint
 
 
 
-
-
-
 ###Funcoes auxiliares para as transicoes da maquina de estados
 
-"""def isPasswordCorrect(username, password):
+def isPasswordCorrect(username, password):
     file = open('users', 'r');
-
+    print 'checando se password esta correto'
     for line in file:
         temp = line.split(';',2)
+        pws = temp[1].split('\n',1)
         if username == temp[0]:
-            if password == temp[1]:
+            print 'encontrou usuario e vai tentar ver se a senha esta correta'
+            if pws[0] == password:
                 return True
             else:
                 return False
 
     file.close()
-    return False"""
+    return False
 
 def isValidPassword(cliente, password):
     if len(password) < 3:
@@ -55,6 +54,8 @@ def doesUserExist(username):
 
 
 
+
+
 ###Maquina de estados para o cliente###
 def exit(cliente, args):
     print "encerrando conexao"
@@ -66,15 +67,16 @@ def exit(cliente, args):
 def quit(cliente, args):
     print "saindo do jogo"
 
-"""def user(cliente, args):
+def user(cliente, args):
     #verificar se user existe
     #    pedir por password
     #    verificar se user e password estao corretos
     username = args[0]
     if doesUserExist(username):
+        cliente.username = username
         cliente.estado = "LOGANDO"
     else:
-        cliente.connfd.sendto("USUARIO NAO EXISTE\n", (cliente.ip, cliente.porta))"""
+        cliente.connfd.sendto("USUARIO NAO EXISTE\n", (cliente.ip, cliente.porta))
 
 
 def newuser(cliente, args):
@@ -116,13 +118,20 @@ def newpass(cliente, args):
     else:
         cliente.connfd.sendto("SENHA INVALIDA\n", (cliente.ip, cliente.porta))
 
-
+def checkpass(cliente, args):
+    password = args[0]
+    cliente.connfd.sendto(password, (cliente.ip, cliente.porta))
+    if isPasswordCorrect(cliente.username, password):
+        cliente.estado = "LOGADO"
+        cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
+    else:
+        cliente.connfd.sendto("PASSWORD INCORRETO!!\n", (cliente.ip, cliente.porta))
 
 
 
 estados = {
-    'CONECTADO': {'USER': None, 'NEWUSER': newuser, 'EXIT': exit },
-    'LOGANDO': {'PASS': None, 'ABORT': quit, 'EXIT': exit },
+    'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'EXIT': exit },
+    'LOGANDO': {'PASS': checkpass, 'ABORT': quit, 'EXIT': exit },
     'LOGADO': {'PLAYACC': None, 'PLAYINV': None, 'PLAYDNY': None, 
                'LIST': None,'HALL': None, 'EXIT': exit },
     'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_registrando, 'EXIT': None },
@@ -130,24 +139,21 @@ estados = {
     'JOGANDO': {'ABORT': quit, 'EXIT': exit },
 }
 
+
 ###Classe com as informacoes da conexao###
 class Cliente():
-    def __init__(self, ip, porta, connType):
+    def __init__(self, ip, porta, connType, flagTCP):
         self.ipTime = 0
-        self.connType = connType 
+        self.login = None
+        self.connType = connType
+        self.flagTCP = flagTCP 
         self.ip = ip
         self.porta = porta
         self.connfd = None
         self.gameFile = None
         self.estado = "CONECTADO"
-
-
-        #######
         self.username = None
-
-
-
-        #######
+    
     def getMsg(self, msg):
         global estados
         msg = msg.split()
@@ -178,6 +184,14 @@ class Heartbeats(dict):
         super(Heartbeats, self).__setitem__(key, value)
         self._lock.release()
 
+    def __detitem__(self, key):
+        """Create or update the dictionary entry for a client"""
+        self._lock.acquire()
+        if key not in self:
+            raise KeyError(str(key))
+        super(Heartbeats, self).__detitem__(key)
+        self._lock.release()
+
     def getSilent(self):
         """Return a list of clients with heartbeat older than CHECK_TIMEOUT"""
         limit = time.time() - CHECK_TIMEOUT
@@ -204,12 +218,13 @@ class ReceiverUDP(threading.Thread):
                 data, addr = self.recSocket.recvfrom(1024)
                 self.recSocket.sendto(data, addr)
                 if not self.heartbeats.has_key((addr[0], addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP')
+                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
                     self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
                 self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
                 self.heartbeats[(addr[0], addr[1])].getMsg(data)
             except socket.timeout:
                 pass
+        self.recSocket.close()
 ###ThreadTCP###
 class ReceiverTCP(threading.Thread):
     """Receive TCP connections and call thread ConnTCP to handle each one"""
@@ -218,22 +233,36 @@ class ReceiverTCP(threading.Thread):
         super(ReceiverTCP, self).__init__()
         self.goOnEvent = goOnEvent
         self.heartbeats = heartbeats
-        self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.recSocket.settimeout(CHECK_TIMEOUT)
-        self.recSocket.bind(('', TCP_PORT))
-        self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
+        self.recSocket = None
+#self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#self.recSocket.settimeout(CHECK_TIMEOUT)
+#self.recSocket.bind(('', TCP_PORT))
+#self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
+        while self.recSocket == None:
+            try:
+                self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.recSocket.settimeout(CHECK_TIMEOUT)
+                self.recSocket.bind(('', TCP_PORT))
+                self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
+                print self.recSocket
+            except Exception, msg:
+                sys.stderr.write("[ERROR] %s \n" % msg[1])
+            
 
     def run(self):
         while self.goOnEvent.isSet():
             try:
+                print self.recSocket
                 cliSocket, addr = self.recSocket.accept()
                 if not self.heartbeats.has_key((addr[0],addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'TCP')
+                    flagTCP = threading.Event()
+                    flagTCP.set() 
+                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'TCP', flagTCP)
                     self.heartbeats[(addr[0],addr[1])].connfd = cliSocket 
                     self.heartbeats[(addr[0],addr[1])].ipTime = time.time()
                     ConnTCP(connfd = cliSocket,
                         heartbeats = self.heartbeats, ip = addr[0],
-                        porta = addr[1]).start()
+                        porta = addr[1], goOnEvent = flagTCP).start()
                     
                 else:
                     print "ERRO: ip ja esta no Dic"
@@ -243,28 +272,34 @@ class ReceiverTCP(threading.Thread):
 
             except socket.timeout:
                 pass
+        print "Vai fechar o socket"
+        self.recSocket.close()
 
 ###ThreadTCP-CLI###                                                                                
 class ConnTCP(threading.Thread):                                                           
     """Manage TCP connections"""                   
                                                                                                
-    def __init__(self, connfd, heartbeats, ip, porta):
+    def __init__(self, connfd, heartbeats, ip, porta, goOnEvent):
         super(ConnTCP, self).__init__()
+        self.goOnEvent = goOnEvent
         self.heartbeats = heartbeats
         self.recSocket = connfd
         self.ip = ip
         self.porta = porta
                                                                                                
     def run(self):                                                                             
-        try:
-            data = self.recSocket.recv(1024)
-            while data != '':
-                self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
-                self.recSocket.sendall('OK...' + data)
+        while self.goOnEvent.isSet():
+            try:
                 data = self.recSocket.recv(1024)
-                
-        except socket.timeout:
-            pass
+                if data != '':
+                    self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
+                    self.recSocket.sendall('OK...' + data)
+                else:
+                    print self.ip
+                    print self.porta
+            except socket.timeout:
+                pass
+        print "Matou uma Thread TCP-CLI"
 ###Thread do verificador de beats (feito no main)###
 def main():
     receiverUDPEvent = threading.Event()
@@ -318,12 +353,16 @@ def main():
                 cliente.connfd.send("Silencioso\n")
                 cliente.connfd.shutdown(1)
                 cliente.connfd.close()
+                cliente.flagTCP.clear()
                 del hbTCP[ip]
             time.sleep(CHECK_PERIOD)
     except KeyboardInterrupt:
         print 'Exiting, please wait...'
         receiverUDPEvent.clear()
         receiverTCPEvent.clear()
+        for ip in hbTCP:
+            hbTCP[ip].flagTCP.clear()
+            hbTCP[ip].connfd.close()
         receiverUDP.join()
         receiverTCP.join()
         print 'Finished.'
