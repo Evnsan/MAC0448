@@ -32,10 +32,11 @@ estados = {
 
 ###Classe com as informacoes da conexao###
 class Cliente():
-    def __init__(self, ip, porta, connType):
+    def __init__(self, ip, porta, connType, flagTCP):
         self.ipTime = 0
         self.login = None
-        self.connType = connType 
+        self.connType = connType
+        self.flagTCP = flagTCP 
         self.ip = ip
         self.porta = porta
         self.connfd = None
@@ -72,6 +73,14 @@ class Heartbeats(dict):
         super(Heartbeats, self).__setitem__(key, value)
         self._lock.release()
 
+    def __detitem__(self, key):
+        """Create or update the dictionary entry for a client"""
+        self._lock.acquire()
+        if key not in self:
+            raise KeyError(str(key))
+        super(Heartbeats, self).__detitem__(key)
+        self._lock.release()
+
     def getSilent(self):
         """Return a list of clients with heartbeat older than CHECK_TIMEOUT"""
         limit = time.time() - CHECK_TIMEOUT
@@ -98,12 +107,13 @@ class ReceiverUDP(threading.Thread):
                 data, addr = self.recSocket.recvfrom(1024)
                 self.recSocket.sendto(data, addr)
                 if not self.heartbeats.has_key((addr[0], addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP')
+                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
                     self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
                 self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
                 self.heartbeats[(addr[0], addr[1])].getMsg(data)
             except socket.timeout:
                 pass
+        self.recSocket.close()
 ###ThreadTCP###
 class ReceiverTCP(threading.Thread):
     """Receive TCP connections and call thread ConnTCP to handle each one"""
@@ -112,22 +122,36 @@ class ReceiverTCP(threading.Thread):
         super(ReceiverTCP, self).__init__()
         self.goOnEvent = goOnEvent
         self.heartbeats = heartbeats
-        self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.recSocket.settimeout(CHECK_TIMEOUT)
-        self.recSocket.bind(('', TCP_PORT))
-        self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
+        self.recSocket = None
+#self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#self.recSocket.settimeout(CHECK_TIMEOUT)
+#self.recSocket.bind(('', TCP_PORT))
+#self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
+        while self.recSocket == None:
+            try:
+                self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.recSocket.settimeout(CHECK_TIMEOUT)
+                self.recSocket.bind(('', TCP_PORT))
+                self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
+                print self.recSocket
+            except Exception, msg:
+                sys.stderr.write("[ERROR] %s \n" % msg[1])
+            
 
     def run(self):
         while self.goOnEvent.isSet():
             try:
+                print self.recSocket
                 cliSocket, addr = self.recSocket.accept()
                 if not self.heartbeats.has_key((addr[0],addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'TCP')
+                    flagTCP = threading.Event()
+                    flagTCP.set() 
+                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'TCP', flagTCP)
                     self.heartbeats[(addr[0],addr[1])].connfd = cliSocket 
                     self.heartbeats[(addr[0],addr[1])].ipTime = time.time()
                     ConnTCP(connfd = cliSocket,
                         heartbeats = self.heartbeats, ip = addr[0],
-                        porta = addr[1]).start()
+                        porta = addr[1], goOnEvent = flagTCP).start()
                     
                 else:
                     print "ERRO: ip ja esta no Dic"
@@ -137,28 +161,34 @@ class ReceiverTCP(threading.Thread):
 
             except socket.timeout:
                 pass
+        print "Vai fechar o socket"
+        self.recSocket.close()
 
 ###ThreadTCP-CLI###                                                                                
 class ConnTCP(threading.Thread):                                                           
     """Manage TCP connections"""                   
                                                                                                
-    def __init__(self, connfd, heartbeats, ip, porta):
+    def __init__(self, connfd, heartbeats, ip, porta, goOnEvent):
         super(ConnTCP, self).__init__()
+        self.goOnEvent = goOnEvent
         self.heartbeats = heartbeats
         self.recSocket = connfd
         self.ip = ip
         self.porta = porta
                                                                                                
     def run(self):                                                                             
-        try:
-            data = self.recSocket.recv(1024)
-            while data != '':
-                self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
-                self.recSocket.sendall('OK...' + data)
+        while self.goOnEvent.isSet():
+            try:
                 data = self.recSocket.recv(1024)
-                
-        except socket.timeout:
-            pass
+                if data != '':
+                    self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
+                    self.recSocket.sendall('OK...' + data)
+                else:
+                    print self.ip
+                    print self.porta
+            except socket.timeout:
+                pass
+        print "Matou uma Thread TCP-CLI"
 ###Thread do verificador de beats (feito no main)###
 def main():
     receiverUDPEvent = threading.Event()
@@ -212,12 +242,16 @@ def main():
                 cliente.connfd.send("Silencioso\n")
                 cliente.connfd.shutdown(1)
                 cliente.connfd.close()
+                cliente.flagTCP.clear()
                 del hbTCP[ip]
             time.sleep(CHECK_PERIOD)
     except KeyboardInterrupt:
         print 'Exiting, please wait...'
         receiverUDPEvent.clear()
         receiverTCPEvent.clear()
+        for ip in hbTCP:
+            hbTCP[ip].flagTCP.clear()
+            hbTCP[ip].connfd.close()
         receiverUDP.join()
         receiverTCP.join()
         print 'Finished.'
