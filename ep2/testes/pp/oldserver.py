@@ -3,11 +3,57 @@
 # Filename: ThreadedBeatServer.py
 """Threaded heartbeat server"""
 
-UDP_PORT = 43278; CHECK_PERIOD = 5; CHECK_TIMEOUT = 3;
+UDP_PORT = 43278; CHECK_PERIOD = 200; CHECK_TIMEOUT = 100
 TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time, sys, select
 from pprint import pprint
+
+
+
+
+
+
+###Funcoes auxiliares para as transicoes da maquina de estados
+
+"""def isPasswordCorrect(username, password):
+    file = open('users', 'r');
+
+    for line in file:
+        temp = line.split(';',2)
+        if username == temp[0]:
+            if password == temp[1]:
+                return True
+            else:
+                return False
+
+    file.close()
+    return False"""
+
+def isValidPassword(cliente, password):
+    if len(password) < 3:
+        cliente.connfd.sendto("comprimento menor que 3 da senha\n", (cliente.ip, cliente.porta))
+        return False
+    
+    if not password.isalnum():
+        cliente.connfd.sendto("PASS deve ter somente alfa-numericos\n", (cliente.ip, cliente.porta))
+        return False
+    return True
+
+def doesUserExist(username):
+    file = open('users', 'r');
+
+    for line in file:
+        temp = line.split(';',1)
+        print "primeiro token da linha no new user: "+ temp[0];
+        if(username == temp[0]):
+            return True
+    else:
+        return False
+    file.close()
+
+
+
 
 ###Maquina de estados para o cliente###
 def exit(cliente, args):
@@ -20,12 +66,66 @@ def exit(cliente, args):
 def quit(cliente, args):
     print "saindo do jogo"
 
+"""def user(cliente, args):
+    #verificar se user existe
+    #    pedir por password
+    #    verificar se user e password estao corretos
+    username = args[0]
+    if doesUserExist(username):
+        cliente.estado = "LOGANDO"
+    else:
+        cliente.connfd.sendto("USUARIO NAO EXISTE\n", (cliente.ip, cliente.porta))"""
+
+
+def newuser(cliente, args):
+    #verificar se existe em um arquivo
+    username = args[0]
+    file = open('users', 'r');
+    
+    #se nao existe mudar para registrando
+    if not doesUserExist(username):
+        cliente.estado = "REGISTRANDO"
+        cliente.username = args[0]
+        cliente.connfd.sendto("USUARIO aceito\n", (cliente.ip, cliente.porta))
+
+    else:
+        cliente.connfd.sendto("USUARIO JA EXISTE\n", (cliente.ip, cliente.porta))
+
+
+    file.close()
+
+def abort_registrando(cliente, args):
+    cliente.estado = "CONECTADO"
+
+
+
+def newpass(cliente, args):
+    passValid = isValidPassword(cliente,args[0])
+
+    if passValid:
+        cliente.connfd.sendto("SENHA VALIDA\n", (cliente.ip, cliente.porta))
+
+        cliente.password = args[0]
+        #escreve usuario e senha no arquivo
+        file = open("users", "a+")
+        file.write(cliente.username + ";" +cliente.password + '\n')
+        file.close()
+        cliente.estado = "LOGADO"
+        cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
+
+    else:
+        cliente.connfd.sendto("SENHA INVALIDA\n", (cliente.ip, cliente.porta))
+
+
+
+
+
 estados = {
-    'CONECTADO': {'USER': None, 'NEWUSER': None, 'EXIT': exit },
+    'CONECTADO': {'USER': None, 'NEWUSER': newuser, 'EXIT': exit },
     'LOGANDO': {'PASS': None, 'ABORT': quit, 'EXIT': exit },
     'LOGADO': {'PLAYACC': None, 'PLAYINV': None, 'PLAYDNY': None, 
                'LIST': None,'HALL': None, 'EXIT': exit },
-    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': None, 'ABORT': None, 'EXIT': None },
+    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_registrando, 'EXIT': None },
     'ESPERANDO': { 'PLAYACC': None, 'ABORT': None, 'EXIT': exit },
     'JOGANDO': {'ABORT': quit, 'EXIT': exit },
 }
@@ -34,14 +134,20 @@ estados = {
 class Cliente():
     def __init__(self, ip, porta, connType):
         self.ipTime = 0
-        self.login = None
         self.connType = connType 
         self.ip = ip
         self.porta = porta
         self.connfd = None
         self.gameFile = None
         self.estado = "CONECTADO"
-    
+
+
+        #######
+        self.username = None
+
+
+
+        #######
     def getMsg(self, msg):
         global estados
         msg = msg.split()
