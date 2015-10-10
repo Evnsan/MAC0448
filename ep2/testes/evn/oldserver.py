@@ -12,24 +12,30 @@ from pprint import pprint
 ###Maquina de estados para o cliente###
 def exit(cliente, args):
     print "encerrando conexao"
-    cliente.connfd.sendto("QUIT\n", (cliente.ip, cliente.porta))
+    if(cliente.connType == 'UDP'):
+        cliente.connfd.sendto("EXIT\n", (cliente.ip, cliente.porta))
+    else:
+        cliente.connfd.sendall("EXIT\n");
 
 def quit(cliente, args):
     print "saindo do jogo"
 
 estados = {
-    'CONECTADO': {'LOGIN': None, 'REGISTRO': None, 'EXIT': exit },
-    'LOGADO': { },
-    'REGISTRANDO': { },
-    'ESPERANDO': { 'EXIT': exit },
-    'JOGANDO': {'QUIT': quit, 'EXIT': exit },
+    'CONECTADO': {'USER': None, 'NEWUSER': None, 'EXIT': exit },
+    'LOGANDO': {'PASS': None, 'ABORT': quit, 'EXIT': exit },
+    'LOGADO': {'PLAYACC': None, 'PLAYINV': None, 'PLAYDNY': None, 
+               'LIST': None,'HALL': None, 'EXIT': exit },
+    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': None, 'ABORT': None, 'EXIT': None },
+    'ESPERANDO': { 'PLAYACC': None, 'ABORT': None, 'EXIT': exit },
+    'JOGANDO': {'ABORT': quit, 'EXIT': exit },
 }
 
 ###Classe com as informacoes da conexao###
 class Cliente():
-    def __init__(self, ip, porta):
+    def __init__(self, ip, porta, connType):
         self.ipTime = 0
         self.login = None
+        self.connType = connType 
         self.ip = ip
         self.porta = porta
         self.connfd = None
@@ -74,19 +80,6 @@ class Heartbeats(dict):
         self._lock.release()
         return silent
 
-###Classe que lida com as mensagens recebidas nas conexoes###
-class CommandParser():
-    def __init__(self, dic):
-        self.dic = dic
-
-# def parse(msg):
-        #tokenizar(ORG CMD [ARG] :TRAIL)
-            #ORG -> username
-            #CMD -> (NEWUSER | USER | QUIT | PLAYREQ | PLAYACC | LIST | PLAY)
-            #ARG -> (palavra)*
-            #TRAIL -> linha
-        #executar acoes
-
 ###TrheadUDP###
 class ReceiverUDP(threading.Thread):
     """Receive UDP packets and log them in the heartbeats dictionary"""
@@ -105,7 +98,7 @@ class ReceiverUDP(threading.Thread):
                 data, addr = self.recSocket.recvfrom(1024)
                 self.recSocket.sendto(data, addr)
                 if not self.heartbeats.has_key((addr[0], addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1])
+                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP')
                     self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
                 self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
                 self.heartbeats[(addr[0], addr[1])].getMsg(data)
@@ -129,7 +122,7 @@ class ReceiverTCP(threading.Thread):
             try:
                 cliSocket, addr = self.recSocket.accept()
                 if not self.heartbeats.has_key((addr[0],addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1])
+                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'TCP')
                     self.heartbeats[(addr[0],addr[1])].connfd = cliSocket 
                     self.heartbeats[(addr[0],addr[1])].ipTime = time.time()
                     ConnTCP(connfd = cliSocket,

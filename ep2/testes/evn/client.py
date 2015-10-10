@@ -20,7 +20,7 @@ host = 'localhost';
 port = 43278;
 
 reply = 'nada'
-while(reply != 'QUIT\n') :
+while(reply != 'EXIT\n') :
     msg = raw_input('Enter message to send : ')
          
     try :
