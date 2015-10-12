@@ -24,7 +24,7 @@ def teste(cliente, args, heartbeats):
                     (cliente.ip, cliente.porta)
                     )
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (cliente.ip, cliente.porta))
+            cliente.connfd.sendto("[ERRO: TESTE] Argumentos Insuficientes\n" , (cliente.ip, cliente.porta))
 
 def isPasswordCorrect(username, password):
     file = open('users', 'r')
@@ -89,7 +89,7 @@ def user(cliente, args, heartbeats):
         else:
             cliente.connfd.sendto("USUARIO NAO EXISTE\n", (cliente.ip, cliente.porta))
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (cliente.ip, cliente.porta))
+            cliente.connfd.sendto("[ERRO: USER] Argumentos Insuficientes\n" , (cliente.ip, cliente.porta))
 
 
 def newuser(cliente, args, heartbeats):
@@ -110,7 +110,7 @@ def newuser(cliente, args, heartbeats):
 
         file.close()
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (cliente.ip, cliente.porta))
+            cliente.connfd.sendto("[ERRO: NEWUSER] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
 
 def abort_registrando(cliente, args, heartbeats):
     cliente.estado = "CONECTADO"
@@ -133,7 +133,7 @@ def newpass(cliente, args, heartbeats):
         else:
             cliente.connfd.sendto("SENHA INVALIDA\n", (cliente.ip, cliente.porta))
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (cliente.ip, cliente.porta))
+            cliente.connfd.sendto("[ERRO: NEWPASS] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
 
 def checkpass(cliente, args, heartbeats):
     try:
@@ -145,7 +145,7 @@ def checkpass(cliente, args, heartbeats):
         else:
             cliente.connfd.sendto("PASSWORD INCORRETO!!\n", (cliente.ip, cliente.porta))
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (cliente.ip, cliente.porta))
+            cliente.connfd.sendto("[ERRO: PASS] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
 
 ###Estados
 estados = {
