@@ -3,7 +3,7 @@
 # Filename: ThreadedBeatServer.py
 """Threaded heartbeat server"""
 
-UDP_PORT = 43278; CHECK_PERIOD = 10; CHECK_TIMEOUT = 8;
+UDP_PORT = 43278; CHECK_PERIOD = 30; CHECK_TIMEOUT = 25;
 TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time, sys, select
@@ -12,15 +12,6 @@ from pprint import pprint
 
 
 ###Funcoes auxiliares para as transicoes da maquina de estados
-def teste(cliente, args, heartbeats):
-    try:
-        alvo = heartbeats.getList()
-        cliente.send("LIST START\n")
-        for username, est in alvo:
-            cliente.send("%s "%username + est + "\n")
-        cliente.send("LIST END\n")
-    except IndexError, msg:
-            cliente.send("[ERRO: TESTE] Argumentos Insuficientes\n")
 
 def isPasswordCorrect(username, password):
     file = open('users', 'r')
@@ -63,6 +54,93 @@ def doesUserExist(username):
     file.close()
 
 ###Maquina de estados para o cliente###
+
+def playinvi(cliente, args, heartbeats):
+    try:
+        playerToInvite = args[0]
+        clienteToInvite = heartbeats.getClienteByName(playerToInvite)
+    except IndexError, msg:
+        cliente.connfd.sendto("[ERRO: PLAYINVI] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
+   
+    if clienteToInvite:
+        cliente.connfd.sendto("invite: from "+cliente.username+" to: "+clienteToInvite.username+"\n", (clienteToInvite.ip, clienteToInvite.porta))  
+        cliente.estado = "ESPERANDO"
+        cliente.loginInvited = clienteToInvite.username
+    else:
+        cliente.connfd.sendto("[ERRO: PLAYINVI] Usuario nao esta onlinen", (cliente.ip, cliente.porta))
+
+
+def listingStates(estado):
+        if estado == "JOGANDO":
+            return True
+        if estado == "ESPERANDO":
+            return True
+        if estado == "LOGADO":
+            return True
+        if cliente.estado == "PRONTO":
+            return True
+        return False
+
+def listPlayers(cliente, args, heartbeats):
+    try:
+        alvo = heartbeats.getList()
+        cliente.send("LIST START\n")
+        for username, est in alvo:
+            cliente.send(username + " " + est + "\n")
+        cliente.send("LIST END\n")
+    except IndexError, msg:
+            cliente.send("[ERRO: LISTPLAYERS] Argumentos Insuficientes\n")
+
+
+
+
+def playacc_esperando(cliente, args, heartbeats):
+    #esperando_jogo
+    
+    try:
+        usernameADV = args[0]
+        cliente.estado = "JOGANDO"
+        if cliente.loginInvited == usernameADV:
+            file = open(cliente.username, "w+")
+            file.write('ESTADO=JOGANDO\n')
+            file.write('ADV=' + usernameADV + '\n') 
+            file.write('CLASSE=1\n')     
+            #cria tabuleiro no arquivo do jogador
+            file.close()        
+    except IndexError, msg:
+        cliente.send("[ERRO: PLAYACC_ESPERANDO] Argumentos Insuficientes\n")
+
+           
+
+
+def playacc_logado(cliente, args, heartbeats):
+    try:
+        usernameAdv = args[0]
+        clienteToPlay = heartbeats.getClienteByName(usernameAdv)
+   
+        if not clienteToPlay is None:
+
+            if clienteToPlay.loginInvited == cliente.username:
+
+                file = open(cliente.username, "w+")
+                file.write('ESTADO=JOGANDO\n')
+                file.write('ADV=' + usernameAdv + '\n')                                                                          
+                file.write('CLASSE=2\n')
+                cliente.send("VOCE ACEITOU O CONVITE E AGORA ESTA EM UM JOGO!\n")
+                cliente.send("SEU CONVITE FOI ACEITO, VOCE ESTA EM UM JOGO!\n")
+                file.close()
+                clienteToPlay.send("PLAYACC " + cliente.username + "\n")
+            else:
+                cliente.send("[ERRO: PLAYACC_LOGADO]  Usuario %s nao esta convidando\n"%usernameAdv)
+        else:
+            cliente.send("[ERRO: PLAYACC_LOGADO] Usuario nao esta online\n")   
+    except IndexError, msg:
+        cliente.send("[ERRO: PLAYACC_LOGADO] Argumentos Insuficientes\n")             
+
+
+
+
+
 def exit(cliente, args, heartbeats):
     print "Encerrando sessao de %s:" % cliente.ip + str(cliente.porta) + " %s"% cliente.connType
     cliente.send("EXITING...\n")
@@ -140,10 +218,10 @@ def checkpass(cliente, args, heartbeats):
 estados = {
     'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'EXIT': exit },
     'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit },
-    'LOGADO': {'PLAYACC': None, 'PLAYINV': None, 'PLAYDNY': None, 
-               'LIST': None,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado, 'TESTE': teste },
+    'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinvi, 'PLAYDNY': None, 
+               'LIST': listPlayers,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado},
     'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado, 'EXIT': None },
-    'ESPERANDO': { 'PLAYACC': None, 'ABORT': None, 'EXIT': exit },
+    'ESPERANDO': { 'PLAYACC': playacc_esperando, 'ABORT': None, 'EXIT': exit },
     'JOGANDO': {'ABORT': quit, 'EXIT': exit },
 }
 
@@ -165,13 +243,14 @@ class Cliente():
     def getMsg(self, msg, heartbeats):
         global estados
         msg = msg.split()
-        cmd = msg[0]
-        del msg[0]
-        args = msg
-        try:
-            estados[self.estado][cmd](self, args, heartbeats)
-        except KeyError:
-            self.send("COMMAND %s INVALID!\n" % cmd)
+        if len(msg) > 0:
+            cmd = msg[0]
+            del msg[0]
+            args = msg
+            try:
+                estados[self.estado][cmd](self, args, heartbeats)
+            except KeyError:
+                self.send("COMMAND %s INVALID!\n" % cmd)
     
     def send(self, msg):
         if(self.connType == 'UDP'):
@@ -258,15 +337,16 @@ class ReceiverUDP(threading.Thread):
         while self.goOnEvent.isSet():
             try:
                 data, addr = self.recSocket.recvfrom(1024)
-                self.recSocket.sendto(data, addr) #somente Eco -> tirar
-                if not self.heartbeats.has_key((addr[0], addr[1])):
-                    self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
-                    self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
-                if not self.heartbeats[addr].estado == 'EXITING': 
-                    self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
-                    self.heartbeats[(addr[0], addr[1])].getMsg(data, self.heartbeats)
-                else:
-                    self.recSocket.sendto("Saindo. Por favor espere...\n", addr)
+                if data != '':
+                    self.recSocket.sendto(data, addr) #somente Eco -> tirar
+                    if not self.heartbeats.has_key((addr[0], addr[1])):
+                        self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
+                        self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
+                    if not self.heartbeats[addr].estado == 'EXITING': 
+                        self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
+                        self.heartbeats[(addr[0], addr[1])].getMsg(data, self.heartbeats)
+                    else:
+                        self.recSocket.sendto("Saindo. Por favor espere...\n", addr)
             except socket.timeout:
                 pass
         self.recSocket.close()
