@@ -14,21 +14,21 @@ from pprint import pprint
 ###Funcoes auxiliares para as transicoes da maquina de estados
 
 def isPasswordCorrect(username, password):
-    file = open('users', 'r')
+    f = open('users', 'r')
     print 'checando se password esta correto'
-    for line in file:
+    for line in f:
         temp = line.split(';',2)
         pws = temp[1].split('\n',1)
         if username == temp[0]:
             print 'encontrou usuario e vai tentar ver se a senha esta correta'
             if pws[0] == password:
-                file.close()
+                f.close()
                 return True
             else:
-                file.close()
+                f.close()
                 return False
 
-    file.close()
+    f.close()
     return False
 
 def isValidPassword(cliente, password):
@@ -42,32 +42,32 @@ def isValidPassword(cliente, password):
     return True
 
 def doesUserExist(username):
-    file = open('users', 'r')
+    f = open('users', 'r')
 
-    for line in file:
+    for line in f:
         temp = line.split(';',1)
         print "primeiro token da linha no new user: " + temp[0]
         if(username == temp[0]):
             return True
     else:
         return False
-    file.close()
+    f.close()
 
 ###Maquina de estados para o cliente###
 
-def playinvi(cliente, args, heartbeats):
+def playinv(cliente, args, heartbeats):
     try:
         playerToInvite = args[0]
+        chatporta = args[1]
         clienteToInvite = heartbeats.getClienteByName(playerToInvite)
+        if clienteToInvite:
+            clienteToInvite.send("PLAYINV "+ cliente.username + " " + chatporta + "\n")
+            cliente.estado = "ESPERANDO"
+            cliente.loginInvited = clienteToInvite.username
+        else:
+            cliente.send("[ERRO: PLAYINV] Usuario nao esta onlinen")
     except IndexError, msg:
-        cliente.connfd.sendto("[ERRO: PLAYINVI] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
-   
-    if clienteToInvite:
-        cliente.connfd.sendto("invite: from "+cliente.username+" to: "+clienteToInvite.username+"\n", (clienteToInvite.ip, clienteToInvite.porta))  
-        cliente.estado = "ESPERANDO"
-        cliente.loginInvited = clienteToInvite.username
-    else:
-        cliente.connfd.sendto("[ERRO: PLAYINVI] Usuario nao esta onlinen", (cliente.ip, cliente.porta))
+        cliente.send("[ERRO: PLAYINV] Argumentos Insuficientes\n")
 
 
 def listingStates(estado):
@@ -96,34 +96,62 @@ def playacc_esperando(cliente, args, heartbeats):
     
     try:
         usernameADV = args[0]
+        chatporta = args[1]
         cliente.estado = "JOGANDO"
         if cliente.loginInvited == usernameADV:
-            file = open(cliente.username, "w+")
-            file.write('ESTADO=JOGANDO\n')
-            file.write('ADV=' + usernameADV + '\n') 
-            file.write('CLASSE=1\n')     
-            #cria tabuleiro no arquivo do jogador
-            file.close()        
+            pontos = None
+            try:
+                f = open(cliente.username, "r")
+                pontos = f.readline()
+                f.close()
+            except IOError, msg:
+                print "blah\n"
+            f = open(cliente.username, "w")
+            if pontos:
+                f.write(pontos)
+            else:
+                f.write("0\n")
+            f.write('JOGANDO\n')
+            f.write(usernameADV + '\n') 
+            f.write('SERVER\n')     
+            f.write(chatporta + '\n')     
+            f.write('2\n')     
+            f.write('0 0 0 0 0 0 0 0 0\n')
+            f.close()        
     except IndexError, msg:
         cliente.send("[ERRO: PLAYACC_ESPERANDO] Argumentos Insuficientes\n")
 
 def playacc_logado(cliente, args, heartbeats):
     try:
         usernameAdv = args[0]
+        chatporta = args[1]
         clienteToPlay = heartbeats.getClienteByName(usernameAdv)
    
         if not clienteToPlay is None:
 
             if clienteToPlay.loginInvited == cliente.username:
-
-                file = open(cliente.username, "w+")
-                file.write('ESTADO=JOGANDO\n')
-                file.write('ADV=' + usernameAdv + '\n')                                                                          
-                file.write('CLASSE=2\n')
+                pontos = None
+                try:
+                    f = open(cliente.username, "r")
+                    pontos = f.readline()
+                    f.close()
+                except IOError, msg:
+                    print "blah\n"
+                f = open(cliente.username, "w")
+                if pontos:
+                    f.write(pontos)
+                else:
+                    f.write("0\n")
+                f.write('JOGANDO\n')
+                f.write(usernameAdv + '\n')                                                                          
+                f.write('CLIENTE\n')
+                f.write(chatporta + '\n')
+                f.write('1\n')
+                f.write('0 0 0 0 0 0 0 0 0\n')
+                f.close()
                 cliente.send("VOCE ACEITOU O CONVITE E AGORA ESTA EM UM JOGO!\n")
                 cliente.send("SEU CONVITE FOI ACEITO, VOCE ESTA EM UM JOGO!\n")
-                file.close()
-                clienteToPlay.send("PLAYACC " + cliente.username + "\n")
+                clienteToPlay.send("PLAYACC " + cliente.username + " " + chatporta + "\n")
             else:
                 cliente.send("[ERRO: PLAYACC_LOGADO]  Usuario %s nao esta convidando\n"%usernameAdv)
         else:
@@ -163,7 +191,7 @@ def newuser(cliente, args, heartbeats):
     #verificar se existe em um arquivo
     try:
         username = args[0]
-        file = open('users', 'r')
+        f = open('users', 'r')
     
         #se nao existe mudar para registrando
         if not doesUserExist(username):
@@ -175,7 +203,7 @@ def newuser(cliente, args, heartbeats):
             cliente.send("[ERROR NEWUSER] Ja exxiste usiario com este username\n")
 
 
-        file.close()
+        f.close()
     except IndexError, msg:
             cliente.send("[ERRO: NEWUSER] Argumentos Insuficientes\n")
 
@@ -186,9 +214,9 @@ def newpass(cliente, args, heartbeats):
         if passValid:
             cliente.send("SENHA VALIDA\n")
             #escreve usuario e senha no arquivo
-            file = open("users", "a+")
-            file.write(cliente.username + ";" + args[0] + '\n')
-            file.close()
+            f = open("users", "a+")
+            f.write(cliente.username + ";" + args[0] + '\n')
+            f.close()
             cliente.estado = "LOGADO"
             cliente.send("LOGADO! ENJOY\n")
 
@@ -212,7 +240,7 @@ def checkpass(cliente, args, heartbeats):
 estados = {
     'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'EXIT': exit },
     'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit },
-    'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinvi, 'PLAYDNY': None, 
+    'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinv, 'PLAYDNY': None, 
                'LIST': listPlayers,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado},
     'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado, 'EXIT': None },
     'ESPERANDO': { 'PLAYACC': playacc_esperando, 'ABORT': None, 'EXIT': exit },
@@ -415,7 +443,8 @@ class ConnTCP(threading.Thread):
                 else:
                     self.recSocket.sendto("Saindo. Por favor espere...\n", addr)
             except KeyError, msg:
-                sys.stderr.write("ERRO: ThreadTCPcli: KeyError = " + str(msg) + "\n")
+                pass
+                #sys.stderr.write("ERRO: ThreadTCPcli: KeyError = " + str(msg) + "\n")
             except socket.timeout:
                 pass
         print "Matou uma Thread TCP-CLI"
@@ -477,13 +506,13 @@ def main():
             silent = hbTCP.getSilent()
             print 'Silent clientsTCP: %s' % silent
             for ip, cliente in silent:
+                cliente.flagTCP.clear()
                 try:
                     cliente.send("Silencioso\n")
-                    cliente.connfd.shutdown(1)
+                    cliente.connfd.shutdown(socket.SHUT_RDWR)
                     cliente.connfd.close()
                 except socket.error, msg:
                     sys.stderr.write("ERRO-  %s: Nao foi possivel fechar o socket\n")
-                cliente.flagTCP.clear()
                 del hbTCP[ip]
             time.sleep(CHECK_PERIOD)
     except KeyboardInterrupt:
