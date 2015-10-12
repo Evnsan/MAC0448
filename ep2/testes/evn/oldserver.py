@@ -13,15 +13,18 @@ from pprint import pprint
 
 ###Funcoes auxiliares para as transicoes da maquina de estados
 def teste(cliente, args, heartbeats):
-    alvo = heartbeats.getClienteByName(args[0])
-    if alvo == None:
-        cliente.connfd.sendto("Nao existe cliente com esse username: %s" % args[0],
-                (cliente.ip, cliente.porta)
-                )
-    else:
-        cliente.connfd.sendto("Ip = %s" % alvo[0][0],
-                (cliente.ip, cliente.porta)
-                )
+    try:
+        alvo = heartbeats.getClienteByName(args[0])
+        if alvo == None:
+            cliente.connfd.sendto("Nao existe cliente com esse username: %s" % args[0],
+                    (cliente.ip, cliente.porta)
+                    )
+        else:
+            cliente.connfd.sendto("Ip = %s" % alvo[0][0],
+                    (cliente.ip, cliente.porta)
+                    )
+    except IndexError, msg:
+            self.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (self.ip, self.porta))
 
 def isPasswordCorrect(username, password):
     file = open('users', 'r')
@@ -78,59 +81,71 @@ def user(cliente, args, heartbeats):
     #verificar se user existe
     #    pedir por password
     #    verificar se user e password estao corretos
-    username = args[0]
-    if doesUserExist(username):
-        cliente.username = username
-        cliente.estado = "LOGANDO"
-    else:
-        cliente.connfd.sendto("USUARIO NAO EXISTE\n", (cliente.ip, cliente.porta))
+    try:
+        username = args[0]
+        if doesUserExist(username):
+            cliente.username = username
+            cliente.estado = "LOGANDO"
+        else:
+            cliente.connfd.sendto("USUARIO NAO EXISTE\n", (cliente.ip, cliente.porta))
+    except IndexError, msg:
+            self.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (self.ip, self.porta))
 
 
 def newuser(cliente, args, heartbeats):
     #verificar se existe em um arquivo
-    username = args[0]
-    file = open('users', 'r')
+    try:
+        username = args[0]
+        file = open('users', 'r')
     
-    #se nao existe mudar para registrando
-    if not doesUserExist(username):
-        cliente.estado = "REGISTRANDO"
-        cliente.username = args[0]
-        cliente.connfd.sendto("USUARIO aceito\n", (cliente.ip, cliente.porta))
+        #se nao existe mudar para registrando
+        if not doesUserExist(username):
+            cliente.estado = "REGISTRANDO"
+            cliente.username = args[0]
+            cliente.connfd.sendto("USUARIO aceito\n", (cliente.ip, cliente.porta))
 
-    else:
-        cliente.connfd.sendto("USUARIO JA EXISTE\n", (cliente.ip, cliente.porta))
+        else:
+            cliente.connfd.sendto("USUARIO JA EXISTE\n", (cliente.ip, cliente.porta))
 
 
-    file.close()
+        file.close()
+    except IndexError, msg:
+            self.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (self.ip, self.porta))
 
 def abort_registrando(cliente, args, heartbeats):
     cliente.estado = "CONECTADO"
 
 def newpass(cliente, args, heartbeats):
-    passValid = isValidPassword(cliente,args[0])
+    try:
+        passValid = isValidPassword(cliente,args[0])
 
-    if passValid:
-        cliente.connfd.sendto("SENHA VALIDA\n", (cliente.ip, cliente.porta))
+        if passValid:
+            cliente.connfd.sendto("SENHA VALIDA\n", (cliente.ip, cliente.porta))
 
-        cliente.password = args[0]
-        #escreve usuario e senha no arquivo
-        file = open("users", "a+")
-        file.write(cliente.username + ";" +cliente.password + '\n')
-        file.close()
-        cliente.estado = "LOGADO"
-        cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
+            cliente.password = args[0]
+            #escreve usuario e senha no arquivo
+            file = open("users", "a+")
+            file.write(cliente.username + ";" +cliente.password + '\n')
+            file.close()
+            cliente.estado = "LOGADO"
+            cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
 
-    else:
-        cliente.connfd.sendto("SENHA INVALIDA\n", (cliente.ip, cliente.porta))
+        else:
+            cliente.connfd.sendto("SENHA INVALIDA\n", (cliente.ip, cliente.porta))
+    except IndexError, msg:
+            self.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (self.ip, self.porta))
 
 def checkpass(cliente, args, heartbeats):
-    password = args[0]
-    cliente.connfd.sendto(password, (cliente.ip, cliente.porta))
-    if isPasswordCorrect(cliente.username, password):
-        cliente.estado = "LOGADO"
-        cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
-    else:
-        cliente.connfd.sendto("PASSWORD INCORRETO!!\n", (cliente.ip, cliente.porta))
+    try:
+        password = args[0]
+        cliente.connfd.sendto(password, (cliente.ip, cliente.porta))
+        if isPasswordCorrect(cliente.username, password):
+            cliente.estado = "LOGADO"
+            cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
+        else:
+            cliente.connfd.sendto("PASSWORD INCORRETO!!\n", (cliente.ip, cliente.porta))
+    except IndexError, msg:
+            self.connfd.sendto("[ERRO: %s] Argumentos Insuficientes\n" % cmd, (self.ip, self.porta))
 
 ###Estados
 estados = {
