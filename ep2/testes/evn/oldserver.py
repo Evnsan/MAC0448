@@ -12,6 +12,16 @@ from pprint import pprint
 
 
 ###Funcoes auxiliares para as transicoes da maquina de estados
+def teste(cliente, args, heartbeats):
+    alvo = heartbeats.getClienteByName(args[0])
+    if alvo == None:
+        cliente.connfd.sendto("Nao existe cliente com esse username: %s" % args[0],
+                (cliente.ip, cliente.porta)
+                )
+    else:
+        cliente.connfd.sendto("Ip = %s" % alvo[0][0],
+                (cliente.ip, cliente.porta)
+                )
 
 def isPasswordCorrect(username, password):
     file = open('users', 'r')
@@ -127,7 +137,7 @@ estados = {
     'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'EXIT': exit },
     'LOGANDO': {'PASS': checkpass, 'ABORT': quit, 'EXIT': exit },
     'LOGADO': {'PLAYACC': None, 'PLAYINV': None, 'PLAYDNY': None, 
-               'LIST': None,'HALL': None, 'EXIT': exit },
+               'LIST': None,'HALL': None, 'EXIT': exit, },
     'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_registrando, 'EXIT': None },
     'ESPERANDO': { 'PLAYACC': None, 'ABORT': None, 'EXIT': exit },
     'JOGANDO': {'ABORT': quit, 'EXIT': exit },
@@ -200,7 +210,7 @@ class Heartbeats(dict):
         self._lock.acquire()
         for (key, cliente) in self.items():
              if cliente.username == name:
-                retorno = cliente
+                retorno = (key, cliente)
         self._lock.release()
         return retorno
 
