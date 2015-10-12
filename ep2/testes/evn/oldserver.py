@@ -70,9 +70,13 @@ def doesUserExist(username):
 def exit(cliente, args, heartbeats):
     print "encerrando conexao"
     if(cliente.connType == 'UDP'):
-        cliente.connfd.sendto("EXIT\n", (cliente.ip, cliente.porta))
+        cliente.connfd.sendto("EXITING...\n", (cliente.ip, cliente.porta))
+        cliente.iptime = 0;
+        cliente.estado = 'EXITING'
     else:
-        cliente.connfd.sendall("EXIT\n")
+        cliente.connfd.sendall("EXITING...\n")
+        cliente.iptime = 0;
+        cliente.estado = 'EXITING'
 
 def quit(cliente, args, heartbeats):
     print "saindo do jogo"
@@ -249,8 +253,11 @@ class ReceiverUDP(threading.Thread):
                 if not self.heartbeats.has_key((addr[0], addr[1])):
                     self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
                     self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
-                self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
-                self.heartbeats[(addr[0], addr[1])].getMsg(data, self.heartbeats)
+                if not self.heartbeats[addr].estado == 'EXITING': 
+                    self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
+                    self.heartbeats[(addr[0], addr[1])].getMsg(data, self.heartbeats)
+                else:
+                    self.recSocket.sendto("Calaboca e quita\n", addr)
             except socket.timeout:
                 pass
         self.recSocket.close()
