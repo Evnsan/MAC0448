@@ -193,6 +193,16 @@ class Heartbeats(dict):
         silent = [(key, cliente) for (key, cliente) in self.items() if cliente.ipTime < limit]
         self._lock.release()
         return silent
+    
+    def getClienteByName(self, name):
+        """Retorna o cliente que tem atributo username = name ou None caso nao haja"""
+        retorno = None
+        self._lock.acquire()
+        for (key, cliente) in self.items():
+             if cliente.username == name:
+                retorno = cliente
+        self._lock.release()
+        return retorno
 
 ###TrheadUDP###
 class ReceiverUDP(threading.Thread):
