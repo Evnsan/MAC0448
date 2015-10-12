@@ -3,7 +3,7 @@
 # Filename: ThreadedBeatServer.py
 """Threaded heartbeat server"""
 
-UDP_PORT = 43278; CHECK_PERIOD = 20; CHECK_TIMEOUT = 15;
+UDP_PORT = 43278; CHECK_PERIOD = 10; CHECK_TIMEOUT = 8;
 TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time, sys, select
@@ -14,17 +14,13 @@ from pprint import pprint
 ###Funcoes auxiliares para as transicoes da maquina de estados
 def teste(cliente, args, heartbeats):
     try:
-        alvo = heartbeats.getClienteByName(args[0])
-        if alvo == None:
-            cliente.connfd.sendto("Nao existe cliente com esse username: %s" % args[0],
-                    (cliente.ip, cliente.porta)
-                    )
-        else:
-            cliente.connfd.sendto("Ip = %s" % alvo[0][0],
-                    (cliente.ip, cliente.porta)
-                    )
+        alvo = heartbeats.getList()
+        cliente.send("LIST START\n")
+        for username, est in alvo:
+            cliente.send("%s "%username + est + "\n")
+        cliente.send("LIST END\n")
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: TESTE] Argumentos Insuficientes\n" , (cliente.ip, cliente.porta))
+            cliente.send("[ERRO: TESTE] Argumentos Insuficientes\n")
 
 def isPasswordCorrect(username, password):
     file = open('users', 'r')
@@ -46,11 +42,11 @@ def isPasswordCorrect(username, password):
 
 def isValidPassword(cliente, password):
     if len(password) < 3:
-        cliente.connfd.sendto("comprimento menor que 3 da senha\n", (cliente.ip, cliente.porta))
+        cliente.send("[ERRO NEWPASS->1] Comprimento da senha menor do que 3\n")
         return False
     
     if not password.isalnum():
-        cliente.connfd.sendto("PASS deve ter somente alfa-numericos\n", (cliente.ip, cliente.porta))
+        cliente.send("[ERRO NEWPASS->1] Password deve ter somente caracteres alfa-numericos\n")
         return False
     return True
 
@@ -68,18 +64,10 @@ def doesUserExist(username):
 
 ###Maquina de estados para o cliente###
 def exit(cliente, args, heartbeats):
-    print "encerrando conexao"
-    if(cliente.connType == 'UDP'):
-        cliente.connfd.sendto("EXITING...\n", (cliente.ip, cliente.porta))
-        cliente.iptime = 0;
-        cliente.estado = 'EXITING'
-    else:
-        cliente.connfd.sendall("EXITING...\n")
-        cliente.iptime = 0;
-        cliente.estado = 'EXITING'
-
-def quit(cliente, args, heartbeats):
-    print "saindo do jogo"
+    print "Encerrando sessao de %s:" % cliente.ip + str(cliente.porta) + " %s"% cliente.connType
+    cliente.send("EXITING...\n")
+    cliente.iptime = 0;
+    cliente.estado = 'EXITING'
 
 def user(cliente, args, heartbeats):
     #verificar se user existe
@@ -91,10 +79,13 @@ def user(cliente, args, heartbeats):
             cliente.username = username
             cliente.estado = "LOGANDO"
         else:
-            cliente.connfd.sendto("USUARIO NAO EXISTE\n", (cliente.ip, cliente.porta))
+            cliente.send("[ERRO: USER] Usuario Inexistente\n")
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: USER] Argumentos Insuficientes\n" , (cliente.ip, cliente.porta))
+            cliente.send("[ERRO: USER] Argumentos Insuficientes\n")
 
+def abort_toConectado(cliente, args, heartbeats):
+    cliente.username = None
+    cliente.estado = "CONECTADO"
 
 def newuser(cliente, args, heartbeats):
     #verificar se existe em um arquivo
@@ -106,58 +97,52 @@ def newuser(cliente, args, heartbeats):
         if not doesUserExist(username):
             cliente.estado = "REGISTRANDO"
             cliente.username = args[0]
-            cliente.connfd.sendto("USUARIO aceito\n", (cliente.ip, cliente.porta))
+            cliente.send("USUARIO aceito\n")
 
         else:
-            cliente.connfd.sendto("USUARIO JA EXISTE\n", (cliente.ip, cliente.porta))
+            cliente.send("[ERROR NEWUSER] Ja exxiste usiario com este username\n")
 
 
         file.close()
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: NEWUSER] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
-
-def abort_registrando(cliente, args, heartbeats):
-    cliente.estado = "CONECTADO"
+            cliente.send("[ERRO: NEWUSER] Argumentos Insuficientes\n")
 
 def newpass(cliente, args, heartbeats):
     try:
         passValid = isValidPassword(cliente,args[0])
 
         if passValid:
-            cliente.connfd.sendto("SENHA VALIDA\n", (cliente.ip, cliente.porta))
-
-            cliente.password = args[0]
+            cliente.send("SENHA VALIDA\n")
             #escreve usuario e senha no arquivo
             file = open("users", "a+")
-            file.write(cliente.username + ";" +cliente.password + '\n')
+            file.write(cliente.username + ";" + args[0] + '\n')
             file.close()
             cliente.estado = "LOGADO"
-            cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
+            cliente.send("LOGADO! ENJOY\n")
 
         else:
-            cliente.connfd.sendto("SENHA INVALIDA\n", (cliente.ip, cliente.porta))
+            cliente.send("[ERRO: NEWPASS] Senha Invalida\n")
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: NEWPASS] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
+            cliente.send("[ERRO: NEWPASS] Argumentos Insuficientes\n")
 
 def checkpass(cliente, args, heartbeats):
     try:
         password = args[0]
-        cliente.connfd.sendto(password, (cliente.ip, cliente.porta))
         if isPasswordCorrect(cliente.username, password):
             cliente.estado = "LOGADO"
-            cliente.connfd.sendto("LOGADO! ENJOY\n", (cliente.ip, cliente.porta))
+            cliente.send("LOGADO! ENJOY\n")
         else:
-            cliente.connfd.sendto("PASSWORD INCORRETO!!\n", (cliente.ip, cliente.porta))
+            cliente.send("[ERRO: PASS] Password Iconrreto!!\n")
     except IndexError, msg:
-            cliente.connfd.sendto("[ERRO: PASS] Argumentos Insuficientes\n", (cliente.ip, cliente.porta))
+            cliente.send("[ERRO: PASS] Argumentos Insuficientes\n")
 
 ###Estados
 estados = {
     'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'EXIT': exit },
-    'LOGANDO': {'PASS': checkpass, 'ABORT': quit, 'EXIT': exit },
+    'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit },
     'LOGADO': {'PLAYACC': None, 'PLAYINV': None, 'PLAYDNY': None, 
-               'LIST': None,'HALL': None, 'EXIT': exit, },
-    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_registrando, 'EXIT': None },
+               'LIST': None,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado, 'TESTE': teste },
+    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado, 'EXIT': None },
     'ESPERANDO': { 'PLAYACC': None, 'ABORT': None, 'EXIT': exit },
     'JOGANDO': {'ABORT': quit, 'EXIT': exit },
 }
@@ -167,7 +152,6 @@ estados = {
 class Cliente():
     def __init__(self, ip, porta, connType, flagTCP):
         self.ipTime = 0
-        self.login = None
         self.connType = connType
         self.flagTCP = flagTCP 
         self.ip = ip
@@ -176,6 +160,7 @@ class Cliente():
         self.gameFile = None
         self.estado = "CONECTADO"
         self.username = None
+        self.loginInvited = None
     
     def getMsg(self, msg, heartbeats):
         global estados
@@ -186,7 +171,14 @@ class Cliente():
         try:
             estados[self.estado][cmd](self, args, heartbeats)
         except KeyError:
-            self.connfd.sendto("COMMAND %s INVALID!\n" % cmd, (self.ip, self.porta))
+            self.send("COMMAND %s INVALID!\n" % cmd)
+    
+    def send(self, msg):
+        if(self.connType == 'UDP'):
+            self.connfd.sendto(msg, (self.ip, self.porta))
+        elif(self.connType == 'TCP'):
+            self.connfd.sendall(msg)
+ 
     def __str__(self):
         return str((str(self.ipTime) , str(self.connfd), str(self.gameFile)))
 
@@ -223,13 +215,30 @@ class Heartbeats(dict):
         self._lock.release()
         return silent
     
+    def getList(self):
+        """Return a list of clients with heartbeat older than CHECK_TIMEOUT"""
+        self._lock.acquire()
+        retorno = []
+        for (key, cliente) in self.items():
+            if cliente.estado == 'LOGADO':
+                est = "Disponivel"
+                retorno.append((cliente.username, est))
+            elif cliente.estado == 'ESPERANDO':
+                est = "Iniciando partida"
+                retorno.append((cliente.username, est))
+            elif cliente.estado == 'JOGANDO':
+                est = "Jogando"
+                retorno.append((cliente.username, est))
+        self._lock.release()
+        return retorno
+    
     def getClienteByName(self, name):
         """Retorna o cliente que tem atributo username = name ou None caso nao haja"""
         retorno = None
         self._lock.acquire()
         for (key, cliente) in self.items():
              if cliente.username == name:
-                retorno = (key, cliente)
+                retorno = cliente
         self._lock.release()
         return retorno
 
@@ -249,7 +258,7 @@ class ReceiverUDP(threading.Thread):
         while self.goOnEvent.isSet():
             try:
                 data, addr = self.recSocket.recvfrom(1024)
-                self.recSocket.sendto(data, addr)
+                self.recSocket.sendto(data, addr) #somente Eco -> tirar
                 if not self.heartbeats.has_key((addr[0], addr[1])):
                     self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
                     self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
@@ -257,7 +266,7 @@ class ReceiverUDP(threading.Thread):
                     self.heartbeats[(addr[0], addr[1])].ipTime = time.time()
                     self.heartbeats[(addr[0], addr[1])].getMsg(data, self.heartbeats)
                 else:
-                    self.recSocket.sendto("Calaboca e quita\n", addr)
+                    self.recSocket.sendto("Saindo. Por favor espere...\n", addr)
             except socket.timeout:
                 pass
         self.recSocket.close()
@@ -278,7 +287,7 @@ class ReceiverTCP(threading.Thread):
                 self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
             except socket.error, msg:
                 self.recSocket = None
-                sys.stderr.write("[ERROR] %s: Tentando novamente. Aguarde...\n" % msg[1])
+                sys.stderr.write("[ERRO] %s: Tentando novamente. Aguarde...\n" % msg[1])
                 time.sleep(1)
             
 
@@ -297,9 +306,9 @@ class ReceiverTCP(threading.Thread):
                         porta = addr[1], goOnEvent = flagTCP).start()
                     
                 else:
-                    print "ERRO: ip ja esta no Dic"
-                    cliSocket.sendall("ERRO: ip ja esta em uso\n")
-                    cliSocket.shutdown(1)
+                    print "[ERRO: CONNECT] ip+porta ja esta no Dic"
+                    cliSocket.sendall("[ERRO: CONNECT] ip+porta ja esta em uso\n")
+                    cliSocket.shutdown(socket.SHUT_RDWR)
                     cliSocket.close()
 
             except socket.timeout:
@@ -326,6 +335,13 @@ class ConnTCP(threading.Thread):
                 if data != '':
                     self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
                     self.recSocket.sendall('OK...' + data)
+                if not self.heartbeats[(self.ip, self.porta)].estado == 'EXITING': 
+                    self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
+                    self.heartbeats[(self.ip, self.porta)].getMsg(data, self.heartbeats)
+                else:
+                    self.recSocket.sendto("Saindo. Por favor espere...\n", addr)
+            except KeyError, msg:
+                sys.stderr.write("ERRO: ThreadTCPcli: KeyError = " + str(msg) + "\n")
             except socket.timeout:
                 pass
         print "Matou uma Thread TCP-CLI"
@@ -380,16 +396,19 @@ def main():
             print 'Silent clients UDP: %s' % silent
             for ip, cliente in silent:
                 print '=>Silencioso ip: %s' % str(ip)
-                cliente.connfd.sendto("Silencioso\n", (ip[0], ip[1]))
+                cliente.send("Silencioso\n")
                 del hbUDP[ip]
 
             #TCP - Beats#
             silent = hbTCP.getSilent()
             print 'Silent clientsTCP: %s' % silent
             for ip, cliente in silent:
-                cliente.connfd.send("Silencioso\n")
-                cliente.connfd.shutdown(1)
-                cliente.connfd.close()
+                try:
+                    cliente.send("Silencioso\n")
+                    cliente.connfd.shutdown(1)
+                    cliente.connfd.close()
+                except socket.error, msg:
+                    sys.stderr.write("ERRO-  %s: Nao foi possivel fechar o socket\n")
                 cliente.flagTCP.clear()
                 del hbTCP[ip]
             time.sleep(CHECK_PERIOD)
