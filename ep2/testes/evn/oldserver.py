@@ -91,9 +91,6 @@ def listPlayers(cliente, args, heartbeats):
     except IndexError, msg:
             cliente.send("[ERRO: LISTPLAYERS] Argumentos Insuficientes\n")
 
-
-
-
 def playacc_esperando(cliente, args, heartbeats):
     #esperando_jogo
     
@@ -109,9 +106,6 @@ def playacc_esperando(cliente, args, heartbeats):
             file.close()        
     except IndexError, msg:
         cliente.send("[ERRO: PLAYACC_ESPERANDO] Argumentos Insuficientes\n")
-
-           
-
 
 def playacc_logado(cliente, args, heartbeats):
     try:
@@ -137,10 +131,6 @@ def playacc_logado(cliente, args, heartbeats):
     except IndexError, msg:
         cliente.send("[ERRO: PLAYACC_LOGADO] Argumentos Insuficientes\n")             
 
-
-
-
-
 def exit(cliente, args, heartbeats):
     print "Encerrando sessao de %s:" % cliente.ip + str(cliente.porta) + " %s"% cliente.connType
     cliente.send("EXITING...\n")
@@ -164,6 +154,10 @@ def user(cliente, args, heartbeats):
 def abort_toConectado(cliente, args, heartbeats):
     cliente.username = None
     cliente.estado = "CONECTADO"
+
+def abort_esperando(cliente, args, heartbeats):
+    cliente.loginInvited = None
+    cliente.estado = "LOGADO"
 
 def newuser(cliente, args, heartbeats):
     #verificar se existe em um arquivo
