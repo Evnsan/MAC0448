@@ -22,8 +22,10 @@ def isPasswordCorrect(username, password):
         if username == temp[0]:
             print 'encontrou usuario e vai tentar ver se a senha esta correta'
             if pws[0] == password:
+                file.close()
                 return True
             else:
+                file.close()
                 return False
 
     file.close()
@@ -50,11 +52,6 @@ def doesUserExist(username):
     else:
         return False
     file.close()
-
-
-
-
-
 
 ###Maquina de estados para o cliente###
 def exit(cliente, args):
