@@ -10,7 +10,6 @@ import socket, threading, time, sys, select
 from pprint import pprint
 
 
-
 ###Funcoes auxiliares para as transicoes da maquina de estados
 
 def isPasswordCorrect(username, password):
@@ -68,8 +67,6 @@ def caniplay(cliente, args, heartbeats):
     except IOError, msg:
         sys.stderr.write("[ERRO CANIPLAY] %s"%msg +"\n")
 
-        
-
 def carregaTabuleiro(filename):
     try:
         f = open(filename, "r")
@@ -98,7 +95,6 @@ def realizaJogada(coordenada, tabuleiro, classe):
             sys.stderr.write("[ERRO REALIZAJOGADA] Cordenada %s Invalida"%coordenada)
     return None
         
-
 def play(cliente, args, heartbeats):
     try:
         cordenada = args[0]
@@ -126,10 +122,6 @@ def play(cliente, args, heartbeats):
     except IndexError, msg:
         cliente.send("[ERRO PLAY] Argumentos Insuficientes")
 
-
-
-
-
 def playinv(cliente, args, heartbeats):
     try:
         playerToInvite = args[0]
@@ -143,7 +135,6 @@ def playinv(cliente, args, heartbeats):
             cliente.send("[ERRO: PLAYINV] Usuario nao esta onlinen")
     except IndexError, msg:
         cliente.send("[ERRO: PLAYINV] Argumentos Insuficientes\n")
-
 
 def listingStates(estado):
         if estado == "JOGANDO":
@@ -250,10 +241,9 @@ def playacc_logado(cliente, args, heartbeats):
         cliente.send("[ERRO: PLAYACC_LOGADO] Argumentos Insuficientes\n")             
 
 def exit(cliente, args, heartbeats):
-    print "Encerrando sessao de %s:" % cliente.ip + str(cliente.porta) + " %s"% cliente.connType
-    cliente.send("EXITING...\n")
-    cliente.iptime = 0;
-    cliente.estado = 'EXITING'
+    ip = heartbeats.getKeyForCliente(cliente)
+    del heartbeats[ip]
+    cliente.exit()
 
 def user(cliente, args, heartbeats):
     #verificar se user existe
@@ -326,7 +316,6 @@ def checkpass(cliente, args, heartbeats):
     except IndexError, msg:
             cliente.send("[ERRO: PASS] Argumentos Insuficientes\n")
 
-
 ###Estados
 estados = {
     'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'EXIT': exit },
@@ -340,7 +329,7 @@ estados = {
 }
 
 
-###Classe com as informacoes da conexao###
+##Classe com as informacoes da conexao###
 class Cliente():
     def __init__(self, ip, porta, connType, flagTCP):
         self.ipTime = 0
@@ -366,6 +355,19 @@ class Cliente():
                 estados[self.estado][cmd](self, args, heartbeats)
             except KeyError:
                 self.send("COMMAND %s INVALID!\n" % cmd)
+    def exit(self):
+        print "Encerrando sessao de %s:" % self.ip + str(self.porta) + " %s"% self.connType
+        msg = "EXITING...\n"
+        if(self.connType == 'UDP'):
+            self.connfd.sendto(msg, (self.ip, self.porta))
+        elif(self.connType == 'TCP'):
+            self.connfd.sendall(msg)
+            try:
+                self.connfd.shutdown(socket.SHUT_RDWR)
+                self.connfd.close()
+            except socket.error, msg:
+                sys.stderr.write("ERRO-  %s: Nao foi possivel fechar o socket\n")
+        
     
     def send(self, msg):
         if(self.connType == 'UDP'):
@@ -433,6 +435,16 @@ class Heartbeats(dict):
         for (key, cliente) in self.items():
              if cliente.username == name:
                 retorno = cliente
+        self._lock.release()
+        return retorno
+    
+    def getKeyForCliente(self, entrada):
+        """Retorna a chave "(ip:porta)" do cliente"""
+        retorno = None
+        self._lock.acquire()
+        for (key, cliente) in self.items():
+             if cliente == entrada:
+                retorno = key
         self._lock.release()
         return retorno
 
@@ -540,6 +552,8 @@ class ConnTCP(threading.Thread):
                 #sys.stderr.write("ERRO: ThreadTCPcli: KeyError = " + str(msg) + "\n")
             except socket.timeout:
                 pass
+            except socket.error:
+                self.goOnEvent.clear()
         print "Matou uma Thread TCP-CLI"
 ###Thread do verificador de beats (feito no main)###
 def main():
