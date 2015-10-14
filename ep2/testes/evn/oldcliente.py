@@ -8,30 +8,65 @@ TIME_BEAT = 10;
 
 import socket, threading, time, sys, select
 
+##############################################################################
+def ok(link, msg):
+    print "[SERVER OK] " + str(msg)
+
+def cmdList(link, msg):
+    print "[SERVER CMDS] " + str(msg) 
+
+def ping(link, msg):
+    print "[SERVER PING] " + str(msg)
+
+def exit(link, msg):
+    link.goOnEvent.clear() 
+
+def invalidcmd(link, msg):
+    print "Comando invalido " + str(msg[0])
+
+def listStart(link, msg):
+    try:
+        if msg[0] == START:
+            link.estado = 'LISTANDO'
+    except IndexError, msg:
+        print "[LISTSTART] " + str(msg)
+
+def listStop(link, msg):
+    try:
+        if msg[0] == START:
+            link.estado = 'CONECTADO'
+    except IndexError, msg:
+        print "[LISTSTOP] " + str(msg)
+
+def listar(link, msg):
+    print str(msg[0]) + str(msg[1])
+
+##############################################################################
+
 ###Estado do Cliente##########################################################
 estados = {
-    'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'ABORT': cmdInvalido,
-                  'EXIT': exit, 'CMDLIST': cmdList, 'PING': ping},
+    'CONECTADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
+                  'PING': ping, 'INVALIDCMD': invalidcmd},
 
-    'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit,
-                'CMDLIST': cmdList, 'PING': ping},
+    'LOGANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping},
 
-    'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinv,
-               'PLAYDNY': playdny, 'LIST': listPlayers,'HALL': None,
-               'EXIT': exit, 'ABORT': abort_toConectado, 'CMDLIST': cmdList,
-               'PING': ping},
+    'LOGADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
+               'LIST': listStart},
+    
+    'LISTANDO': {'LL': listar, 'EXITING': exit, 'CMDLIST': cmdList,
+                 'PING': ping, 'LIST':listStop },
 
-    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'CMDLIST': cmdList,
-                    'ABORT': abort_toConectado, 'EXIT': exit, 'PING': ping}
+    'REGISTRANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
+                    'PING': ping},
 
-    'ESPERANDO': {'PLAYACC': playacc_esperando, 'ABORT': abort_esperando,
-                  'EXIT': exit, 'CMDLIST': cmdList, 'PING': ping},
+    'ESPERANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
+                  'PING': ping},
 
-    'JOGANDO_WAIT': {'ABORT': None, 'BOARD': board, 'EXIT': exit ,
-                     'CANIPLAY': caniplay, 'CMDLIST': cmdList, 'PING': ping},
+    'JOGANDO_WAIT': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
+                     'PING': ping},
 
-    'JOGANDO_PLAY': {'ABORT': None, 'BOARD': board, 'EXIT': exit,
-                     'PLAY': play, 'CMDLIST': cmdList, 'PING': ping},
+    'JOGANDO_PLAY': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
+                     'PING': ping},
 }
 ##############################################################################
 
@@ -94,7 +129,8 @@ class Link():
             try:
                 estados[self.estado][cmd](self, args)
             except KeyError, erro:
-               print "[LINK GETMSG] " + erro  
+               print "[LINK GETMSG] " + str(erro)  
+               print "[LINK GETMSG] " + str(cmd) + " " + str(args)  
 ##############################################################################
 
 ###TrheadUDP##################################################################
@@ -157,7 +193,7 @@ class ThreadTCP(threading.Thread):
 ###Main#######################################################################
 def main():
     if(len(sys.argv) < 3) :
-        print "Modo de uso: ./oldcliente.py HOSTNAME TCP|UDP\n"
+        print "Modo de uso: ./oldcliente.py HOSTNAME TCP|UDP [PORTA]\n"
         sys.exit(0)
     ##declaracoes inicias##
     goOnEvent = threading.Event()
@@ -167,8 +203,12 @@ def main():
     protocolo = sys.argv[2]
     ####UDP####
     if(protocolo == 'UDP' or protocolo == 'udp' or protocolo == 'Udp'):
+        try:
+            porta = int(sys.argv[3])
+        except IndexError:
+            porta = UDP_PORTA
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.bind(('', UDP_PORTA))
+        s.bind(('', porta))
         link = Link(socket = s, ip = ipServer, porta = SERVER_UDP_PORTA,
                     protocolo = 'UDP', goOnEvent = goOnEvent)
         link.send("PING\n")
@@ -189,6 +229,10 @@ def main():
     ###########
     ####TCP####             
     elif(protocolo == 'TCP' or protocolo == 'tcp' or protocolo == 'Tdp'):
+        try:
+            porta = int(sys.argv[3])
+        except IndexError:
+            porta = UDP_PORTA
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             s.connect((ipServer, SERVER_TCP_PORTA))

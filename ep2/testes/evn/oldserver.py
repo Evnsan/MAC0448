@@ -150,7 +150,7 @@ def listPlayers(cliente, args, heartbeats):
         alvo = heartbeats.getList()
         cliente.send("LIST START\n")
         for username, est in alvo:
-            cliente.send(username + " " + est + "\n")
+            cliente.send("LL " + username + " " + est + "\n")
         cliente.send("LIST END\n")
     except IndexError, msg:
             cliente.send("[ERRO: LISTPLAYERS] Argumentos Insuficientes\n")
@@ -331,7 +331,7 @@ def cmdInvalido(cliente, args, heartbeats):
     cliente.send("[ERRO CMDINVALIDO] Comando invalido para o estado %s\n"%cliente.estado)
 
 def cmdList(cliente, args, heartbeats):
-    msg0 = "Lista de Comandos no estado %s: "%cliente.estado
+    msg0 = "CMDLIST %s: "%cliente.estado
     msg = {
         'CONECTADO':  "USER, NEWUSER, CMDLIST, EXIT\n",
         'LOGANDO': "PASS, ABORT, CMDLIST, EXIT\n",
@@ -396,7 +396,7 @@ class Cliente():
             try:
                 estados[self.estado][cmd](self, args, heartbeats)
             except KeyError:
-                self.send("COMMAND %s INVALID!\n" % cmd)
+                self.send("INVALIDCMD %s\n" % cmd)
 
     def exit(self):
         print "Encerrando sessao de %s:" % self.ip + str(self.porta) + " %s"% self.connType
