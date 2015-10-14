@@ -25,11 +25,9 @@ class ReceiverUDP(threading.Thread):
         self.recSocket.close()
 
 def getLine():
-    i, o, e = select.select([sys.stdin], [], [], 0.0001)
-    for s in i:
-        if s == sys.stdin:
-            linha = sys.stdin.readline()
-            return linha
+    if select.select([sys.stdin,], [], [], 0.0)[0]:
+        linha = raw_input() 
+        return linha
     return None 
 
 def main():
@@ -44,11 +42,13 @@ def main():
     s.sendto("USER evn", (socket.gethostbyname(host), SERVER_PORTA))
     while True:
         try:
-            linha = getLine()
-            if linha != None:
-                s.sendto(linha, ip, SERVER_PORTA)
-            data, addr = s.recvfrom(1024)
-            print "receive message:", data
+            if select.select([sys.stdin,], [], [], 0.0)[0]:
+                linha = raw_input() 
+                s.sendto(linha,( ip, SERVER_PORTA))
+            if select.select([s,], [], [], 0.0)[0]:
+                data, addr = s.recvfrom(1024)
+                print data
+#time.sleep(1)
         except socket.error, msg:
             print "[ERRO] " + msg
 
