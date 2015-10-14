@@ -2,8 +2,8 @@
 
 # Filename: OldServer.py
 
-UDP_PORT = 43278; CHECK_PERIOD = 30; CHECK_TIMEOUT = 25;
-TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
+UDP_PORT = 8888; CHECK_PERIOD = 30; CHECK_TIMEOUT = 25;
+TCP_PORT = 8888; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time, sys, select
 from pprint import pprint
