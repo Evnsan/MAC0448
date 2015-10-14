@@ -342,29 +342,32 @@ def cmdList(cliente, args, heartbeats):
         'JOGANDO_PLAY': "ABORT, BOARD, PLAY, CMDLIST, EXIT\n" }
     cliente.send(msg0 + msg[cliente.estado])
 
+def ping(cliente, args, heartbeats):
+    pass
+
 ###Estados
 estados = {
     'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'ABORT': cmdInvalido, 'EXIT': exit,
-                  'CMDLIST': cmdList},
+                  'CMDLIST': cmdList, 'PING': ping},
 
     'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit,
-                'CMDLIST': cmdList},
+                'CMDLIST': cmdList, 'PING': ping},
 
     'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinv, 'PLAYDNY': playdny, 
                'LIST': listPlayers,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado,
-               'CMDLIST': cmdList},
+               'CMDLIST': cmdList, 'PING': ping},
 
     'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado,
-               'EXIT': exit, 'CMDLIST': cmdList},
+               'EXIT': exit, 'CMDLIST': cmdList, 'PING': ping},
 
     'ESPERANDO': {'PLAYACC': playacc_esperando, 'ABORT': abort_esperando, 'EXIT': exit,
-               'CMDLIST': cmdList},
+               'CMDLIST': cmdList, 'PING': ping},
 
     'JOGANDO_WAIT': {'ABORT': None, 'BOARD': board, 'EXIT': exit , 'CANIPLAY': caniplay,
-               'CMDLIST': cmdList},
+               'CMDLIST': cmdList, 'PING': ping},
 
     'JOGANDO_PLAY': {'ABORT': None, 'BOARD': board, 'EXIT': exit, 'PLAY': play,
-               'CMDLIST': cmdList},
+               'CMDLIST': cmdList, 'PING': ping},
 }
 
 
@@ -504,7 +507,6 @@ class ReceiverUDP(threading.Thread):
             try:
                 data, addr = self.recSocket.recvfrom(1024)
                 if data != '':
-                    self.recSocket.sendto(data, addr) #somente Eco -> tirar
                     if not self.heartbeats.has_key((addr[0], addr[1])):
                         self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
                         self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
@@ -529,6 +531,7 @@ class ReceiverTCP(threading.Thread):
             try:
                 self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.recSocket.settimeout(CHECK_TIMEOUT)
+                self.recSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.recSocket.bind(('', TCP_PORT))
                 self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
             except socket.error, msg:
@@ -580,7 +583,6 @@ class ConnTCP(threading.Thread):
                 data = self.recSocket.recv(1024)
                 if data != '':
                     self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
-                    self.recSocket.sendall('OK...' + data)
                 if not self.heartbeats[(self.ip, self.porta)].estado == 'EXITING': 
                     self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
                     self.heartbeats[(self.ip, self.porta)].getMsg(data, self.heartbeats)
