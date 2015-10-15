@@ -11,6 +11,13 @@ from pprint import pprint
 
 ###Funcoes auxiliares para as transicoes da maquina de estados
 
+def isCoordenadaValid(coordenada):
+    if coordenada.isdigit() and len(coordenada) == 1:
+        return True
+    else:
+        return False
+
+
 def geraTabuleiroFinal(tab, winnerLine):
     teste = tab.split("\n")
     teste = teste[0].split(" ")
@@ -116,10 +123,10 @@ def caniplay(cliente, args, heartbeats):
             winner = playerTurno[1]
             cliente.send(carregaTabuleiro(cliente.gamefilename))
             if winner == '0':
-                cliente.send("O jogo empatou\n")
+                cliente.send("PLAY DRAW\n")
 
             else:
-                cliente.send("Voce perdeu....  time %s venceu!!\n"%winner)
+                cliente.send("PLAY LOOSER\n"%winner)
                 cliente.estado = "LOGADO"
                 cliente.adversario = None
                 cliente.gamefilename = None
@@ -153,40 +160,44 @@ def realizaJogada(coordenada, tabuleiro, classe):
         else:
             return None
     except IndexError, msg:
-            sys.stderr.write("[ERRO REALIZAJOGADA] Cordenada %s Invalida\n"%coordenada)
+            sys.stderr.write("[ERRO REALIZAJOGADA] coordenada %s Invalida\n"%coordenada)
     return None
         
 def play(cliente, args, heartbeats):
     try:
-        cordenada = args[0]
-        tabuleiro = carregaTabuleiro(cliente.gamefilename)#verifica se jogada eh valida
-        novoTabuleiro = realizaJogada(cordenada, tabuleiro, cliente.gameclasse)
-        if novoTabuleiro:
-            winner, winnerLine = whoWon(novoTabuleiro)
-            if winner == '0':
-                f = open(cliente.gamefilename,"w")
-                f.write(cliente.adversario + '\n')
-                f.write(novoTabuleiro + '\n')
-                cliente.send("BOARD" + novoTabuleiro + '\n')
-                cliente.estado = "JOGANDO_WAIT"
+        coordenada = args[0]
+        if isCoordenadaValid(coordenada):
+            tabuleiro = carregaTabuleiro(cliente.gamefilename)#verifica se jogada eh valida
+            novoTabuleiro = realizaJogada(coordenada, tabuleiro, cliente.gameclasse)
+            if novoTabuleiro:
+                winner, winnerLine = whoWon(novoTabuleiro)
+                if winner == '0':
+                    f = open(cliente.gamefilename,"w")
+                    f.write(cliente.adversario + '\n')
+                    f.write(novoTabuleiro + '\n')
+                    cliente.send("BOARD" + novoTabuleiro + '\n')
+                    cliente.estado = "JOGANDO_WAIT"
+                else:
+                    f = open(cliente.gamefilename,"w")
+                    f.write('#FINALIZADO ' + winner +'\n')
+                    novoTabuleiro = geraTabuleiroFinal(novoTabuleiro, winnerLine)
+                    f.write(novoTabuleiro + '\n')
+                    cliente.send("BOARD" + novoTabuleiro + '\n')
+                    if int(winner) == cliente.gameclasse:
+                        cliente.send("PLAY WINNER\n")
+                    cliente.estado = "LOGADO"
+                    cliente.adversario = None
+                    cliente.gamefilename = None
+                    cliente.gameclasse = None
+                      
             else:
-                f = open(cliente.gamefilename,"w")
-                f.write('#FINALIZADO ' + winner +'\n')
-                novoTabuleiro = geraTabuleiroFinal(novoTabuleiro, winnerLine)
-                f.write(novoTabuleiro + '\n')
-                cliente.send("BOARD" + novoTabuleiro + '\n')
-                if int(winner) == cliente.gameclasse:
-                    cliente.send("YOU WON, GRATZ!\n")
-                cliente.estado = "LOGADO"
-                cliente.adversario = None
-                cliente.gamefilename = None
-                cliente.gameclasse = None
-                  
+                cliente.send("[ERRO PLAY] coordenada %s Invalida\n"%coordenada)
         else:
-            cliente.send("[ERRO PLAY] Cordenada %s Invalida\n"%cordenada)
+            cliente.send("[ERRO PLAY] coordenada %s Invalida\n"%coordenada)
 
     except IndexError, msg:
         cliente.send("[ERRO PLAY] Argumentos Insuficientes\n")
+
 
 def playinv(cliente, args, heartbeats):
     try:
