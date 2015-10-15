@@ -88,6 +88,10 @@ def caniplay(link, msg):
     try:
         if msg[0] == 'NO':
             print "ainda e vez do seu adversario"
+        if msg[0] == 'YES':
+            print "voce ja pode jogar"
+    except IndexError, erro:
+        print "[CANIPLAY] " + str(erro)
 ##############################################################################
 
 ###Estado do Cliente##########################################################
