@@ -53,12 +53,27 @@ def board(link, msg):
 
 def playinv(link, msg):
     try:
-        print ("O jogador " + msg[0] + " esta lhe convidadndo" + 
-                " para uma partidai.")
+        print ("O jogador " + msg[0] + " esta lhe convidando" + 
+                " para uma partida.")
         print "  Para aceitar digitei: PLAYACC " + msg[0] + " " + msg[1]
         print "  Para recusar digite: PLAYDNY " + msg[0]
     except IndexError, erro:
         print "[PLAYINV] " + str(erro) 
+
+def toEsperando(link, msg):
+    link.estado = 'ESPERANDO' 
+
+def playacc(link, msg):
+    try:
+        print "O jogador " + msg[0] + "aceitou seu convite"
+        link.send("PLAYACC " + msg[0] + " " + msg[1]
+        link.estado = 'JOGANDO_WAIT'
+    except IndexError, erro:
+        print "[PLAYACC] " + str(erro)
+
+def playdny(link, msg):
+    print "O jogador " + msg[0] + "rejeitou seu convite"
+    link.estado = 'LOGADO'
 
 ##############################################################################
 
@@ -69,14 +84,16 @@ estados = {
                   'PLAYINV': playinv},
 
     'LOGADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
-               'LIST': listStart, 'INVALIDCMD': invalidcmd },
+               'LIST': listStart, 'INVALIDCMD': invalidcmd,
+               'ESPERANDO': toEsperando },
     
     'LISTANDO': {'LL': listar, 'EXITING': exit, 'CMDLIST': cmdList,
                  'PING': ping, 'LIST':listStop, 'INVALIDCMD': invalidcmd,
                  'PLAYINV': playinv },
 
     'ESPERANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                  'PING': ping, 'INVALIDCMD': invalidcmd },
+                  'PING': ping, 'INVALIDCMD': invalidcmd ,
+                  'PLAYACC': playacc, 'PLAYDNY': playdny },
 
     'JOGANDO_WAIT': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
                      'PING': ping, 'INVALIDCMD': invalidcmd,
