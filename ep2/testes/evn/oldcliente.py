@@ -66,7 +66,7 @@ def toEsperando(link, msg):
 def playacc(link, msg):
     try:
         print "O jogador " + msg[0] + "aceitou seu convite"
-        link.send("PLAYACC " + msg[0] + " " + msg[1]
+        link.send("PLAYACC " + msg[0] + " " + msg[1])
         link.estado = 'JOGANDO_WAIT'
     except IndexError, erro:
         print "[PLAYACC] " + str(erro)
