@@ -2,7 +2,7 @@
 
 # Filename: OldServer.py
 
-UDP_PORT = 8888; CHECK_PERIOD = 15; CHECK_TIMEOUT = 12;
+UDP_PORT = 8888; CHECK_PERIOD = 30; CHECK_TIMEOUT = 25;
 TCP_PORT = 8888; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time, sys, select
@@ -123,10 +123,10 @@ def caniplay(cliente, args, heartbeats):
             winner = playerTurno[1]
             cliente.send(carregaTabuleiro(cliente.gamefilename))
             if winner == '0':
-                cliente.send("PLAYDRW\n") # empate
+                cliente.send("PLAY DRAW\n")
 
             else:
-                cliente.send("PLAYLOS\n")
+                cliente.send("PLAY LOOSER\n"%winner)
                 cliente.estado = "LOGADO"
                 cliente.adversario = None
                 cliente.gamefilename = None
@@ -184,7 +184,7 @@ def play(cliente, args, heartbeats):
                     f.write(novoTabuleiro + '\n')
                     cliente.send("BOARD" + novoTabuleiro + '\n')
                     if int(winner) == cliente.gameclasse:
-                        cliente.send("PLAYWIN\n")
+                        cliente.send("PLAY WINNER\n")
                     cliente.estado = "LOGADO"
                     cliente.adversario = None
                     cliente.gamefilename = None
@@ -340,18 +340,10 @@ def user(cliente, args, heartbeats):
 def abort_toConectado(cliente, args, heartbeats):
     cliente.username = None
     cliente.estado = "CONECTADO"
-    cliente.send("ABORT CONECTADO")
 
 def abort_esperando(cliente, args, heartbeats):
     cliente.adversario = None
     cliente.estado = "LOGADO"
-    cliente.send("ABORT LOGADO")
-
-def abort_jogando(cliente, args, heartbeats):
-    #Escrever rec no arquivo do cliente se o jogo nao acabou
-    cliente.adversario = None
-    cliente.estado = 'LOGADO'
-    cliente.send("ABORT LOGADO")
 
 def playdny(cliente, args, heartbeats):
     try:
@@ -429,36 +421,32 @@ def cmdList(cliente, args, heartbeats):
         'JOGANDO_PLAY': "ABORT, BOARD, PLAY, CMDLIST, EXIT\n" }
     cliente.send(msg0 + msg[cliente.estado])
 
-def getestd(cliente, args, heartbeats):
-    print "vai enviar estado para o cliente" 
-    cliente.send("GETESTD " + cliente.estado)
-
 def ping(cliente, args, heartbeats):
     pass
 
 ###Estados
 estados = {
     'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'ABORT': cmdInvalido, 'EXIT': exit,
-                  'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
+                  'CMDLIST': cmdList, 'PING': ping},
 
     'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit,
-                'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
+                'CMDLIST': cmdList, 'PING': ping},
 
     'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinv, 'PLAYDNY': playdny, 
                'LIST': listPlayers,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado,
-               'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
+               'CMDLIST': cmdList, 'PING': ping},
 
     'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado,
-               'EXIT': exit, 'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
+               'EXIT': exit, 'CMDLIST': cmdList, 'PING': ping},
 
     'ESPERANDO': {'PLAYACC': playacc_esperando, 'ABORT': abort_esperando, 'EXIT': exit,
-               'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
+               'CMDLIST': cmdList, 'PING': ping},
 
-    'JOGANDO_WAIT': {'ABORT': abort_jogando, 'BOARD': board, 'EXIT': exit , 'CANIPLAY': caniplay,
-               'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
+    'JOGANDO_WAIT': {'ABORT': None, 'BOARD': board, 'EXIT': exit , 'CANIPLAY': caniplay,
+               'CMDLIST': cmdList, 'PING': ping},
 
-    'JOGANDO_PLAY': {'ABORT': abort_jogando, 'BOARD': board, 'EXIT': exit, 'PLAY': play,
-               'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
+    'JOGANDO_PLAY': {'ABORT': None, 'BOARD': board, 'EXIT': exit, 'PLAY': play,
+               'CMDLIST': cmdList, 'PING': ping},
 }
 
 
@@ -479,21 +467,19 @@ class Cliente():
     
     def getMsg(self, msg, heartbeats):
         global estados
-        linhas = msg.split('\n', 4)
-        for lin in linhas:
-            msg = lin.split(' ', 4)
-            if len(msg) > 0 and msg != ['']:
-                cmd = msg[0]
-                del msg[0]
-                args = msg
-                try:
-                    estados[self.estado][cmd](self, args, heartbeats)
-                except KeyError:
-                    self.send("INVALIDCMD %s\n" % cmd)
+        msg = msg.split()
+        if len(msg) > 0:
+            cmd = msg[0]
+            del msg[0]
+            args = msg
+            try:
+                estados[self.estado][cmd](self, args, heartbeats)
+            except KeyError:
+                self.send("INVALIDCMD %s\n" % cmd)
 
     def exit(self):
         print "Encerrando sessao de %s:" % self.ip + str(self.porta) + " %s"% self.connType
-        msg = "EXITING\n"
+        msg = "EXITING...\n"
         if(self.connType == 'UDP'):
             self.connfd.sendto(msg, (self.ip, self.porta))
         elif(self.connType == 'TCP'):
@@ -674,7 +660,6 @@ class ConnTCP(threading.Thread):
         while self.goOnEvent.isSet():
             try:
                 data = self.recSocket.recv(1024)
-#self.recSocket.sendall(data) #eco - apagar
                 if data != '':
                     self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
                 if not self.heartbeats[(self.ip, self.porta)].estado == 'EXITING': 
@@ -743,7 +728,7 @@ def main():
             print 'Silent clients UDP: %s' % silent
             for ip, cliente in silent:
                 print '=>Silencioso ip: %s' % str(ip)
-                cliente.send("EXITING\n")
+                cliente.send("Silencioso\n")
                 del hbUDP[ip]
 
             #TCP - Beats#
@@ -752,11 +737,11 @@ def main():
             for ip, cliente in silent:
                 cliente.flagTCP.clear()
                 try:
-                    cliente.send("EXITING\n")
+                    cliente.send("Silencioso\n")
                     cliente.connfd.shutdown(socket.SHUT_RDWR)
                     cliente.connfd.close()
                 except socket.error, msg:
-                    sys.stderr.write("[MAIN-TCPBEATS] " + str(msg))
+                    sys.stderr.write("ERRO-  %s: Nao foi possivel fechar o socket\n")
                 del hbTCP[ip]
             time.sleep(CHECK_PERIOD)
     except KeyboardInterrupt:
@@ -764,10 +749,6 @@ def main():
         receiverUDPEvent.clear()
         receiverTCPEvent.clear()
         for ip in hbTCP:
-            try:
-                hbTCP[ip].send('EXITING')
-            except socket.error, erro:
-                print "[MAIN - Existing ] " + str(erro)
             hbTCP[ip].flagTCP.clear()
             hbTCP[ip].connfd.close()
         receiverUDP.join()
