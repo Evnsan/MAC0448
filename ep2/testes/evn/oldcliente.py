@@ -74,8 +74,11 @@ def toEsperando(link, msg):
 def playacc_esperando(link, msg):
     try:
         print "O jogador " + msg[0] + " aceitou seu convite"
+        print "PLAYACC " + msg[0] + " " + msg[1]
         link.send("PLAYACC " + msg[0] + " " + msg[1])
+        print "PLAYACC " + msg[0] + " " + msg[1]
         link.estado = 'JOGANDO_S'
+        print "Passou limpo"
     except IndexError, erro:
         print "[PLAYACC] " + str(erro)
 
@@ -100,9 +103,13 @@ def playacc_logado(link, msg):
 def abort_toLogado(link, msg):
     try:
         link.estado = 'LOGADO'
-        link.closeChat()
+        if link.chatSock != None:
+            link.closeChat()
     except socket.error, erro:
         print "[ABORT] " + str(erro)
+
+def abort_toConectado(link, msg):
+        link.estado = 'CONECTADO'
 
 def playdny(link, msg):
     try:
@@ -152,6 +159,14 @@ def getestd(link, msg):
     except IndexError, erro:
         print "[GETESTD] " + str(erro)
 
+def chatack_jogando_s(link, msg):
+    print "Chegou confirmacao de chat abert do adversario"
+    link.estado = 'JOGANDO'
+
+def chatack_esperando(link, msg):
+    print "Chegou confirmacao de chat aberto do adversario"
+    link.estado = 'CHATACK'
+
 ##############################################################################
 
 ###Estado do Cliente##########################################################
@@ -163,7 +178,8 @@ estados = {
     'LOGADO': {'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
                'LIST': listStart, 'INVALIDCMD': invalidcmd,
                'ESPERANDO': toEsperando, 'PLAYINV': playinv,
-               'GETESTD': getestd, 'PLAYACC': playacc_logado},
+               'GETESTD': getestd, 'PLAYACC': playacc_logado,
+               'ABORT': abort_toConectado },
     
     'LISTANDO': {'LL': listar, 'EXITING': exit, 'CMDLIST': cmdList,
                  'PING': ping, 'LIST':listStop, 'INVALIDCMD': invalidcmd,
@@ -172,7 +188,8 @@ estados = {
     'ESPERANDO': {'EXITING': exit, 'CMDLIST': cmdList,
                   'PING': ping, 'INVALIDCMD': invalidcmd ,
                   'PLAYACC': playacc_esperando, 'PLAYDNY': playdny,
-                  'GETESTD': getestd, 'ABORT': abort_toLogado },
+                  'GETESTD': getestd, 'ABORT': abort_toLogado,
+                  'CHATACK': chatack_esperando},
 
     'JOGANDO': {'EXITING': exit, 'CMDLIST': cmdList,
                 'PING': ping, 'INVALIDCMD': invalidcmd, 'BOARD':board,
@@ -224,6 +241,7 @@ class Link():
                     linha, addr = self.socket.recvfrom(1024)
                 elif self.protocolo == 'TCP':
                     linha = self.socket.recv(1024)
+                print "[LINK.GETLINE] " + str(linha)
                 self.getMsg(linha)
             self._lock.release()
         return linha 
@@ -240,7 +258,7 @@ class Link():
                     print "[LINK.SEND] " + str(erro)
                     print "A Conexao falhou, encerrando aplicativo"
                     self.goOnEvent.clear()
-            self._lock.release()
+        self._lock.release()
 
     def close(self):
         if self.protocolo == 'UDP':
@@ -276,7 +294,7 @@ class Link():
         self._lock.acquire()
         if self.goOnEvent.isSet():
             if self.protocolo == 'UDP':
-                self.chatSock.sendto(msg, (self.ip, self.porta))
+                self.chatSock.sendto(msg, (self.chatIp, self.chatPorta))
             elif self.protocolo == 'TCP':
                 self.chatSock.sendall(msg)
             self._lock.release()
@@ -284,6 +302,7 @@ class Link():
     def closeChat(self):
         if self.protocolo == 'UDP':
             self.chatSock.close()
+            self.chatSock = None
         elif self.protocolo == 'TCP':
 #            print "vai fechar"
 #            self.chatSock.shutdown(socket.SHUT_RDWR)
@@ -332,8 +351,8 @@ class ThreadUDP(threading.Thread):
                     elif len(cmd) > 0 and cmd[0] == ':':
                         linha = linha[1:]
                         self.link.send(linha)
-                    elif (self.link.estado == 'CHATACK'
-                            or self.link.estado == 'JOGANDO'):
+                    elif (self.link.estado == 'CHATACK' or
+                            self.link.estado == 'JOGANDO'):
                          self.link.sendChat(linha)
                     else:
                         print ("==>Voce nao pode mandar mensagens, "+
@@ -342,11 +361,11 @@ class ThreadUDP(threading.Thread):
                               + " adicione o simbolo de scape \':\'")
                         print "===>i.e.   :CMDLIST"
                 
-                linha = self.link.getLine()
-                if linha != None: 
-                    linha = linha.split('\n', 2)[0]
-# print linha
-                #time.sleep(1)
+                self.link.getLine()
+                if (self.link.estado == 'CHATACK' or
+                        self.link.estado == 'JOGANDO'):
+                    #self.link.getChatLine()
+                    pass
             except socket.error, msg:
                 print "[THREADUDP] " + msg
                 pass
