@@ -236,19 +236,16 @@ class Link():
 
     def getMsg(self, msg):
         global estados
-        linhas = msg.split('\n', 4)
-        for lin in linhas:
-            if lin != [''] and lin != '' and lin != '':
-                msg = lin.split(' ', 4)
-                if len(msg) > 0:
-                    cmd = msg[0]
-                    del msg[0]
-                    args = msg
-                    try:
-                        estados[self.estado][cmd](self, args)
-                    except KeyError, erro:
-                        print "[LINK GETMSG] " + str(erro)  
-                        print "[LINK GETMSG] " + str(cmd) + " " + str(args)  
+        msg = msg.split()
+        if len(msg) > 0:
+            cmd = msg[0]
+            del msg[0]
+            args = msg
+            try:
+                estados[self.estado][cmd](self, args)
+            except KeyError, erro:
+               print "[LINK GETMSG] " + str(erro)  
+               print "[LINK GETMSG] " + str(cmd) + " " + str(args)  
 ##############################################################################
 
 ###TrheadUDP##################################################################
@@ -271,20 +268,10 @@ class ThreadUDP(threading.Thread):
                 if linha != None:
                     cmd = linha.split(" ", 1)
                     cmd = cmd[0]
-                    if len(cmd) > 0 and cmd[0] == '+':
-                        print self.link.estado
-                    elif len(cmd) > 0 and cmd[0] == ':':
-                        linha = linha[1:]
-                        self.link.send(linha)
-                    elif self.link.chatSock != None:
+                    if cmd == 'MSG' and self.link.chatSock != None:
                          self.link.sendChat(linha)
                     else:
-                        print ("==>Voce nao pode mandar mensagens, "+
-                              "pois nao esta em um jogo")
-                        print ("==>Para utilizar um comando CMD para o server,"
-                              + " adicione o simbolo de scape \':\'")
-                        print "===>i.e.   :CMDLIST"
-                
+                        self.link.send(linha)
                 linha = self.link.getLine()
                 if linha != None: 
                     linha = linha.split('\n', 2)[0]
@@ -316,9 +303,7 @@ class ThreadTCP(threading.Thread):
                 if linha != None:
                     cmd = linha.split(" ", 1)
                     cmd = cmd[0]
-                    if len(cmd) > 0 and cmd[0] == '+':
-                        print self.link.estado
-                    elif len(cmd) > 0 and cmd[0] == ':':
+                    if cmd[0] == ':':
                         linha = linha[1:]
                         self.link.send(linha)
                     elif self.link.chatSock != None:
@@ -332,6 +317,7 @@ class ThreadTCP(threading.Thread):
                 linha = self.link.getLine()
                 if linha != None: 
                     linha = linha.split('\n', 2)[0]
+                   #print linha
                 #time.sleep(1)
             except socket.error, msg:
                 print "[THREADTCP] " + msg
