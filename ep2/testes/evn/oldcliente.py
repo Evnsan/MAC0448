@@ -61,6 +61,7 @@ def playinv(link, msg):
         print "[PLAYINV] " + str(erro) 
 
 def toEsperando(link, msg):
+    print "Voce convidou o jogador "
     link.estado = 'ESPERANDO' 
 
 def playacc(link, msg):
@@ -85,7 +86,7 @@ estados = {
 
     'LOGADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
                'LIST': listStart, 'INVALIDCMD': invalidcmd,
-               'ESPERANDO': toEsperando },
+               'ESPERANDO': toEsperando, 'PLAYINV': playinv },
     
     'LISTANDO': {'LL': listar, 'EXITING': exit, 'CMDLIST': cmdList,
                  'PING': ping, 'LIST':listStop, 'INVALIDCMD': invalidcmd,
