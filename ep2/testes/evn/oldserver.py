@@ -10,6 +10,26 @@ from pprint import pprint
 
 
 ###Funcoes auxiliares para as transicoes da maquina de estados
+def verificaEmpate(tab):
+    for t in tab:
+        if t is '0':
+            return False
+    return True
+
+def updatePontuacao(pontosUltimaPartida, cliente):
+    try:
+        f = open(cliente.username, "r")
+        pontos = f.readline()
+        f.close()
+    except IOError, msg:
+        print "[WARNING UPDATEPONTUACAO] Cliente nao tinha file\n"
+    f = open(cliente.username, "w")
+    if pontos:
+        pontos = int(pontos) + pontosUltimaPartida
+        f.write(str(pontos) + '\n')
+    else:
+        f.write(pontosUltimaPartida + '\n')
+
 
 def isCoordenadaValid(coordenada):
     if coordenada.isdigit() and len(coordenada) == 1:
@@ -65,7 +85,9 @@ def whoWon(tabuleiro):
         if(winner > 0):
             linhaVencedora = g
             return winner, linhaVencedora
-    return ('0',[]) 
+    if verificaEmpate(tab):
+        return ('0',[])
+    return ('-1',[]) 
 
 
 def isPasswordCorrect(username, password):
@@ -123,10 +145,16 @@ def caniplay(cliente, args, heartbeats):
             winner = playerTurno[1]
             cliente.send(carregaTabuleiro(cliente.gamefilename))
             if winner == '0':
-                cliente.send("PLAYDRW\n") # empate
+                updatePontuacao(1,cliente)
+                cliente.estado = "LOGADO"
+                cliente.adversario = None
+                cliente.gamefilename = None
+                cliente.gameclasse = None
+                cliente.send("PLAYDRW\n")
 
             else:
                 cliente.send("PLAYLOS\n")
+                updatePontuacao(0,cliente)
                 cliente.estado = "LOGADO"
                 cliente.adversario = None
                 cliente.gamefilename = None
@@ -171,20 +199,33 @@ def play(cliente, args, heartbeats):
             novoTabuleiro = realizaJogada(coordenada, tabuleiro, cliente.gameclasse)
             if novoTabuleiro:
                 winner, winnerLine = whoWon(novoTabuleiro)
-                if winner == '0':
+                if winner == '-1':
                     f = open(cliente.gamefilename,"w")
                     f.write(cliente.adversario + '\n')
                     f.write(novoTabuleiro + '\n')
-                    cliente.send("BOARD" + novoTabuleiro + '\n')
+                    cliente.send("BOARD " + novoTabuleiro + '\n')
                     cliente.estado = "JOGANDO_WAIT"
+                elif winner == '0':
+                    f = open(cliente.gamefilename,"w")
+                    f.write('#FINALIZADO 0\n')
+                    f.write(novoTabuleiro + '\n')
+                    cliente.send("BOARD " + novoTabuleiro + '\n')
+                    cliente.send("PLAYTIE\n")
+                    updatePontuacao(1,cliente)
+                    cliente.estado = "LOGADO"
+                    cliente.adversario = None
+                    cliente.gamefilename = None
+                    cliente.gameclasse = None
+
                 else:
                     f = open(cliente.gamefilename,"w")
                     f.write('#FINALIZADO ' + winner +'\n')
                     novoTabuleiro = geraTabuleiroFinal(novoTabuleiro, winnerLine)
                     f.write(novoTabuleiro + '\n')
-                    cliente.send("BOARD" + novoTabuleiro + '\n')
+                    cliente.send("BOARD " + novoTabuleiro + '\n')
                     if int(winner) == cliente.gameclasse:
                         cliente.send("PLAYWIN\n")
+                        updatePontuacao(2,cliente)
                     cliente.estado = "LOGADO"
                     cliente.adversario = None
                     cliente.gamefilename = None
@@ -205,9 +246,14 @@ def playinv(cliente, args, heartbeats):
         chatporta = args[1]
         clienteToInvite = heartbeats.getClienteByName(playerToInvite)
         if clienteToInvite:
-            clienteToInvite.send("PLAYINV "+ cliente.username + " " + chatporta + "\n")
-            cliente.estado = "ESPERANDO"
-            cliente.adversario = clienteToInvite.username
+            if clienteToInvite.username != cliente.username:
+                clienteToInvite.send("PLAYINV "+ cliente.username + " " + chatporta + "\n")
+                cliente.estado = "ESPERANDO"
+                cliente.adversario = clienteToInvite.username
+                cliente.send("ESPERANDO " + playerToInvite+"\n")
+            else:
+                cliente.send("[ERRO: PLAYINV] Impossivel se convidar para uma partida\n")
+
         else:
             cliente.send("[ERRO: PLAYINV] Usuario nao esta onlinen\n")
     except IndexError, msg:
