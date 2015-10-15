@@ -303,7 +303,7 @@ class ThreadTCP(threading.Thread):
                 if linha != None:
                     cmd = linha.split(" ", 1)
                     cmd = cmd[0]
-                    if cmd[0] == ':':
+                    if len(cmd) > 0 and cmd[0] == ':':
                         linha = linha[1:]
                         self.link.send(linha)
                     elif self.link.chatSock != None:
