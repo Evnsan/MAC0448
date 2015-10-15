@@ -83,7 +83,7 @@ def playacc_chat(link, msg):
     try:
         print "O jogador " + msg[0] + " aceitou seu convite"
         link.send("PLAYACC " + msg[0] + " " + msg[1])
-        link.estado = 'JOGANDO'
+        link.estado = 'JOGANDO_S'
     except IndexError, erro:
         print "[PLAYACC] " + str(erro)
 
