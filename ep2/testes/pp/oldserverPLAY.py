@@ -33,13 +33,7 @@ def geraTabuleiroFinal(tab, winnerLine):
     except IndexError, msg:
             sys.stderr.write("[ERRO GERATABULEIROFINAL]")
     return None
-
-
-
-    
-
-
-    return tab
+    #return tab
 
 
 def victoryLine(seq, tab):
@@ -55,9 +49,10 @@ def whoWon(tabuleiro):
     g3 = [6,7,8]
     g4 = [0,3,6]
     g5 = [1,4,7]
-    g6 = [6,7,8]
+    g6 = [2,5,8]
     g7 = [0,4,8]
     g8 = [2,4,6]
+    
     tab = tabuleiro.split("\n")
     tab = tab[0].split(" ")
 

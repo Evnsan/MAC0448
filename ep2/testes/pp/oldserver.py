@@ -1,17 +1,65 @@
 #!/usr/bin/env python
 
-# Filename: ThreadedBeatServer.py
-"""Threaded heartbeat server"""
+# Filename: OldServer.py
 
-UDP_PORT = 43278; CHECK_PERIOD = 30; CHECK_TIMEOUT = 25;
-TCP_PORT = 43278; MAX_TCP_CONNECT_QUEUE = 5;
+UDP_PORT = 8888; CHECK_PERIOD = 30; CHECK_TIMEOUT = 25;
+TCP_PORT = 8888; MAX_TCP_CONNECT_QUEUE = 5;
 
 import socket, threading, time, sys, select
 from pprint import pprint
 
 
-
 ###Funcoes auxiliares para as transicoes da maquina de estados
+
+def geraTabuleiroFinal(tab, winnerLine):
+    teste = tab.split("\n")
+    teste = teste[0].split(" ")
+    print teste
+    print winnerLine
+    retorno = ""
+    try:
+        teste[winnerLine[0]] = '8'
+        teste[winnerLine[1]] = '8'
+        teste[winnerLine[2]] = '8'
+        retorno = teste[0]
+        for i in range(1,9):
+            retorno = retorno + " " + teste[i]
+        print retorno
+        return retorno        
+    except IndexError, msg:
+            sys.stderr.write("[ERRO GERATABULEIROFINAL]")
+    return None
+    #return tab
+
+
+def victoryLine(seq, tab):
+    if (tab[seq[0]] == tab[seq[1]] and tab[seq[1]] == tab[seq[2]]):
+        winner = tab[seq[0]]
+        if winner != '0':  # pra nao considerar uma tripla de zeros como linha vitoriosa
+            return winner    
+    return 0
+#retorna 0 se nao houve vencedor, ou o inteiro que representa a classe do vencedor
+def whoWon(tabuleiro):
+    g1 = [0,1,2]
+    g2 = [3,4,5]
+    g3 = [6,7,8]
+    g4 = [0,3,6]
+    g5 = [1,4,7]
+    g6 = [2,5,8]
+    g7 = [0,4,8]
+    g8 = [2,4,6]
+    
+    tab = tabuleiro.split("\n")
+    tab = tab[0].split(" ")
+
+    gameGabarito = [g1,g2,g3,g4,g5,g6,g7,g8]
+    for g in gameGabarito:
+        winner = victoryLine(g, tab)
+        if(winner > 0):
+            linhaVencedora = g
+            return winner, linhaVencedora
+    return ('0',[]) 
+
 
 def isPasswordCorrect(username, password):
     f = open('users', 'r')
@@ -46,7 +94,6 @@ def doesUserExist(username):
 
     for line in f:
         temp = line.split(';',1)
-        print "primeiro token da linha no new user: " + temp[0]
         if(username == temp[0]):
             return True
     else:
@@ -59,16 +106,30 @@ def doesUserExist(username):
 def caniplay(cliente, args, heartbeats):
     try:
         f = open(cliente.gamefilename,"r")
-        if f.readline() == cliente.username + "\n":
+        playerTurno = f.readline()
+        playerTurno = playerTurno.split("\n")
+        playerTurno = playerTurno[0].split(" ")
+        if playerTurno[0] == cliente.username:
             cliente.estado = "JOGANDO_PLAY"
             cliente.send("CANIPLAY OK\n")
+        elif playerTurno[0] == "#FINALIZADO":
+            winner = playerTurno[1]
+            cliente.send(carregaTabuleiro(cliente.gamefilename))
+            if winner == '0':
+                cliente.send("O jogo empatou\n")
+
+            else:
+                cliente.send("Voce perdeu....  time %s venceu!!\n"%winner)
+                cliente.estado = "LOGADO"
+                cliente.adversario = None
+                cliente.gamefilename = None
+                cliente.gameclasse = None
+
         else:
             cliente.send("CANIPLAY NO\n")
         f.close()    
     except IOError, msg:
         sys.stderr.write("[ERRO CANIPLAY] %s"%msg +"\n")
-
-        
 
 def carregaTabuleiro(filename):
     try:
@@ -83,14 +144,11 @@ def realizaJogada(coordenada, tabuleiro, classe):
     teste = teste[0].split(" ")
     retorno = ""
     try:
-        print str(teste)
-        print teste[int(coordenada)]
         if teste[int(coordenada)] == '0':
             teste[int(coordenada)] = str(classe)
             retorno = teste[0]
             for i in range(1,9):
                 retorno = retorno + " " + teste[i]
-            print retorno
             return retorno
         else:
             return None
@@ -98,37 +156,37 @@ def realizaJogada(coordenada, tabuleiro, classe):
             sys.stderr.write("[ERRO REALIZAJOGADA] Cordenada %s Invalida"%coordenada)
     return None
         
-
 def play(cliente, args, heartbeats):
     try:
         cordenada = args[0]
         tabuleiro = carregaTabuleiro(cliente.gamefilename)#verifica se jogada eh valida
-        print "tabuleiro: " + tabuleiro
         novoTabuleiro = realizaJogada(cordenada, tabuleiro, cliente.gameclasse)
         if novoTabuleiro:
-            f = open(cliente.gamefilename,"w")
-            f.write(cliente.adversario + '\n')
-            f.write(novoTabuleiro + '\n')
-            cliente.send(novoTabuleiro + '\n')
-            cliente.estado = "JOGANDO_WAIT"
-            #confere tabuleiro
-            #se nao acabou
-                #muda estado do jogador
-                #manda mensagem para o proximo jogador
-                #envia novo tabuleiro para ambos
-            #se acabou
-                #modifica pontuacao
-                #muda estado
-                #manda mensagem pros jogadores
+            winner, winnerLine = whoWon(novoTabuleiro)
+            if winner == '0':
+                f = open(cliente.gamefilename,"w")
+                f.write(cliente.adversario + '\n')
+                f.write(novoTabuleiro + '\n')
+                cliente.send(novoTabuleiro + '\n')
+                cliente.estado = "JOGANDO_WAIT"
+            else:
+                f = open(cliente.gamefilename,"w")
+                f.write('#FINALIZADO ' + winner +'\n')
+                novoTabuleiro = geraTabuleiroFinal(novoTabuleiro, winnerLine)
+                f.write(novoTabuleiro + '\n')
+                cliente.send(novoTabuleiro + '\n')
+                if int(winner) == cliente.gameclasse:
+                    cliente.send("YOU WON, GRATZ!")
+                cliente.estado = "LOGADO"
+                cliente.adversario = None
+                cliente.gamefilename = None
+                cliente.gameclasse = None
+                  
         else:
             cliente.send("[ERRO PLAY] Cordenada %s Invalida"%cordenada)
 
     except IndexError, msg:
         cliente.send("[ERRO PLAY] Argumentos Insuficientes")
-
-
-
-
 
 def playinv(cliente, args, heartbeats):
     try:
@@ -140,10 +198,9 @@ def playinv(cliente, args, heartbeats):
             cliente.estado = "ESPERANDO"
             cliente.adversario = clienteToInvite.username
         else:
-            cliente.send("[ERRO: PLAYINV] Usuario nao esta onlinen")
+            cliente.send("[ERRO: PLAYINV] Usuario nao esta onlinen\n")
     except IndexError, msg:
         cliente.send("[ERRO: PLAYINV] Argumentos Insuficientes\n")
-
 
 def listingStates(estado):
         if estado == "JOGANDO":
@@ -161,7 +218,7 @@ def listPlayers(cliente, args, heartbeats):
         alvo = heartbeats.getList()
         cliente.send("LIST START\n")
         for username, est in alvo:
-            cliente.send(username + " " + est + "\n")
+            cliente.send("LL " + username + " " + est + "\n")
         cliente.send("LIST END\n")
     except IndexError, msg:
             cliente.send("[ERRO: LISTPLAYERS] Argumentos Insuficientes\n")
@@ -225,7 +282,7 @@ def playacc_logado(cliente, args, heartbeats):
                     pontos = f.readline()
                     f.close()
                 except IOError, msg:
-                    print "blah\n"
+                    print "[WARNING PLAYACC_LOGADO] Cliente nao tinha file\n"
                 f = open(cliente.username, "w")
                 if pontos:
                     f.write(pontos)
@@ -250,10 +307,10 @@ def playacc_logado(cliente, args, heartbeats):
         cliente.send("[ERRO: PLAYACC_LOGADO] Argumentos Insuficientes\n")             
 
 def exit(cliente, args, heartbeats):
-    print "Encerrando sessao de %s:" % cliente.ip + str(cliente.porta) + " %s"% cliente.connType
-    cliente.send("EXITING...\n")
-    cliente.iptime = 0;
+    ip = heartbeats.getKeyForCliente(cliente)
     cliente.estado = 'EXITING'
+    del heartbeats[ip]
+    cliente.exit()
 
 def user(cliente, args, heartbeats):
     #verificar se user existe
@@ -276,6 +333,14 @@ def abort_toConectado(cliente, args, heartbeats):
 def abort_esperando(cliente, args, heartbeats):
     cliente.adversario = None
     cliente.estado = "LOGADO"
+
+def playdny(cliente, args, heartbeats):
+    try:
+        inviter = heartbeats.getClienteByName(args[0])
+        if(inviter.adversario == cliente.username):
+            inviter.send("PLAYDNY %s\n"%cliente.username)
+    except IndexError, msg:
+        cliente.send("[ERRO PLAYDNY] Argumentos Insuficientes\n")
 
 def newuser(cliente, args, heartbeats):
     #verificar se existe em um arquivo
@@ -308,7 +373,7 @@ def newpass(cliente, args, heartbeats):
             f.write(cliente.username + ";" + args[0] + '\n')
             f.close()
             cliente.estado = "LOGADO"
-            cliente.send("LOGADO! ENJOY\n")
+            cliente.send("LOGADO\n")
 
         else:
             cliente.send("[ERRO: NEWPASS] Senha Invalida\n")
@@ -320,27 +385,61 @@ def checkpass(cliente, args, heartbeats):
         password = args[0]
         if isPasswordCorrect(cliente.username, password):
             cliente.estado = "LOGADO"
-            cliente.send("LOGADO! ENJOY\n")
+            cliente.send("LOGADO\n")
         else:
             cliente.send("[ERRO: PASS] Password Iconrreto!!\n")
     except IndexError, msg:
             cliente.send("[ERRO: PASS] Argumentos Insuficientes\n")
 
+def board(cliente, args, heartbeats):
+    tabuleiro = carregaTabuleiro(cliente.gamefilename)
+    cliente.send("BOARD " + tabuleiro)
+    
+def cmdInvalido(cliente, args, heartbeats):
+    cliente.send("[ERRO CMDINVALIDO] Comando invalido para o estado %s\n"%cliente.estado)
+
+def cmdList(cliente, args, heartbeats):
+    msg0 = "CMDLIST %s: "%cliente.estado
+    msg = {
+        'CONECTADO':  "USER, NEWUSER, CMDLIST, EXIT\n",
+        'LOGANDO': "PASS, ABORT, CMDLIST, EXIT\n",
+        'LOGADO': "PLAYACC, PLAYINV, PLAYDNY, LIST, HALL, ABORT, CMDLIST, EXIT\n",
+        'REGISTRANDO': "NEWNAME, NEWPASS, ABORT, CMDLIST, EXIT\n",
+        'ESPERANDO': "PLAYACC, ABORT, CMDLIST, EXIT\n",
+        'JOGANDO_WAIT': "ABORT, BOARD, CANIPLAY, CMDLIST, EXIT\n",
+        'JOGANDO_PLAY': "ABORT, BOARD, PLAY, CMDLIST, EXIT\n" }
+    cliente.send(msg0 + msg[cliente.estado])
+
+def ping(cliente, args, heartbeats):
+    pass
 
 ###Estados
 estados = {
-    'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'EXIT': exit },
-    'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit },
-    'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinv, 'PLAYDNY': None, 
-               'LIST': listPlayers,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado},
-    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado, 'EXIT': None },
-    'ESPERANDO': { 'PLAYACC': playacc_esperando, 'ABORT': None, 'EXIT': exit },
-    'JOGANDO_WAIT': {'ABORT': quit, 'EXIT': exit , 'CANIPLAY': caniplay},
-    'JOGANDO_PLAY': {'ABORT': quit, 'EXIT': exit, 'PLAY': play },
+    'CONECTADO': {'USER': user, 'NEWUSER': newuser, 'ABORT': cmdInvalido, 'EXIT': exit,
+                  'CMDLIST': cmdList, 'PING': ping},
+
+    'LOGANDO': {'PASS': checkpass, 'ABORT': abort_toConectado, 'EXIT': exit,
+                'CMDLIST': cmdList, 'PING': ping},
+
+    'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinv, 'PLAYDNY': playdny, 
+               'LIST': listPlayers,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado,
+               'CMDLIST': cmdList, 'PING': ping},
+
+    'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado,
+               'EXIT': exit, 'CMDLIST': cmdList, 'PING': ping},
+
+    'ESPERANDO': {'PLAYACC': playacc_esperando, 'ABORT': abort_esperando, 'EXIT': exit,
+               'CMDLIST': cmdList, 'PING': ping},
+
+    'JOGANDO_WAIT': {'ABORT': None, 'BOARD': board, 'EXIT': exit , 'CANIPLAY': caniplay,
+               'CMDLIST': cmdList, 'PING': ping},
+
+    'JOGANDO_PLAY': {'ABORT': None, 'BOARD': board, 'EXIT': exit, 'PLAY': play,
+               'CMDLIST': cmdList, 'PING': ping},
 }
 
 
-###Classe com as informacoes da conexao###
+##Classe com as informacoes da conexao###
 class Cliente():
     def __init__(self, ip, porta, connType, flagTCP):
         self.ipTime = 0
@@ -365,7 +464,20 @@ class Cliente():
             try:
                 estados[self.estado][cmd](self, args, heartbeats)
             except KeyError:
-                self.send("COMMAND %s INVALID!\n" % cmd)
+                self.send("INVALIDCMD %s\n" % cmd)
+
+    def exit(self):
+        print "Encerrando sessao de %s:" % self.ip + str(self.porta) + " %s"% self.connType
+        msg = "EXITING...\n"
+        if(self.connType == 'UDP'):
+            self.connfd.sendto(msg, (self.ip, self.porta))
+        elif(self.connType == 'TCP'):
+            self.connfd.sendall(msg)
+            try:
+                self.connfd.shutdown(socket.SHUT_RDWR)
+                self.connfd.close()
+            except socket.error, msg:
+                sys.stderr.write("ERRO-  %s: Nao foi possivel fechar o socket\n")
     
     def send(self, msg):
         if(self.connType == 'UDP'):
@@ -435,6 +547,16 @@ class Heartbeats(dict):
                 retorno = cliente
         self._lock.release()
         return retorno
+    
+    def getKeyForCliente(self, entrada):
+        """Retorna a chave "(ip:porta)" do cliente"""
+        retorno = None
+        self._lock.acquire()
+        for (key, cliente) in self.items():
+             if cliente == entrada:
+                retorno = key
+        self._lock.release()
+        return retorno
 
 ###TrheadUDP###
 class ReceiverUDP(threading.Thread):
@@ -453,7 +575,6 @@ class ReceiverUDP(threading.Thread):
             try:
                 data, addr = self.recSocket.recvfrom(1024)
                 if data != '':
-                    self.recSocket.sendto(data, addr) #somente Eco -> tirar
                     if not self.heartbeats.has_key((addr[0], addr[1])):
                         self.heartbeats[(addr[0],addr[1])] = Cliente(addr[0], addr[1], 'UDP', None)
                         self.heartbeats[(addr[0],addr[1])].connfd = self.recSocket 
@@ -478,6 +599,7 @@ class ReceiverTCP(threading.Thread):
             try:
                 self.recSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.recSocket.settimeout(CHECK_TIMEOUT)
+                self.recSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.recSocket.bind(('', TCP_PORT))
                 self.recSocket.listen(MAX_TCP_CONNECT_QUEUE)
             except socket.error, msg:
@@ -529,10 +651,11 @@ class ConnTCP(threading.Thread):
                 data = self.recSocket.recv(1024)
                 if data != '':
                     self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
-                    self.recSocket.sendall('OK...' + data)
                 if not self.heartbeats[(self.ip, self.porta)].estado == 'EXITING': 
                     self.heartbeats[(self.ip, self.porta)].ipTime = time.time()
                     self.heartbeats[(self.ip, self.porta)].getMsg(data, self.heartbeats)
+                    if self.heartbeats[(self.ip, self.porta)].estado == 'EXITING':
+                        self.goOnEvent.clear()
                 else:
                     self.recSocket.sendall("Saindo. Por favor espere...\n")
             except KeyError, msg:
@@ -540,6 +663,8 @@ class ConnTCP(threading.Thread):
                 #sys.stderr.write("ERRO: ThreadTCPcli: KeyError = " + str(msg) + "\n")
             except socket.timeout:
                 pass
+            except socket.error:
+                self.goOnEvent.clear()
         print "Matou uma Thread TCP-CLI"
 ###Thread do verificador de beats (feito no main)###
 def main():
