@@ -55,8 +55,8 @@ def playinv(link, msg):
     try:
         print ("O jogador " + msg[0] + " esta lhe convidadndo" + 
                 " para uma partidai.")
-        print "  Para aceitar digitei: PLAYACC " + msg[1] + " " + msg[2]
-        print "  Para recusar digite: PLAYDNY " + msg[1]
+        print "  Para aceitar digitei: PLAYACC " + msg[0] + " " + msg[1]
+        print "  Para recusar digite: PLAYDNY " + msg[0]
     except IndexError, erro:
         print "[PLAYINV] " + str(erro) 
 
