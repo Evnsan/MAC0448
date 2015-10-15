@@ -206,12 +206,11 @@ class ThreadTCP(threading.Thread):
         self.link.close()
 ##############################################################################
 
-##############################################################################
-
 ###Main#######################################################################
 def main():
     if(len(sys.argv) < 3) :
-        print "Modo de uso: ./oldcliente.py HOSTNAME TCP|UDP [PORTA]\n"
+        print ("Modo de uso: ./oldcliente.py HOSTNAME TCP|UDP" + 
+                " [CLIENTE PORTA [SERVER PORTA]]\n")
         sys.exit(0)
     ##declaracoes inicias##
     goOnEvent = threading.Event()
@@ -219,15 +218,20 @@ def main():
 
     ipServer = socket.gethostbyname(sys.argv[1])
     protocolo = sys.argv[2]
+    
     ####UDP####
     if(protocolo == 'UDP' or protocolo == 'udp' or protocolo == 'Udp'):
         try:
-            porta = int(sys.argv[3])
+            clientePorta = int(sys.argv[3])
         except IndexError:
-            porta = UDP_PORTA
+            clientePorta = UDP_PORTA
+        try:
+            serverPorta = int(sys.argv[4])
+        except IndexError:
+            serverPorta = SERVER_UDP_PORTA
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.bind(('', porta))
-        link = Link(socket = s, ip = ipServer, porta = SERVER_UDP_PORTA,
+        s.bind(('', clientePorta))
+        link = Link(socket = s, ip = ipServer, porta = serverPorta,
                     protocolo = 'UDP', goOnEvent = goOnEvent)
         link.send("PING\n")
         threadUDP = ThreadUDP(goOnEvent = goOnEvent, link = link)
@@ -246,19 +250,23 @@ def main():
                 sys.exit(0)
     ###########
     ####TCP####             
-    elif(protocolo == 'TCP' or protocolo == 'tcp' or protocolo == 'Tdp'):
+    elif(protocolo == 'TCP' or protocolo == 'tcp' or protocolo == 'Tcp'):
         try:
-            porta = int(sys.argv[3])
+            clientePorta = int(sys.argv[3])
         except IndexError:
-            porta = UDP_PORTA
+            clientePorta = TCP_PORTA
+        try:
+            serverPorta = int(sys.argv[4])
+        except IndexError:
+            serverPorta = SERVER_TCP_PORTA
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            s.connect((ipServer, SERVER_TCP_PORTA))
+            s.connect((ipServer, serverPorta))
         except socket.error, msg:
             print "[ERRO MAIN] " + str(msg)
             s.close()
             sys.exit(0)
-        link = Link(socket = s, ip = ipServer, porta = SERVER_TCP_PORTA,
+        link = Link(socket = s, ip = ipServer, porta = serverPorta,
                     protocolo = 'TCP', goOnEvent = goOnEvent)
         link.send("PING\n")
         threadTCP = ThreadTCP(goOnEvent = goOnEvent, link = link)
