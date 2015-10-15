@@ -26,47 +26,50 @@ def invalidcmd(link, msg):
 
 def listStart(link, msg):
     try:
-        if msg[0] == START:
+        if msg[0] == 'START':
             link.estado = 'LISTANDO'
     except IndexError, msg:
         print "[LISTSTART] " + str(msg)
 
 def listStop(link, msg):
     try:
-        if msg[0] == START:
+        if msg[0] == 'STOP':
             link.estado = 'CONECTADO'
     except IndexError, msg:
         print "[LISTSTOP] " + str(msg)
 
 def listar(link, msg):
-    print str(msg[0]) + str(msg[1])
+    print str(msg[0]) + " "+ str(msg[1])
 
+def toLogado(link, msg):
+    link.estado = 'LOGADO'
 ##############################################################################
 
 ###Estado do Cliente##########################################################
 estados = {
     'CONECTADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                  'PING': ping, 'INVALIDCMD': invalidcmd},
+                  'PING': ping, 'INVALIDCMD': invalidcmd, 'LOGADO':toLogado},
 
-    'LOGANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping},
+    'LOGANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
+                'INVALIDCMD': invalidcmd, },
 
     'LOGADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
-               'LIST': listStart},
+               'LIST': listStart, 'INVALIDCMD': invalidcmd },
     
     'LISTANDO': {'LL': listar, 'EXITING': exit, 'CMDLIST': cmdList,
-                 'PING': ping, 'LIST':listStop },
+                 'PING': ping, 'LIST':listStop, 'INVALIDCMD': invalidcmd },
 
     'REGISTRANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                    'PING': ping},
+                    'PING': ping, 'INVALIDCMD': invalidcmd },
 
     'ESPERANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                  'PING': ping},
+                  'PING': ping, 'INVALIDCMD': invalidcmd },
 
     'JOGANDO_WAIT': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                     'PING': ping},
+                     'PING': ping, 'INVALIDCMD': invalidcmd },
 
     'JOGANDO_PLAY': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                     'PING': ping},
+                     'PING': ping, 'INVALIDCMD': invalidcmd },
 }
 ##############################################################################
 
@@ -100,7 +103,7 @@ class Link():
                     linha = self.socket.recv(1024)
                 self.getMsg(linha)
             self._lock.release()
-        return linha
+        return linha 
 
     def send(self, msg):
         self._lock.acquire()
@@ -152,7 +155,7 @@ class ThreadUDP(threading.Thread):
                     linha = linha.split('\n', 2)[0]
                     if linha == 'EXITING...':
                         self.goOnEvent.clear()
-                    print linha
+# print linha
                 #time.sleep(1)
             except socket.error, msg:
                 print "[THREADUDP] " + msg

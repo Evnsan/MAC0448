@@ -305,7 +305,7 @@ def newpass(cliente, args, heartbeats):
             f.write(cliente.username + ";" + args[0] + '\n')
             f.close()
             cliente.estado = "LOGADO"
-            cliente.send("LOGADO! ENJOY\n")
+            cliente.send("LOGADO\n")
 
         else:
             cliente.send("[ERRO: NEWPASS] Senha Invalida\n")
@@ -317,7 +317,7 @@ def checkpass(cliente, args, heartbeats):
         password = args[0]
         if isPasswordCorrect(cliente.username, password):
             cliente.estado = "LOGADO"
-            cliente.send("LOGADO! ENJOY\n")
+            cliente.send("LOGADO\n")
         else:
             cliente.send("[ERRO: PASS] Password Iconrreto!!\n")
     except IndexError, msg:
