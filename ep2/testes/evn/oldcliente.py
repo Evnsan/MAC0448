@@ -74,11 +74,8 @@ def toEsperando(link, msg):
 def playacc_esperando(link, msg):
     try:
         print "O jogador " + msg[0] + " aceitou seu convite"
-        print "PLAYACC " + msg[0] + " " + msg[1]
         link.send("PLAYACC " + msg[0] + " " + msg[1])
-        print "PLAYACC " + msg[0] + " " + msg[1]
         link.estado = 'JOGANDO_S'
-        print "Passou limpo"
     except IndexError, erro:
         print "[PLAYACC] " + str(erro)
 
@@ -221,7 +218,7 @@ def getLine():
 ###Link#######################################################################
 class Link():
     def __init__(self, socket, ip, porta, protocolo, goOnEvent):
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self.socket = socket
         self.ip = ip
         self.porta = porta
