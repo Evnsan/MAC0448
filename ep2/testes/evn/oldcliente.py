@@ -68,7 +68,7 @@ def playacc(link, msg):
     try:
         print "O jogador " + msg[0] + "aceitou seu convite"
         link.send("PLAYACC " + msg[0] + " " + msg[1])
-        link.estado = 'JOGANDO_WAIT'
+        link.estado = 'JOGANDO'
     except IndexError, erro:
         print "[PLAYACC] " + str(erro)
 
@@ -76,6 +76,18 @@ def playdny(link, msg):
     print "O jogador " + msg[0] + "rejeitou seu convite"
     link.estado = 'LOGADO'
 
+def playWyn(link, msg):
+    print "Parabens, voce ganhou!"
+    print "Digite ABORT para sair da partida"
+
+def playLos(link, msg):
+    print "Seu adversario venceu esta!"
+    print "Digite ABORT para sair da partida"
+
+def caniplay(link, msg):
+    try:
+        if msg[0] == 'NO':
+            print "ainda e vez do seu adversario"
 ##############################################################################
 
 ###Estado do Cliente##########################################################
@@ -96,13 +108,10 @@ estados = {
                   'PING': ping, 'INVALIDCMD': invalidcmd ,
                   'PLAYACC': playacc, 'PLAYDNY': playdny },
 
-    'JOGANDO_WAIT': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                     'PING': ping, 'INVALIDCMD': invalidcmd,
-                     'BOARD':board },
+    'JOGANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
+                'PING': ping, 'INVALIDCMD': invalidcmd, 'BOARD':board,
+                'CANIPLAY': caniplay,'PLAYWIN': playWyn, 'PLAYLOS': playLos },
 
-    'JOGANDO_PLAY': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                     'PING': ping, 'INVALIDCMD': invalidcmd, 
-                     'BOARD':board },
 }
 ##############################################################################
 
