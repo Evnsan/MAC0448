@@ -11,56 +11,6 @@ from pprint import pprint
 
 ###Funcoes auxiliares para as transicoes da maquina de estados
 
-def geraTabuleiroFinal(tab, winnerLine):
-    teste = tab.split("\n")
-    teste = teste[0].split(" ")
-    print teste
-    print winnerLine
-    retorno = ""
-    try:
-        teste[winnerLine[0]] = '8'
-        teste[winnerLine[1]] = '8'
-        teste[winnerLine[2]] = '8'
-        retorno = teste[0]
-        for i in range(1,9):
-            retorno = retorno + " " + teste[i]
-        print retorno
-        return retorno        
-    except IndexError, msg:
-            sys.stderr.write("[ERRO GERATABULEIROFINAL]")
-    return None
-    #return tab
-
-
-def victoryLine(seq, tab):
-    if (tab[seq[0]] == tab[seq[1]] and tab[seq[1]] == tab[seq[2]]):
-        winner = tab[seq[0]]
-        if winner != '0':  # pra nao considerar uma tripla de zeros como linha vitoriosa
-            return winner    
-    return 0
-#retorna 0 se nao houve vencedor, ou o inteiro que representa a classe do vencedor
-def whoWon(tabuleiro):
-    g1 = [0,1,2]
-    g2 = [3,4,5]
-    g3 = [6,7,8]
-    g4 = [0,3,6]
-    g5 = [1,4,7]
-    g6 = [2,5,8]
-    g7 = [0,4,8]
-    g8 = [2,4,6]
-    
-    tab = tabuleiro.split("\n")
-    tab = tab[0].split(" ")
-
-    gameGabarito = [g1,g2,g3,g4,g5,g6,g7,g8]
-    for g in gameGabarito:
-        winner = victoryLine(g, tab)
-        if(winner > 0):
-            linhaVencedora = g
-            return winner, linhaVencedora
-    return ('0',[]) 
-
-
 def isPasswordCorrect(username, password):
     f = open('users', 'r')
     print 'checando se password esta correto'
@@ -106,25 +56,9 @@ def doesUserExist(username):
 def caniplay(cliente, args, heartbeats):
     try:
         f = open(cliente.gamefilename,"r")
-        playerTurno = f.readline()
-        playerTurno = playerTurno.split("\n")
-        playerTurno = playerTurno[0].split(" ")
-        if playerTurno[0] == cliente.username:
+        if f.readline() == cliente.username + "\n":
             cliente.estado = "JOGANDO_PLAY"
             cliente.send("CANIPLAY OK\n")
-        elif playerTurno[0] == "#FINALIZADO":
-            winner = playerTurno[1]
-            cliente.send(carregaTabuleiro(cliente.gamefilename))
-            if winner == '0':
-                cliente.send("O jogo empatou\n")
-
-            else:
-                cliente.send("Voce perdeu....  time %s venceu!!\n"%winner)
-                cliente.estado = "LOGADO"
-                cliente.adversario = None
-                cliente.gamefilename = None
-                cliente.gameclasse = None
-
         else:
             cliente.send("CANIPLAY NO\n")
         f.close()    
@@ -144,46 +78,44 @@ def realizaJogada(coordenada, tabuleiro, classe):
     teste = teste[0].split(" ")
     retorno = ""
     try:
+        print str(teste)
+        print teste[int(coordenada)]
         if teste[int(coordenada)] == '0':
             teste[int(coordenada)] = str(classe)
             retorno = teste[0]
             for i in range(1,9):
                 retorno = retorno + " " + teste[i]
+            print retorno
             return retorno
         else:
             return None
     except IndexError, msg:
-            sys.stderr.write("[ERRO REALIZAJOGADA] Cordenada %s Invalida\n"%coordenada)
+            sys.stderr.write("[ERRO REALIZAJOGADA] Cordenada %s Invalida"%coordenada)
     return None
         
 def play(cliente, args, heartbeats):
     try:
         cordenada = args[0]
         tabuleiro = carregaTabuleiro(cliente.gamefilename)#verifica se jogada eh valida
+        print "tabuleiro: " + tabuleiro
         novoTabuleiro = realizaJogada(cordenada, tabuleiro, cliente.gameclasse)
         if novoTabuleiro:
-            winner, winnerLine = whoWon(novoTabuleiro)
-            if winner == '0':
-                f = open(cliente.gamefilename,"w")
-                f.write(cliente.adversario + '\n')
-                f.write(novoTabuleiro + '\n')
-                cliente.send("BOARD" + novoTabuleiro + '\n')
-                cliente.estado = "JOGANDO_WAIT"
-            else:
-                f = open(cliente.gamefilename,"w")
-                f.write('#FINALIZADO ' + winner +'\n')
-                novoTabuleiro = geraTabuleiroFinal(novoTabuleiro, winnerLine)
-                f.write(novoTabuleiro + '\n')
-                cliente.send("BOARD" + novoTabuleiro + '\n')
-                if int(winner) == cliente.gameclasse:
-                    cliente.send("YOU WON, GRATZ!\n")
-                cliente.estado = "LOGADO"
-                cliente.adversario = None
-                cliente.gamefilename = None
-                cliente.gameclasse = None
-                  
+            f = open(cliente.gamefilename,"w")
+            f.write(cliente.adversario + '\n')
+            f.write(novoTabuleiro + '\n')
+            cliente.send("BOARD " + novoTabuleiro + '\n')
+            cliente.estado = "JOGANDO_WAIT"
+            #confere tabuleiro
+            #se nao acabou
+                #muda estado do jogador
+                #manda mensagem para o proximo jogador
+                #envia novo tabuleiro para ambos
+            #se acabou
+                #modifica pontuacao
+                #muda estado
+                #manda mensagem pros jogadores
         else:
-            cliente.send("[ERRO PLAY] Cordenada %s Invalida\n"%cordenada)
+            cliente.send("[ERRO PLAY] Cordenada %s Invalida"%cordenada)
 
     except IndexError, msg:
         cliente.send("[ERRO PLAY] Argumentos Insuficientes\n")
@@ -237,7 +169,7 @@ def playacc_esperando(cliente, args, heartbeats):
                 pontos = f.readline()
                 f.close()
             except IOError, msg:
-                pass
+                print "blah\n"
             f = open(cliente.username, "w")
             if pontos:
                 f.write(pontos)
@@ -468,7 +400,7 @@ class Cliente():
 
     def exit(self):
         print "Encerrando sessao de %s:" % self.ip + str(self.porta) + " %s"% self.connType
-        msg = "EXITING...\n"
+        msg = "EXITING\n"
         if(self.connType == 'UDP'):
             self.connfd.sendto(msg, (self.ip, self.porta))
         elif(self.connType == 'TCP'):

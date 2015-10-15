@@ -19,57 +19,72 @@ def ping(link, msg):
     print "[SERVER PING] " + str(msg)
 
 def exit(link, msg):
+    print "Saindo..."
     link.goOnEvent.clear() 
 
 def invalidcmd(link, msg):
     print "Comando invalido " + str(msg[0])
+    print ("Utilize o comando CMDLIST para ver " + 
+            "quais comandos sao validos neste estado")
 
 def listStart(link, msg):
     try:
         if msg[0] == 'START':
             link.estado = 'LISTANDO'
-    except IndexError, msg:
-        print "[LISTSTART] " + str(msg)
+    except IndexError, erro:
+        print "[LISTSTART] " + str(erro)
 
 def listStop(link, msg):
     try:
         if msg[0] == 'STOP':
             link.estado = 'CONECTADO'
-    except IndexError, msg:
-        print "[LISTSTOP] " + str(msg)
+    except IndexError, erro:
+        print "[LISTSTOP] " + str(erro)
 
 def listar(link, msg):
     print str(msg[0]) + " "+ str(msg[1])
 
 def toLogado(link, msg):
     link.estado = 'LOGADO'
+    print "BEM VINDO ao OLDSERVER"
+
+def board(link, msg):
+    print str(msg)
+
+def playinv(link, msg):
+    try:
+        print ("O jogador " + msg[0] + " esta lhe convidadndo" + 
+                " para uma partidai.")
+        print "  Para aceitar digitei: PLAYACC " + msg[1] + " " + msg[2]
+        print "  Para recusar digite: PLAYDNY " + msg[1]
+    except IndexError, erro:
+        print "[PLAYINV] " + str(erro) 
+
 ##############################################################################
 
 ###Estado do Cliente##########################################################
 estados = {
     'CONECTADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                  'PING': ping, 'INVALIDCMD': invalidcmd, 'LOGADO':toLogado},
-
-    'LOGANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
-                'INVALIDCMD': invalidcmd, },
+                  'PING': ping, 'INVALIDCMD': invalidcmd, 'LOGADO':toLogado,
+                  'PLAYINV': playinv},
 
     'LOGADO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList, 'PING': ping,
                'LIST': listStart, 'INVALIDCMD': invalidcmd },
     
     'LISTANDO': {'LL': listar, 'EXITING': exit, 'CMDLIST': cmdList,
-                 'PING': ping, 'LIST':listStop, 'INVALIDCMD': invalidcmd },
-
-    'REGISTRANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                    'PING': ping, 'INVALIDCMD': invalidcmd },
+                 'PING': ping, 'LIST':listStop, 'INVALIDCMD': invalidcmd,
+                 'PLAYINV': playinv },
 
     'ESPERANDO': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
                   'PING': ping, 'INVALIDCMD': invalidcmd },
 
     'JOGANDO_WAIT': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                     'PING': ping, 'INVALIDCMD': invalidcmd },
+                     'PING': ping, 'INVALIDCMD': invalidcmd,
+                     'BOARD':board },
 
     'JOGANDO_PLAY': {'OK': ok, 'EXITING': exit, 'CMDLIST': cmdList,
-                     'PING': ping, 'INVALIDCMD': invalidcmd },
+                     'PING': ping, 'INVALIDCMD': invalidcmd, 
+                     'BOARD':board },
 }
 ##############################################################################
 
