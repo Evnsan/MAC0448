@@ -301,13 +301,12 @@ class Link():
         linha = None
         if self.goOnEvent.isSet():
             self._lock.acquire()
-            if select.select([self.socket], [], [], 0.1)[0]:
+            if select.select([self.chatSock], [], [], 0.1)[0]:
                 if self.protocolo == 'UDP':
                     linha, addr = self.chatSock.recvfrom(1024)
-                    print "[ADVERSARIO] " + str(linha)
-                    linha = linha.split('\n')
-                    print str(linha)
-                    if linha[0] == 'CHATACK':
+                    print "[ADVERSARIO:] " + str(linha)
+                    cmd = linha.split('\n')
+                    if cmd[0] == 'CHATACK':
                         self.chatPorta = addr[1]
                         self.chatIp = addr[0]
                         if self.estado == 'ESPERANDO':
@@ -315,7 +314,6 @@ class Link():
                             self.sendChat('CHATACK')
                         elif self.estado == 'JOGANDO_S':
                             self.estado = 'JOGANDO'
-                        print "OKKKKK"
                         
                 elif self.protocolo == 'TCP':
                     #linha = self.socket.recv(1024)
@@ -378,7 +376,7 @@ class ThreadUDP(threading.Thread):
                         self.link.send(linha)
                     elif (self.link.estado == 'CHATACK' or
                             self.link.estado == 'JOGANDO'):
-                        print "[THREADUDP - linha do prompt] " + str(linha)
+                        print "[VOCE] " + str(linha)
                         self.link.sendChat(linha)
                     else:
                         print ("==>Voce nao pode mandar mensagens, "+
