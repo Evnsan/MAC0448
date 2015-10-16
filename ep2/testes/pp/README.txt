@@ -9,7 +9,7 @@ nome: Pedro Ferreira Alexandre nUsp:7577448
 LEIA-ME oldserver.py
 
 Para a execução do servidor é obrigatório que sejam criados dois diretórios juntos
-as demais pastas do projeot:
+com as demais pastas do projeot:
 1) ./SESSION
 2) ./LOG
 ____________________________________________________________________________________
