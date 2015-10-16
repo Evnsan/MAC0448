@@ -319,6 +319,7 @@ def playacc_logado(cliente, args, heartbeats):
         usernameAdv = args[0]
         chatporta = args[1]
         clienteToPlay = heartbeats.getClienteByName(usernameAdv)
+        chatip = heartbeats.getKeyForCliente(clienteToPlay)[0]
         cliente.estado = "JOGANDO_PLAY"
         cliente.adversario = usernameAdv
         cliente.gamefilename = cliente.username+usernameAdv
@@ -354,7 +355,8 @@ def playacc_logado(cliente, args, heartbeats):
                 f.write(cliente.gamefilename + '\n')    
                 f.close()
 
-                cliente.send("VOCE ACEITOU O CONVITE E AGORA ESTA EM UM JOGO!\n")
+                cliente.send("PLAYACC " + usernameAdv + " " + chatip + " "
+                        + chatporta)
                 clienteToPlay.send("PLAYACC " + cliente.username + " " + chatporta + "\n")
             else:
                 cliente.send("[ERRO: PLAYACC_LOGADO]  Usuario %s nao esta convidando\n"%usernameAdv)

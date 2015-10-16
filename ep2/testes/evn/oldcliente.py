@@ -3,7 +3,7 @@
 # Filename OldCliente.py
 
 SERVER_TCP_PORTA = 8888; SERVER_UDP_PORTA = 8888;
-UDP_PORTA = 8886; TCP_PORTA = 8886; CHAT_PORTA = 7777;
+UDP_PORTA = 8886; TCP_PORTA = 8886; CHAT_PORTA = 7474;
 TIME_BEAT = 10;
 
 import socket, threading, time, sys, select
@@ -91,8 +91,9 @@ def playacc_logado(link, msg):
     try:
         print "Voce aceitou o convite do jogador " + msg[0]
         print "Iniciando Chat..."
-        link.openCliChat(msg[1])
-#        link.sendChat('CHATOK')
+        print "PARAMS...: " + msg[1] + " " + msg[2] 
+        link.openCliChat(msg[1], msg[2])
+        link.sendChat('CHATACK\n')
         link.estado = 'JOGANDO_S'
     except IndexError, erro:
         print "[PLAYACC] " + str(erro)
@@ -233,12 +234,12 @@ class Link():
         linha = None
         if self.goOnEvent.isSet():
             self._lock.acquire()
-            if select.select([self.socket], [], [], 0.0)[0]:
+            if select.select([self.socket], [], [], 0.1)[0]:
                 if self.protocolo == 'UDP':
                     linha, addr = self.socket.recvfrom(1024)
                 elif self.protocolo == 'TCP':
                     linha = self.socket.recv(1024)
-                print "[LINK.GETLINE] " + str(linha)
+                #print "[LINK.GETLINE] " + str(linha)
                 self.getMsg(linha)
             self._lock.release()
         return linha 
@@ -278,12 +279,12 @@ class Link():
         except socket.error, erro:
             print "[OPENSERVCHAT] " + str(erro)
 
-    def openCliChat(self, porta):
+    def openCliChat(self, ip, porta):
         if self.protocolo == 'UDP':
             self.chatSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.chatSock.bind(('', CHAT_PORTA))
-            self.chatIp = None
-            self.chatPorta = porta
+            self.chatIp = str(ip) 
+            self.chatPorta = int(porta)
         elif self.protocolo == 'TCP':
             print "nao implementado o chatSock TCP"
 
@@ -294,8 +295,35 @@ class Link():
                 self.chatSock.sendto(msg, (self.chatIp, self.chatPorta))
             elif self.protocolo == 'TCP':
                 self.chatSock.sendall(msg)
-            self._lock.release()
+        self._lock.release()
 
+    def getChatLine(self):
+        linha = None
+        if self.goOnEvent.isSet():
+            self._lock.acquire()
+            if select.select([self.socket], [], [], 0.1)[0]:
+                if self.protocolo == 'UDP':
+                    linha, addr = self.chatSock.recvfrom(1024)
+                    print "[ADVERSARIO] " + str(linha)
+                    linha = linha.split('\n')
+                    print str(linha)
+                    if linha[0] == 'CHATACK':
+                        self.chatPorta = addr[1]
+                        self.chatIp = addr[0]
+                        if self.estado == 'ESPERANDO':
+                            self.estado = 'CHATACK'
+                            self.sendChat('CHATACK')
+                        elif self.estado == 'JOGANDO_S':
+                            self.estado = 'JOGANDO'
+                        print "OKKKKK"
+                        
+                elif self.protocolo == 'TCP':
+                    #linha = self.socket.recv(1024)
+                    pass
+                #self.getMsg(linha)
+            self._lock.release()
+        return linha 
+    
     def closeChat(self):
         if self.protocolo == 'UDP':
             self.chatSock.close()
@@ -350,7 +378,8 @@ class ThreadUDP(threading.Thread):
                         self.link.send(linha)
                     elif (self.link.estado == 'CHATACK' or
                             self.link.estado == 'JOGANDO'):
-                         self.link.sendChat(linha)
+                        print "[THREADUDP - linha do prompt] " + str(linha)
+                        self.link.sendChat(linha)
                     else:
                         print ("==>Voce nao pode mandar mensagens, "+
                               "pois nao esta em um jogo com chat")
@@ -360,11 +389,11 @@ class ThreadUDP(threading.Thread):
                 
                 self.link.getLine()
                 if (self.link.estado == 'CHATACK' or
-                        self.link.estado == 'JOGANDO'):
-                    #self.link.getChatLine()
-                    pass
+                        self.link.estado == 'JOGANDO' or
+                        self.link.estado == 'JOGANDO_S'):
+                    self.link.getChatLine()
             except socket.error, msg:
-                print "[THREADUDP] " + msg
+                print "[THREADUDP] " + str(msg)
                 pass
         self.link.close()
 ##############################################################################
