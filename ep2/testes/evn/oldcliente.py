@@ -6,7 +6,7 @@ SERVER_TCP_PORTA = 8888; SERVER_UDP_PORTA = 8888;
 UDP_PORTA = 8886; TCP_PORTA = 8886; CHAT_PORTA = 7474;
 TIME_BEAT = 10;
 
-import socket, threading, time, sys, select
+import socket, threading, time, sys, select, ssl
 
 ##############################################################################
 def ok(link, msg):
@@ -227,6 +227,7 @@ class Link():
         self.goOnEvent = goOnEvent
         self.estado = 'CONECTADO'
         self.chatSock = None
+        self.auxSock = None
         self.chatIp = None 
         self.chatPorta = None
 
@@ -275,7 +276,12 @@ class Link():
                 self.chatSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 self.chatSock.bind(('', int(porta)))
             elif self.protocolo == 'TCP':
-                print "nao implementado o chatSock TCP"
+                self.auxSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.auxSock.bind(('',int(porta)))
+                self.auxSock.listen(1)
+                self.chatSock, addr = self.auxSock.accept()
+                self.chatIp = addr[0]
+                self.chatPorta = addr[1]
         except socket.error, erro:
             print "[OPENSERVCHAT] " + str(erro)
 
@@ -286,7 +292,10 @@ class Link():
             self.chatIp = str(ip) 
             self.chatPorta = int(porta)
         elif self.protocolo == 'TCP':
-            print "nao implementado o chatSock TCP"
+            self.chatSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.chatSock.connect((ip, int(porta)))
+            self.chatIp = str(ip) 
+            self.chatPorta = int(porta)
 
     def sendChat(self, msg):
         self._lock.acquire()
@@ -327,10 +336,10 @@ class Link():
             self.chatSock.close()
             self.chatSock = None
         elif self.protocolo == 'TCP':
-#            print "vai fechar"
-#            self.chatSock.shutdown(socket.SHUT_RDWR)
-#            self.chatSock.close()
-            print "nao implementado o chatSock TCP"
+            self.chatSock.shutdown(socket.SHUT_RDWR)
+            self.chatSock.close()
+            self.auxSock.shutdown(socket.SHUT_RDWR)
+            self.auxSock.close()
 
     def getMsg(self, msg):
         global estados
@@ -361,7 +370,7 @@ class ThreadUDP(threading.Thread):
         try:
             self.link.send('GETESTD')
         except socket.error, msg:
-            print "[THREADUDP] " + msg
+            print "[THREADUDP] " + str(msg)
             pass
         while self.goOnEvent.isSet():
             try:
@@ -434,7 +443,7 @@ class ThreadTCP(threading.Thread):
                     linha = linha.split('\n', 2)[0]
                 #time.sleep(1)
             except socket.error, msg:
-                print "[THREADTCP] " + msg
+                print "[THREADTCP] " + str(msg)
         self.link.close()
 ##############################################################################
 
@@ -492,6 +501,7 @@ def main():
         except IndexError:
             serverPorta = SERVER_TCP_PORTA
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# ssl.wrap_socket(s, ssl_version=ssl.PROTOCOL_TLSv1)
         try:
             s.connect((ipServer, serverPorta))
         except socket.error, msg:

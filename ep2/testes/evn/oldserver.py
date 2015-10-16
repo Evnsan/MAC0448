@@ -5,7 +5,7 @@
 UDP_PORT = 8888; CHECK_PERIOD = 15; CHECK_TIMEOUT = 12;
 TCP_PORT = 8888; MAX_TCP_CONNECT_QUEUE = 5;
 
-import socket, threading, time, sys, select
+import socket, threading, time, sys, select, ssl
 from pprint import pprint
 
 
@@ -687,6 +687,7 @@ class ReceiverTCP(threading.Thread):
         while self.goOnEvent.isSet():
             try:
                 cliSocket, addr = self.recSocket.accept()
+#                ssl.wrap_socket(cliSocket, ssl_version=ssl.PROTOCOL_TLSv1, server_side=True)
                 if not self.heartbeats.has_key((addr[0],addr[1])):
                     flagTCP = threading.Event()
                     flagTCP.set() 

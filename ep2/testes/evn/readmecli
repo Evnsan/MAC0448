@@ -1,0 +1,51 @@
+Leia-me oldcliente.py
+Para iniciar o aplicativo execute o scripit em python contido no arquivo oldcliente.py
+da seguinte forma:
+	./oldserver.py SERVER [PORTAALTERNATIVAUDP [PORTAALTERNATIVASERVER]
+No início do arquivo é possível editar as pordas de destino dos sockets UDP(SERVER_UDP_PORT)
+e TCP(SERVER_TCP_PORTA), as portas UDP(UDP_PORTA) e TCP(TCP_PORTA) do socket do cliente e a 
+porta utilizada pelo chat UDP(CHAT_PORTA).
+MODO DE USO:
+-Interação via prompt de comando:
+--Toda linha escrita no prompt é enviada para o adversario do jogo
+--Todo comando precedido de ':' é enviado para o servidor
+--Caracter '+' informa o estado atual na maquina de estados
+
+-Comandos Principais:
+--USER nome -> iniciao login de 'nome'
+--PASS chave -> informa senha 'chave'
+--NEWUSER nome -> cadastra novo usuario 'nome'
+--NEWPASS chave -> cadastra nova senha 'chave' 
+--LIST -> lista usuarios logados e seus estados
+--HALL -> lista Hall da Fama
+--PLAYINV nome porta --> Convida usuario 'nome' para jogar e conectar no chat na porta 'porta'
+--PLAYACC nome porta --> Aceita convite de usuario 'nome' com chat na porta 'porta'
+--PLAYDNY nome -> declina convite do usuario 'nome'
+--ABORT -> retorna para o estado anterior na maquina de estados do servidor e do cliente
+--BOARD -> pede pelo tabuleiro de jogo atual
+--GETESTD -> pergunta o estado no servidor para sincronizar o cliente
+
+INFORMAÇÕES GERAIS:
+O cliente não guardará as informações de forma persistente de nenhuma forma. Mas sim manterá
+informações de seu estado em memória. Este estado é a base para sua execução, assim quando
+uma ação e executada pelo usuario, a mensagem é montada e enviada para o servidor que emitirá
+uma resposta. Esta última causa a mudança de estado do cliente que passa a agir de forma
+diferente de acordo com o estado atingido.
+Nesta lógica o cliente é basicamente uma máquina de estados ao estilo tradicional, passando
+de estado para estado mediante a ação das mensagens recebidas.
+Para efeito de sincronia, o protocolo desenvolvido suporta uma mensagem em especial, GETESTD,
+que pede ao servidor que informe o estado no qual o cliente se encontra na maquina de estados
+do servido. Após uma tradução o cliente atinge o estado necessário.
+Quando um jogo é iniciado, o cliente tentará iniciar uma conexão com o aplicativo cliente de
+seu adversário da seguinte forma:
+[Anfitrião] abre a porta e informa ao cliente
+[Convidado] recebe msg pelo servidor, inicia novo socket e envia CHATACK
+[Anfitrião] recebe CHATACK pelo novo socket e responde CHATACK
+Neste ponto ambos estão conversando.
+
+Estado Atual:
+Para a atual versão do cliente, no caso do UDP a ultima tarefa deve ser feita manualmente digi-
+tando CHATACK no prompt e apertando enter.
+O tcp não foi implementado por falta de tempo, e pode gerar problemas ao iniciar partida pelo
+cliente.
+O servidor esta completa nesta parte.
