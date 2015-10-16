@@ -5,25 +5,57 @@
 UDP_PORT = 8888; CHECK_PERIOD = 15; CHECK_TIMEOUT = 12;
 TCP_PORT = 8888; MAX_TCP_CONNECT_QUEUE = 5;
 
-import socket, threading, time, sys, select, ssl
 from pprint import pprint
+import socket, threading, time, sys, select, ssl, os
+
 
 
 ###Funcoes auxiliares para as transicoes da maquina de estados
+
+def cleanSessions():
+ for fname in os.listdir("./SESSION"):
+    os.remove("./SESSION/"+fname)
+
+def writeLog(name, logstring):
+    try:
+        f = open("./LOG/"+str(name) + ".log", "a+")
+        f.write("["+time.strftime("%c")+"] "  + str(logstring) + "\n")
+    except IOError, msg:
+        print "[ERROR WRITELOG] file de log nao foi encontrada\n"
+
+
+def existSessionFile(name):
+    for fname in os.listdir("./SESSION"):
+        if fname == name:
+            return False
+    try:
+        f = open("./SESSION/"+name, "w")
+    except IOError, msg:
+        print "[ERROR WRITESESSION] ExisteSessionFile\n"
+    return True
+
+def removeSessionFile(name):
+    if os.path.exists("./SESSION/"+name):
+        os.remove("./SESSION/"+name)
+
+
+
 def verificaEmpate(tab):
     for t in tab:
         if t is '0':
             return False
     return True
 
+
+
 def updatePontuacao(pontosUltimaPartida, cliente):
     try:
-        f = open(cliente.username, "r")
+        f = open(cliente.username + ".gm", "r")
         pontos = f.readline()
         f.close()
     except IOError, msg:
         print "[WARNING UPDATEPONTUACAO] Cliente nao tinha file\n"
-    f = open(cliente.username, "w")
+    f = open(cliente.username + ".gm", "w")
     if pontos:
         pontos = int(pontos) + pontosUltimaPartida
         f.write(str(pontos) + '\n')
@@ -129,10 +161,61 @@ def doesUserExist(username):
         return False
     f.close()
 
+def carregaTabuleiro(filename):
+    try:
+        f = open(filename + ".gm", "r")
+        f.readline()
+        return f.readline()
+    except IOError, msg:
+        sys.stderr.write("[ERRO CARREGATABULEIRO] %s"%msg +"\n")
+
+def realizaJogada(coordenada, tabuleiro, classe):
+    teste = tabuleiro.split("\n")
+    teste = teste[0].split(" ")
+    retorno = ""
+    try:
+        if teste[int(coordenada)] == '0':
+            teste[int(coordenada)] = str(classe)
+            retorno = teste[0]
+            for i in range(1,9):
+                retorno = retorno + " " + teste[i]
+            return retorno
+        else:
+            return None
+    except IndexError, msg:
+            sys.stderr.write("[ERRO REALIZAJOGADA] coordenada %s Invalida\n"%coordenada)
+    return None
+
 ###Maquina de estados para o cliente###
+
+def hallOfFame(cliente, args, heartbeats):
+    writeLog(cliente.username,"HALL")
+    hall = []
+    for fname in os.listdir("./"):
+        if fname.endswith(".gm"):
+            try:
+                f = open(fname, "r")
+                pontos = f.readline()
+                f.close()
+                name = fname.split('.')
+                obj = (int(pontos), name[0])
+                hall.append(obj)
+            except IOError, msg:
+                print "[WARNING HALL] file do cliente nao foi encontrada\n"
+                writeLog(cliente.username,"[WARNING HALL] file do cliente nao foi encontrada")
+
+
+
+    hall.sort(reverse = True)
+    cliente.send('HALLBEGIN\n')
+    for (pontos, nome) in hall:
+            cliente.send('HALL ' + str(pontos) + ' ' + nome + '\n')
+    cliente.send('HALLEND\n')
+
 
 
 def caniplay(cliente, args, heartbeats):
+    writeLog(cliente.username,"CANIPLAY")
     try:
         f = open(cliente.gamefilename,"r")
         playerTurno = f.readline()
@@ -165,33 +248,12 @@ def caniplay(cliente, args, heartbeats):
         f.close()    
     except IOError, msg:
         sys.stderr.write("[ERRO CANIPLAY] %s"%msg +"\n")
+        writeLog(cliente.username,"[ERRO CANIPLAY]")
 
-def carregaTabuleiro(filename):
-    try:
-        f = open(filename, "r")
-        f.readline()
-        return f.readline()
-    except IOError, msg:
-        sys.stderr.write("[ERRO CARREGATABULEIRO] %s"%msg +"\n")
 
-def realizaJogada(coordenada, tabuleiro, classe):
-    teste = tabuleiro.split("\n")
-    teste = teste[0].split(" ")
-    retorno = ""
-    try:
-        if teste[int(coordenada)] == '0':
-            teste[int(coordenada)] = str(classe)
-            retorno = teste[0]
-            for i in range(1,9):
-                retorno = retorno + " " + teste[i]
-            return retorno
-        else:
-            return None
-    except IndexError, msg:
-            sys.stderr.write("[ERRO REALIZAJOGADA] coordenada %s Invalida\n"%coordenada)
-    return None
         
 def play(cliente, args, heartbeats):
+    writeLog(cliente.username,"PLAY")
     try:
         coordenada = args[0]
         if isCoordenadaValid(coordenada):
@@ -233,14 +295,20 @@ def play(cliente, args, heartbeats):
                       
             else:
                 cliente.send("[ERRO PLAY] coordenada %s Invalida\n"%coordenada)
+                writeLog(cliente.username,"[ERRO PLAY] Coordenada Invalida ")
+
         else:
             cliente.send("[ERRO PLAY] coordenada %s Invalida\n"%coordenada)
+            writeLog(cliente.username,"[ERRO PLAY] Coordenada Invalida ")
+
 
     except IndexError, msg:
         cliente.send("[ERRO PLAY] Argumentos Insuficientes\n")
+        writeLog(cliente.username,"[ERRO PLAY] Argumentos Insuficientes")
 
 
 def playinv(cliente, args, heartbeats):
+    writeLog(cliente.username,"PLAYINV")
     try:
         playerToInvite = args[0]
         chatporta = args[1]
@@ -253,24 +321,19 @@ def playinv(cliente, args, heartbeats):
                 cliente.send("ESPERANDO " + playerToInvite + " " + chatporta  + "\n")
             else:
                 cliente.send("[ERRO: PLAYINV] Impossivel se convidar para uma partida\n")
+                writeLog(cliente.username,"[ERRO: PLAYINV] Impossivel se convidar para uma partida")
+
 
         else:
-            cliente.send("[ERRO: PLAYINV] Usuario nao esta onlinen\n")
+            cliente.send("[ERRO: PLAYINV] Usuario nao esta online\n")
+            writeLog(cliente.username,"[ERRO: PLAYINV] Usuario nao esta online")
+
     except IndexError, msg:
         cliente.send("[ERRO: PLAYINV] Argumentos Insuficientes\n")
 
-def listingStates(estado):
-        if estado == "JOGANDO":
-            return True
-        if estado == "ESPERANDO":
-            return True
-        if estado == "LOGADO":
-            return True
-        if cliente.estado == "PRONTO":
-            return True
-        return False
 
 def listPlayers(cliente, args, heartbeats):
+    writeLog(cliente.username,"LIST")
     try:
         alvo = heartbeats.getList()
         cliente.send("LIST START\n")
@@ -279,10 +342,10 @@ def listPlayers(cliente, args, heartbeats):
         cliente.send("LIST STOP\n")
     except IndexError, msg:
             cliente.send("[ERRO: LISTPLAYERS] Argumentos Insuficientes\n")
+            writeLog(cliente.username,"[ERRO: LISTPLAYERS] Argumentos Insuficientes")
 
 def playacc_esperando(cliente, args, heartbeats):
-    #esperando_jogo
-    
+    writeLog(cliente.username,"PLAYACC_ESPERANDO")
     try:
         usernameAdv = args[0]
         chatporta = args[1]
@@ -290,12 +353,12 @@ def playacc_esperando(cliente, args, heartbeats):
         if cliente.adversario == usernameAdv:
             pontos = None
             try:
-                f = open(cliente.username, "r")
+                f = open(cliente.username + ".gm", "r")
                 pontos = f.readline()
                 f.close()
             except IOError, msg:
                 pass
-            f = open(cliente.username, "w")
+            f = open(cliente.username + ".gm", "w")
             if pontos:
                 f.write(pontos)
             else:
@@ -310,11 +373,13 @@ def playacc_esperando(cliente, args, heartbeats):
             f.write(cliente.gamefilename + '\n') 
             f.close()
             cliente.send("SEU CONVITE FOI ACEITO, VOCE ESTA EM UM JOGO!\n")
-      
+
     except IndexError, msg:
         cliente.send("[ERRO: PLAYACC_ESPERANDO] Argumentos Insuficientes\n")
+        writeLog(cliente.username,"[ERRO: PLAYACC_ESPERANDO] Argumentos Insuficientes")
 
 def playacc_logado(cliente, args, heartbeats):
+    writeLog(cliente.username,"PLAYACC_LOGADO")
     try:
         usernameAdv = args[0]
         chatporta = args[1]
@@ -335,13 +400,15 @@ def playacc_logado(cliente, args, heartbeats):
             if clienteToPlay.adversario == cliente.username:
                 pontos = None
                 try:
-                    f = open(cliente.username, "r")
+                    f = open(cliente.username + ".gm", "r")
                     
                     pontos = f.readline()
                     f.close()
                 except IOError, msg:
                     print "[WARNING PLAYACC_LOGADO] Cliente nao tinha file\n"
-                f = open(cliente.username, "w")
+                    writeLog(cliente.username,"[WARNING PLAYACC_LOGADO] Cliente nao tinha file")
+
+                f = open(cliente.username + ".gm", "w")
                 if pontos:
                     f.write(pontos)
                 else:
@@ -360,14 +427,22 @@ def playacc_logado(cliente, args, heartbeats):
                 clienteToPlay.send("PLAYACC " + cliente.username + " " + chatporta + "\n")
             else:
                 cliente.send("[ERRO: PLAYACC_LOGADO]  Usuario %s nao esta convidando\n"%usernameAdv)
+                writeLog(cliente.username,"[ERRO: PLAYACC_LOGADO]  Usuario "+usernameAdv+" nao esta convidando")
+
         else:
-            cliente.send("[ERRO: PLAYACC_LOGADO] Usuario nao esta online\n")   
+            cliente.send("[ERRO: PLAYACC_LOGADO] Usuario nao esta online\n")
+            writeLog(cliente.username,"[ERRO: PLAYACC_LOGADO] Usuario nao esta online")
+   
     except IndexError, msg:
-        cliente.send("[ERRO: PLAYACC_LOGADO] Argumentos Insuficientes\n")             
+        cliente.send("[ERRO: PLAYACC_LOGADO] Argumentos Insuficientes\n")  
+        writeLog(cliente.username,"[ERRO: PLAYACC_LOGADO] Usuario nao esta online")       
 
 def exit(cliente, args, heartbeats):
+    writeLog(cliente.username,"EXIT")
     ip = heartbeats.getKeyForCliente(cliente)
     cliente.estado = 'EXITING'
+    removeSessionFile(cliente.username)
+    writeLog(cliente.username,"LOGOUT")
     del heartbeats[ip]
     cliente.exit()
 
@@ -378,36 +453,45 @@ def user(cliente, args, heartbeats):
     try:
         username = args[0]
         if doesUserExist(username):
-            cliente.username = username
-            cliente.estado = "LOGANDO"
+            if existSessionFile(username):
+                cliente.username = username
+                cliente.estado = "LOGANDO"
+            else:
+                cliente.send("[ERRO: USER] Usuario ja esta Online\n")
+
         else:
             cliente.send("[ERRO: USER] Usuario Inexistente\n")
     except IndexError, msg:
             cliente.send("[ERRO: USER] Argumentos Insuficientes\n")
 
 def abort_toConectado(cliente, args, heartbeats):
+    writeLog(cliente.username,"ABORT_TOCONECTADO")
     cliente.username = None
     cliente.estado = "CONECTADO"
     cliente.send("ABORT CONECTADO")
 
 def abort_esperando(cliente, args, heartbeats):
+    writeLog(cliente.username,"ABORT_ESPERANDO")
     cliente.adversario = None
     cliente.estado = "LOGADO"
     cliente.send("ABORT LOGADO")
 
 def abort_jogando(cliente, args, heartbeats):
+    writeLog(cliente.username,"ABORT_JOGANDO")
     #Escrever rec no arquivo do cliente se o jogo nao acabou
     cliente.adversario = None
     cliente.estado = 'LOGADO'
     cliente.send("ABORT LOGADO")
 
 def playdny(cliente, args, heartbeats):
+    writeLog(cliente.username,"PLAYDNY")
     try:
         inviter = heartbeats.getClienteByName(args[0])
         if(inviter.adversario == cliente.username):
             inviter.send("PLAYDNY %s\n"%cliente.username)
     except IndexError, msg:
         cliente.send("[ERRO PLAYDNY] Argumentos Insuficientes\n")
+        writeLog(cliente.username,"[ERRO PLAYDNY] Argumentos Insuficientes")
 
 def newuser(cliente, args, heartbeats):
     #verificar se existe em um arquivo
@@ -441,7 +525,7 @@ def newpass(cliente, args, heartbeats):
             f.close()
             cliente.estado = "LOGADO"
             cliente.send("LOGADO\n")
-
+            writeLog(cliente.username,"LOGIN")
         else:
             cliente.send("[ERRO: NEWPASS] Senha Invalida\n")
     except IndexError, msg:
@@ -453,19 +537,24 @@ def checkpass(cliente, args, heartbeats):
         if isPasswordCorrect(cliente.username, password):
             cliente.estado = "LOGADO"
             cliente.send("LOGADO\n")
+            writeLog(cliente.username,"LOGIN")
+
         else:
             cliente.send("[ERRO: PASS] Password Iconrreto!!\n")
     except IndexError, msg:
             cliente.send("[ERRO: PASS] Argumentos Insuficientes\n")
 
 def board(cliente, args, heartbeats):
+    writeLog(cliente.username,"BOARD")
     tabuleiro = carregaTabuleiro(cliente.gamefilename)
     cliente.send("BOARD " + tabuleiro)
     
 def cmdInvalido(cliente, args, heartbeats):
+    writeLog(cliente.username,"CMDINVALIDO_NOESTADO")
     cliente.send("[ERRO CMDINVALIDO] Comando invalido para o estado %s\n"%cliente.estado)
 
 def cmdList(cliente, args, heartbeats):
+    writeLog(cliente.username,"CMDLIST")
     msg0 = "CMDLIST %s: "%cliente.estado
     msg = {
         'CONECTADO':  "USER, NEWUSER, CMDLIST, EXIT\n",
@@ -478,6 +567,7 @@ def cmdList(cliente, args, heartbeats):
     cliente.send(msg0 + msg[cliente.estado])
 
 def getestd(cliente, args, heartbeats):
+    writeLog(cliente.username,"GETESTD")
     cliente.send("GETESTD " + cliente.estado)
 
 def ping(cliente, args, heartbeats):
@@ -492,7 +582,7 @@ estados = {
                 'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
 
     'LOGADO': {'PLAYACC': playacc_logado, 'PLAYINV': playinv, 'PLAYDNY': playdny, 
-               'LIST': listPlayers,'HALL': None, 'EXIT': exit, 'ABORT': abort_toConectado,
+               'LIST': listPlayers,'HALL': hallOfFame, 'EXIT': exit, 'ABORT': abort_toConectado,
                'CMDLIST': cmdList, 'PING': ping, 'GETESTD': getestd },
 
     'REGISTRANDO': {'NEWNAME': None, 'NEWPASS': newpass, 'ABORT': abort_toConectado,
@@ -550,6 +640,7 @@ class Cliente():
                 self.connfd.close()
             except socket.error, msg:
                 sys.stderr.write("ERRO-  %s: Nao foi possivel fechar o socket\n")
+        removeSessionFile(self.username)
     
     def send(self, msg):
         if(self.connType == 'UDP'):
@@ -687,7 +778,6 @@ class ReceiverTCP(threading.Thread):
         while self.goOnEvent.isSet():
             try:
                 cliSocket, addr = self.recSocket.accept()
-#                ssl.wrap_socket(cliSocket, ssl_version=ssl.PROTOCOL_TLSv1, server_side=True)
                 if not self.heartbeats.has_key((addr[0],addr[1])):
                     flagTCP = threading.Event()
                     flagTCP.set() 
@@ -756,6 +846,8 @@ def main():
 
     open("users","a+").close()
     
+    cleanSessions()
+
     #UDP#
     receiverUDP = ReceiverUDP(goOnEvent = receiverUDPEvent,
             heartbeats = hbUDP)
@@ -795,6 +887,9 @@ def main():
             for ip, cliente in silent:
                 print '=>Silencioso ip: %s' % str(ip)
                 cliente.send("EXITING\n")
+                if cliente.username:
+                    removeSessionFile(cliente.username)
+                    writeLog(cliente.username,"SILENCED")
                 del hbUDP[ip]
 
             #TCP - Beats#
@@ -803,11 +898,16 @@ def main():
             for ip, cliente in silent:
                 cliente.flagTCP.clear()
                 try:
+                    removeSessionFile(cliente.username)
                     cliente.send("EXITING\n")
                     cliente.connfd.shutdown(socket.SHUT_RDWR)
                     cliente.connfd.close()
                 except socket.error, msg:
                     sys.stderr.write("[MAIN-TCPBEATS] " + str(msg) + "\n")
+                if cliente.username:
+                    writeLog(cliente.username,"SILENCED")
+                    removeSessionFile(cliente.username)
+
                 del hbTCP[ip]
             time.sleep(CHECK_PERIOD)
     except KeyboardInterrupt:
