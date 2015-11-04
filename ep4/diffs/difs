@@ -1,0 +1,52 @@
+Common.h
+----------******---------
+36,37d35
+< #define SEVAL_FUNCDEF	0x080		/* only allow function definitions */
+< #define SEVAL_ONECMD	0x100		/* only allow a single command */
+
+Evalstring.c
+----------******---------
+311,318d310
+< 	      if ((flags & SEVAL_FUNCDEF) && command->type != cm_function_def)
+< 		{
+< 		  internal_warning ("%s: ignoring function definition attempt", from_file);
+< 		  should_jump_to_top_level = 0;
+< 		  last_result = last_command_exit_value = EX_BADUSAGE;
+< 		  break;
+< 		}
+< 
+379,381d370
+< 
+< 	      if (flags & SEVAL_ONECMD)
+< 		break;
+
+Subst.c
+----------******---------
+8050,8052c8050
+<       else if (var && (invisible_p (var) || var_isset (var) == 0))
+< 	temp = (char *)NULL;
+<       else if ((var = find_variable_last_nameref (temp1)) && var_isset (var) && invisible_p (var) == 0)
+---
+>       else if (var = find_variable_last_nameref (temp1))
+
+Variables.c
+----------******---------
+361,365c361,367
+< 	  /* Don't import function names that are invalid identifiers from the
+< 	     environment, though we still allow them to be defined as shell
+< 	     variables. */
+< 	  if (legal_identifier (name))
+< 	    parse_and_execute (temp_string, name, SEVAL_NONINT|SEVAL_NOHIST|SEVAL_FUNCDEF|SEVAL_ONECMD);
+---
+> 	  if (posixly_correct == 0 || legal_identifier (name))
+> 	    parse_and_execute (temp_string, name, SEVAL_NONINT|SEVAL_NOHIST);
+> 
+> 	  /* Ancient backwards compatibility.  Old versions of bash exported
+> 	     functions like name()=() {...} */
+> 	  if (name[char_index - 1] == ')' && name[char_index - 2] == '(')
+> 	    name[char_index - 2] = '\0';
+381a384,387
+> 
+> 	  /* ( */
+> 	  if (name[char_index - 1] == ')' && name[char_index - 2] == '\0')
+> 	    name[char_index - 2] = '(';		/* ) */
