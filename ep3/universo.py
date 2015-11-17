@@ -16,7 +16,7 @@ def cmdSimulate(args):
 	print "este e o comando cmdSimulate: " + str(args)
 
 comandos = {'set': cmdSet, 'simulate': cmdSimulate, 'finish': cmdFinish}
-comandosSet = {}
+#comandosSet = {'host': , ''}
 comandosSimulate = {}
 
 
