@@ -1,0 +1,15 @@
+Assumindo que comentarios começam por '#'
+Comando primarios aceitos:
+ -set
+ -simulate
+ -finish
+Comandos secundarios aceitos:
+ -set + host
+ -set + router
+ -set + duplex-link
+ -set + ip
+ -set + performance
+ -set + ircc
+ -set + ircs
+ -set + dnss
+ -set + sniffer
