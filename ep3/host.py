@@ -7,7 +7,7 @@ class Host(object):
         self.ip = ''
         self.ipRoteador = ''
         self.ipDnsServidor = ''
-        self.snifferFile = None
+        self.sniffer = None
         self.enlace = None
         self.buff = []
         self.papel = ''
@@ -32,7 +32,7 @@ class Host(object):
         self.enlace = enlace
     
     def sefSniffer(self, sniffer):
-        self.snifferFile = sniffer
+        self.sniffer = sniffer
 
     def setPapel(self, papel):
         self.papel = papel
