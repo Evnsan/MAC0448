@@ -36,4 +36,6 @@ class Host(object):
 
     def setPapel(self, papel):
         self.papel = papel
-
+    
+    def getHostName(self):
+        return self.hostName
