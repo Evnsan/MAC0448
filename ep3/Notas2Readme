@@ -7,6 +7,7 @@ Comandos secundarios aceitos:
  -set + host
  -set + router
  -set + duplex-link
+ -set + route
  -set + ip
  -set + performance
  -set + ircc
