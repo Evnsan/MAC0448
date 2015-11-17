@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Arquivo com o codigo da classe Host do simulador de rede
+#
+
 class Host(object):
     def __init__(self, hostName):
         super(Host, self).__init__()
