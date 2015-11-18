@@ -14,7 +14,7 @@ class Router(object):
             self.enlaces.append(None)
 
     def setRota(self, remetente, destinatario):
-        rotas[remetente] = destinatario
+        self.rotas[remetente] = destinatario
 
     def getRota(self, remetente):
         return rotas[remetente]

@@ -108,6 +108,12 @@ def cmdSniffer(args):
 
         
 def cmdRoute(args):
+    nomeRouter = args[1]
+    del args[0]
+    del args[0]
+    router = routers[nomeRouter]
+    for i in xrange(0, len(args)/2,2):
+        router.setRota(args[i],args[i+1])
     print "cmdRoute" + str(args)
 
 ## Comandos aceitos no arquivo de configuracao
