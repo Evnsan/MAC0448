@@ -14,6 +14,7 @@ from enlace import Enlace
 elementos = [] 
 routers = {}
 hosts = {}
+tempoDeSimulacao = 0
 ###############################################################################
 
 
@@ -65,7 +66,10 @@ def cmdRoute(args):
 ## Comandos aceitos no arquivo de configuracao
 
 def cmdFinish(args):
-	print "este e o comando finish: " + str(args)
+    print "este e o comando finish: " + str(args)
+    global tempoDeSimulacao
+    tempoDeSimulacao = 1000 * float(args[0])
+    print tempoDeSimulacao
 
 def cmdSet(args):
 	comandosSet[args[0]](args)
@@ -113,7 +117,8 @@ def main():
     cmds = p.lerComandos()
     print "AQUI===>" + str(cmds)
     executaComandos(cmds)
-    executaSimulacoes(3)
+    print tempoDeSimulacao
+    executaSimulacoes(tempoDeSimulacao)
 
 ###############################################################################
 
