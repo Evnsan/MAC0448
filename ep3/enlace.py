@@ -34,6 +34,8 @@ class Enlace(object):
         if len(tempos) > 0:
             if tempos[0] == 0 :
                 porta.recebe(buff[0])
+                if self.sniffer:
+                    self.gravaDatagrama(buff[0])
                 tempos.popleft()
                 buff.popleft()
             else:
@@ -41,7 +43,11 @@ class Enlace(object):
         else:
             print "ENLACE::PROCESSA : Nada para processar"
 
-    def sefSniffer(self, sniffer):
+    def gravaDatagrama(self, datagrama):
+        print "SNIFFER: " + datagrama
+        #gravar no arquivo <===================
+
+    def setSniffer(self, sniffer):
         self.sniffer = sniffer
 
     def mysplit(self, s):

@@ -69,8 +69,25 @@ def cmdDnss(args):
     rotinaCmdAplicacao(args)
     print "cmdDnss" + str(args)
 
+def parseSniff(arg):
+    host = None 
+    porta = None 
+    try:
+        host, porta =  arg.split(".")
+    except ValueError:
+        host = arg
+    print str(host) + " " + str(porta)
+    return [host, porta]
+    
 def cmdSniffer(args):
     print "cmdSniffer" + str(args)
+    node, porta = parseSniff(args[1])
+    try:
+        hosts[node].setSniffer(args[3])
+    except KeyError:
+        routers[node].setSniffers(porta, arg[3])
+
+        
 def cmdRoute(args):
     print "cmdRoute" + str(args)
 

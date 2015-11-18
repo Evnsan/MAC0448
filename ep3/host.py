@@ -23,6 +23,9 @@ class Host(object):
         self.comandos = []
         self.nomeAplicacao = None
 
+    def __str__(self):
+        return "HOST: " + str(self.hostName) + " IP(" + str(self.ip) + ")"
+
         #### funcoes das camadas
         self.cmdaRedes = CamadaRedes()
         self.cmdaTransporte = CamadaTransporte()
@@ -48,7 +51,8 @@ class Host(object):
         self.enlace = enlace
     
     def setSniffer(self, sniffer):
-        self.sniffer = sniffer
+        #self.sniffer = sniffe0r
+        self.enlace.setSniffer(sniffer)
 
     def setPapel(self, papel):
         self.papel = papel
@@ -81,8 +85,6 @@ class Host(object):
         return msg
 
     def recebe(self, datagrama):
-        if self.sniffer:
-            self.gravaPacote(datagrama)
         self.buff.append(datagrama)
     
     def adicionaComando(self, hora, comando, args):
@@ -91,8 +93,4 @@ class Host(object):
 
     def printComandos(self):
         print self.comandos
-
-    def gravaPacote(self, datagrama):
-        print datagrama
-        #gravar no arquivo <================
 

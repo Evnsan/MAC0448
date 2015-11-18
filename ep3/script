@@ -9,7 +9,7 @@ h1
 e = Enlace(h0, h1, "10M", "5s")
 h0.setEnlace(e)
 h1.setEnlace(e)
-e.passo()
+e.passo(10)
 d = Datagrama()
 d.setTamanho(15)
 e.enviar(h0, d)
