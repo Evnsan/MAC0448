@@ -5,12 +5,17 @@ class Router(object):
         self.nome = nome
         self.numDeInterfaces = numDeInterfaces
         self.enlaces = []
+        self.ips = []
         self.tempoPacote = None
         self.portas = {}
         self.sniffer = None
         super(Router, self).__init__()
         for i in range(numDeInterfaces):
             self.enlaces.append(None)
+            self.ips.append(None)
+
+    def __repr__(self):
+        return "ROUTER: " + str(self.nome) + " IPS(" + str(self.
 
     def setEnlace(self, porta, enlace):
         self.enlaces[porta] = enlace
@@ -28,6 +33,10 @@ class Router(object):
     def setSniffer(self, porta, sniffer):
         enlace = self.enlaces[porta]
         enlace.setSniffer(sniffer)
+    
+    def setIp(self, args):
+        pass
+        
 ##getters e setters
 
 	def getNome(self):

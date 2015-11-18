@@ -37,7 +37,6 @@ class Host(object):
     
     def setIp(self, args):
         if not isinstance(args, basestring):
-    
             try:
                 self.ipDnsServidor = args[2]
                 self.ipRoteador = args[1]

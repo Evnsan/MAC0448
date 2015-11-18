@@ -66,6 +66,14 @@ def cmdDuplexLink(args):
 
 def cmdIp(args):
 	print "cmdIp" + str(args)
+    node = args[1]
+    del args[0]
+    del args[0]
+    try:
+        hosts[node].setIp(args)
+    except KeyError:
+        routers[node].setIp(args)
+
 
 def cmdPerformance(args):
 	print "cmdPerformance" + str(args)
