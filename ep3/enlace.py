@@ -57,7 +57,7 @@ class Enlace(object):
 
     def enviar(self, remetente, datagrama):
         tempo = math.ceil(float(datagrama.getTamanho()) /
-                float(self.capacidade))
+                float(self.capacidade) + self.atraso)
         if(remetente == self.portaA):
             self.buffA.append(datagrama)
             self.temposA.append(tempo)

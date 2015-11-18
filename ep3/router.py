@@ -42,7 +42,8 @@ class Router(object):
         enlace.setSniffer(sniffer)
     
     def setIp(self, args):
-        pass
+        for i in xrange(0,2*int(self.numDeInterfaces),2):
+            self.ips[int(args[i])] = args[i+1] 
         
 ##getters e setters
 
