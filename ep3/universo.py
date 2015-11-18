@@ -56,12 +56,12 @@ def cmdDuplexLink(args):
         e.setTerminalA(routers[node])
     
     #TerminalB
-    node, porta = parsePonto(args[1])
+    node, porta = parsePonto(args[2])
     try:
-        hosts[node].setSniffer(args[3])
+        hosts[node].setEnlace(e)
         e.setTerminalB(hosts[node])
     except KeyError:
-        routers[node].setSniffer(int(porta), args[3])
+        routers[node].setEnlace(int(porta), e)
         e.setTerminalB(routers[node])
 
 def cmdIp(args):
