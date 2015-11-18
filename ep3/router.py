@@ -7,13 +7,14 @@ class Router(object):
         self.enlaces = []
         self.ips = []
         self.tempoPacote = None
-        self.portas = {}
+        self.portas = []
         self.sniffer = None
         self.rotas = {} 
         super(Router, self).__init__()
         for i in range(numDeInterfaces):
             self.enlaces.append(None)
             self.ips.append(None)
+            self.portas.append(None)
 
     def __repr__(self):
         return "ROUTER: " + str(self.nome) + " IPS(" + str(self.ips) + ")"
