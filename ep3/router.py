@@ -8,9 +8,16 @@ class Router(object):
         self.tempoPacote = None
         self.portas = {}
         self.sniffer = None
+        self.rotas = {} 
         super(Router, self).__init__()
         for i in range(numDeInterfaces):
             self.enlaces.append(None)
+
+    def setRota(self, remetente, destinatario):
+        rotas[remetente] = destinatario
+
+    def getRota(self, remetente):
+        return rotas[remetente]
 
     def setEnlace(self, porta, enlace):
         self.enlaces[porta] = enlace
