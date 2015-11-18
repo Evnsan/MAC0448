@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+from camadaTransporte import CamadaTransporte
+from camadaAplicacao import CamadaAplicacao
+from camadaRedes import CamadaRedes
+from mensagem import Mensagem
+from segmento import Segmento
+from datagrama import Datagrama
 
 # Arquivo com o codigo da classe Host do simulador de rede
 #
@@ -14,6 +20,11 @@ class Host(object):
         self.enlace = None
         self.buff = []
         self.papel = ''
+
+        #### funcoes das camadas
+        self.cmdaRedes = CamadaRedes()
+        self.cmdaTransporte = CamadaTransporte()
+        self.cmdaAplicacao = CamadaAplicacao()
 
     def setIp(self, args):
         if not isinstance(args, basestring):
@@ -45,3 +56,20 @@ class Host(object):
 
     def passo(self):
         print "HOST(" + self.hostName + "): meu turno"
+
+    def enviar(self):
+        msgteste = "teste"
+        mensagem = self.cmdaAplicacao.empacotaMensagem(msgteste)
+        segmento = self.cmdaTransporte.empacotaSegmento(mensagem)
+        datagrama = self.cmdaRedes.empacotaDatagrama(segmento)
+        return datagrama
+
+    def receber(self, datagrama):
+        segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
+        mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
+        msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
+        return msg
+
+
+
+
