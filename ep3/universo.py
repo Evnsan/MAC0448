@@ -1,22 +1,27 @@
 #!/usr/bin/python
 
+################## Biblioteca de classes - elementos da rede ##################
 from parser import Parser
 from router import Router
 from host import Host
+from enlace import Enlace
+###############################################################################
 
+################## Listas Globais - Variaveis Globais #########################
 elementos = {}
 routers = {}
 hosts = {}
+###############################################################################
 
+
+################## Rotinas de Configuracao e Execucao do universo #############
 
 ## Comandos secundarios
-
 def cmdRouter(args):
 	print "cmdRouter" + str(args)
 	r = Router(args[1], args[2])
 	routers[args[1]] = r
 	elementos[args[1]] = r
-
 
 def cmdHost(args):
 	print "cmdHost" + str(args)
@@ -60,19 +65,29 @@ def cmdFinish(args):
 def cmdSet(args):
 	comandosSet[args[0]](args)
 
-
-
 def cmdSimulate(args):
 	print "este e o comando cmdSimulate: " + str(args)
 
-comandos = {'set': cmdSet, 'simulate': cmdSimulate, 'finish': cmdFinish}
-comandosSet = {'host': cmdHost, 'router': cmdRouter,           'duplex-link': cmdDuplexLink, 
-			   'ip': cmdIp,     'performance': cmdPerformance, 'ircc': cmdIrcc,
-			   'ircs': cmdIrcs, 'dnss': cmdDnss,               'sniffer': cmdSniffer,
+
+comandos = {'set': cmdSet,
+            'simulate': cmdSimulate,
+            'finish': cmdFinish}
+
+comandosSet = {'host': cmdHost,
+               'router': cmdRouter,
+               'duplex-link': cmdDuplexLink, 
+			   'ip': cmdIp,
+               'performance': cmdPerformance,i
+               'ircc': cmdIrcc,
+			   'ircs': cmdIrcs,
+               'dnss': cmdDnss,
+               'sniffer': cmdSniffer,
 			   'route': cmdRoute}
 
 comandosSimulate = {}
+###############################################################################
 
+################## Rotinas do ciclo de execucao do universo ###################
 
 def executaComandos(cmds):
 	for cmd,args in cmds:
@@ -83,7 +98,7 @@ def main():
 	cmds = p.lerComandos()
 	executaComandos(cmds)
 
-
+###############################################################################
 
 if __name__ == '__main__':
     main()
