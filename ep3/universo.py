@@ -33,7 +33,9 @@ def cmdHost(args):
 	elementos.append(h)
 
 def cmdDuplexLink(args):
-	print "cmdDuplexLink" + str(args)
+    print "cmdDuplexLink" + str(args)
+    e = Enlace(args[1], args[2], args[3], args[4])
+    elementos.append(e)
 
 def cmdIp(args):
 	print "cmdIp" + str(args)
@@ -109,6 +111,7 @@ def main():
         print "Arquivo de configuracao: " + str(sys.argv[1])
         p.setArqConfiguracao(sys.argv[1])
     cmds = p.lerComandos()
+    print "AQUI===>" + str(cmds)
     executaComandos(cmds)
     executaSimulacoes(3)
 
