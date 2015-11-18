@@ -70,3 +70,9 @@ class Enlace(object):
         print self.buffA
         print self.temposB
         print self.buffB
+
+    def setTerminalA(self, terminal):
+       self.portaA = terminal 
+    
+    def setTerminalB(self, terminal):
+       self.portaB = terminal 
