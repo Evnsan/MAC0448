@@ -10,9 +10,9 @@ from datagrama import Datagrama
 #
 
 class Host(object):
-    def __init__(self, hostName):
+    def __init__(self, nome):
         super(Host, self).__init__()
-        self.hostName = hostName
+        self.nome = nome
         self.ip = ''
         self.ipRoteador = ''
         self.ipDnsServidor = ''
@@ -29,10 +29,10 @@ class Host(object):
         self.cmdaAplicacao = CamadaAplicacao()
     
     def __str__(self):
-        return "HOST: " + str(self.hostName) + " IP(" + str(self.ip) + ")"
+        return "HOST: " + str(self.nome) + " IP(" + str(self.ip) + ")"
     
     def __repr__(self):
-        return "HOST " + str(self.hostName) + " IP=" + str(self.ip)
+        return "HOST " + str(self.nome) + " IP=" + str(self.ip)
 
     
     def setIp(self, args):
@@ -42,13 +42,13 @@ class Host(object):
                 self.ipRoteador = args[1]
                 self.ip = args[0]
             except IndexError, msg:
-                print ("HOST(SETIP) - Hostname = " + self.hostName 
+                print ("HOST(SETIP) - Hostname = " + self.nome 
                        + ": Argumentos Insuficientes.")
                 print "    " + str(msg)
         else:
-            print ("HOST(" + self.hostName + ").setIp()"
+            print ("HOST(" + self.nome + ").setIp()"
                    + ": Argumentos devem ser listas")
-            print "HOST(" + self.hostName + ") Recebido:" + str(args)
+            print "HOST(" + self.nome + ") Recebido:" + str(args)
 
     def setEnlace(self, enlace):
         self.enlace = enlace
@@ -61,10 +61,10 @@ class Host(object):
         self.papel = papel
     
     def getHostName(self):
-        return self.hostName
+        return self.nome
 
     def passo(self, relogio):
-        print "HOST(" + self.hostName + "): meu turno"
+        print "HOST(" + self.nome + "): meu turno"
         try:    
             while relogio >= self.comandos[0][0]:
                 #PRECISA ARRUMAR AQUI <================

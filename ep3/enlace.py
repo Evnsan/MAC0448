@@ -25,17 +25,15 @@ class Enlace(object):
     def passo(self, relogio):
         print ("ENLACE(" + str(self.portaA) +
                 " <-> " + str(self.portaB) +  "): Meu turno")
-        print self.capacidade
-        print self.atraso
-        self.processa(self.temposA, self.buffA, self.portaA)
-        self.processa(self.temposB, self.buffB, self.portaB)
+        self.processa(self.temposA, self.buffA, self.portaA, relogio)
+        self.processa(self.temposB, self.buffB, self.portaB, relogio)
    
-    def processa(self, tempos, buff, porta):
+    def processa(self, tempos, buff, porta, relogio):
         if len(tempos) > 0:
             if tempos[0] == 0 :
                 porta.recebe(buff[0])
                 if self.sniffer:
-                    self.gravaDatagrama(buff[0])
+                    self.gravaDatagrama(buff[0], relogio)
                 tempos.popleft()
                 buff.popleft()
             else:
@@ -43,8 +41,11 @@ class Enlace(object):
         else:
             print "ENLACE::PROCESSA : Nada para processar"
 
-    def gravaDatagrama(self, datagrama):
-        print "SNIFFER: " + datagrama
+    def gravaDatagrama(self, datagrama, relogio):
+        msg = "[" + str(relogio) + "]: " + str(datagrama)
+        with open(self.sniffer, 'a') as arquivo:
+            arquivo.write(msg + '\n')
+        print "SNIFFER " + msg
         #gravar no arquivo <===================
 
     def setSniffer(self, sniffer):
@@ -57,7 +58,7 @@ class Enlace(object):
 
     def enviar(self, remetente, datagrama):
         tempo = math.ceil(float(datagrama.getTamanho()) /
-                float(self.capacidade) + self.atraso)
+                float(self.capacidade) + float(self.atraso))
         if(remetente == self.portaA):
             self.buffA.append(datagrama)
             self.temposA.append(tempo)
