@@ -43,9 +43,26 @@ def cmdHost(args):
 
 def cmdDuplexLink(args):
     print "cmdDuplexLink" + str(args)
-    e = Enlace(args[1], args[2], args[3], args[4])
+    e = Enlace(None, None, args[3], args[4])
     elementos.append(e)
     #colocar os enlaces nos hosts/routers
+    #TerminalA
+    node, porta = parsePonto(args[1])
+    try:
+        hosts[node].setEnlace(e)
+        e.setTerminalA(hosts[node])
+    except KeyError:
+        routers[node].setEnlace(int(porta), e)
+        e.setTerminalA(routers[node])
+    
+    #TerminalB
+    node, porta = parsePonto(args[1])
+    try:
+        hosts[node].setSniffer(args[3])
+        e.setTerminalB(hosts[node])
+    except KeyError:
+        routers[node].setSniffer(int(porta), args[3])
+        e.setTerminalB(routers[node])
 
 def cmdIp(args):
 	print "cmdIp" + str(args)
@@ -58,6 +75,7 @@ def cmdPerformance(args):
 	r.setTempoPacote(args[0])
 	del args[0]
 	r.setPortas(args)
+
 def cmdIrcc(args):
     rotinaCmdAplicacao(args)
     print "cmdIrcc" + str(args)
@@ -70,7 +88,7 @@ def cmdDnss(args):
     rotinaCmdAplicacao(args)
     print "cmdDnss" + str(args)
 
-def parseSniff(arg):
+def parsePonto(arg):
     host = None 
     porta = None 
     try:
@@ -82,7 +100,7 @@ def parseSniff(arg):
     
 def cmdSniffer(args):
     print "cmdSniffer" + str(args)
-    node, porta = parseSniff(args[1])
+    node, porta = parsePonto(args[1])
     try:
         hosts[node].setSniffer(args[3])
     except KeyError:

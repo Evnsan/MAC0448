@@ -23,14 +23,18 @@ class Host(object):
         self.comandos = []
         self.nomeAplicacao = None
 
-    def __str__(self):
-        return "HOST: " + str(self.hostName) + " IP(" + str(self.ip) + ")"
-
         #### funcoes das camadas
         self.cmdaRedes = CamadaRedes()
         self.cmdaTransporte = CamadaTransporte()
         self.cmdaAplicacao = CamadaAplicacao()
+    
+    def __str__(self):
+        return "HOST: " + str(self.hostName) + " IP(" + str(self.ip) + ")"
+    
+    def __repr__(self):
+        return "HOST " + str(self.hostName) + " IP=" + str(self.ip)
 
+    
     def setIp(self, args):
         if not isinstance(args, basestring):
     
