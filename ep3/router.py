@@ -16,7 +16,7 @@ class Router(object):
             self.ips.append(None)
 
     def __repr__(self):
-        return "ROUTER: " + str(self.nome) + " IPS(" + str(self.
+        return "ROUTER: " + str(self.nome) + " IPS(" + str(self.ips) + ")"
 
     def setRota(self, remetente, destinatario):
         self.rotas[remetente] = destinatario

@@ -65,7 +65,7 @@ def cmdDuplexLink(args):
         e.setTerminalB(routers[node])
 
 def cmdIp(args):
-	print "cmdIp" + str(args)
+    print "cmdIp" + str(args)
     node = args[1]
     del args[0]
     del args[0]
