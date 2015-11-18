@@ -11,13 +11,14 @@ class Segmento(object):
     def __str__(self):
         return "<PROTO REDES>" + str(self.mensagem) + "</PROTO REDES>"
 	
-	def getTamanho(self):
-		return self.tamanho
+    def getTamanho(self):
+        return self.tamanho
 
-	def setTamanho(self,tamanho):
-		self.tamanho = tamanho
+    def setTamanho(self,tamanho):
+        self.tamanho = tamanho
 
-	def setMensagem(self,mensagem):
-		self.mensagem = mensagem
-	def getMensagem(self):
-		return self.mensagem
+    def setMensagem(self,mensagem):
+	    self.mensagem = mensagem
+
+    def getMensagem(self):
+        return self.mensagem

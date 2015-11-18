@@ -35,6 +35,8 @@ class Router(object):
     def setPortas(self,args):
         for i in xrange(0,2*int(self.numDeInterfaces),2):
             self.portas[args[i]].setTamanhoBuffer(args[i+1]) 
+
+
 		
     def setTempoPacote(self,tempo):
         self.tempoPacote = tempo

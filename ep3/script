@@ -1,6 +1,8 @@
 from enlace import Enlace
 from host import Host
 from datagrama import Datagrama
+from segmento import Segmento
+from mensagem import Mensagem
 
 h0 = Host("h0")
 h0
@@ -9,8 +11,12 @@ h1
 e = Enlace(h0, h1, "10M", "5s")
 h0.setEnlace(e)
 h1.setEnlace(e)
-e.passo(10)
+m = Mensagem()
+m.setMsg("IRC MSG")
+s = Segmento()
+s.setMensagem(m)
 d = Datagrama()
+d.setSegmento(s)
 d.setTamanho(15)
 e.enviar(h0, d)
 e.printBuff()
@@ -19,3 +25,5 @@ h0.adicionaComando(8, "cmp", "lsjk")
 h0.adicionaComando(1, "cmp", "ldajk")
 h0.adicionaComando(10, "cmp", "sdaj")
 h0.setSniffer("snifferH0")
+e.passo(10)
+e.passo(10)
