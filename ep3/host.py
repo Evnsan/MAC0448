@@ -45,3 +45,7 @@ class Host(object):
 
     def passo(self):
         print "HOST(" + self.hostName + "): meu turno"
+
+    def recebe(self, datagrama):
+        self.buff.append(datagrama)
+        print "Recebido"
