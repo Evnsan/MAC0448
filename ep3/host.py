@@ -71,5 +71,6 @@ class Host(object):
         return msg
 
 
-
-
+    def recebe(self, datagrama):
+        self.buff.append(datagrama)
+        print "Recebido"
