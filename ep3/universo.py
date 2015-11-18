@@ -141,7 +141,7 @@ def main():
     #print "AQUI===>" + str(cmds)
     executaComandos(cmds)
     #print tempoDeSimulacao
-    #executaSimulacoes(tempoDeSimulacao)
+    executaSimulacoes(tempoDeSimulacao)
     ###############################################################################
 
 if __name__ == '__main__':

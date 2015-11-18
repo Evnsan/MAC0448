@@ -7,6 +7,7 @@ class Router(object):
         self.enlaces = []
         self.tempoPacote = None
         self.portas = {}
+        self.sniffer = None
         super(Router, self).__init__()
 
     def setEnlace(se,fposEnlace, enlace):
@@ -22,7 +23,9 @@ class Router(object):
     def passo(self, relogio):
         print "ROUTER(" + self.nome + "): Meu turno"
 
-
+    def setSniffer(self, porta, sniffer):
+        enlace = enlaces[porta]
+        enlace.setSniffer(sniffer)
 ##getters e setters
 
 	def getNome(self):
