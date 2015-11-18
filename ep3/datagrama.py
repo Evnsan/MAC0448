@@ -9,6 +9,10 @@ class Datagrama(object):
         self.tamanho = None
         super(Datagrama, self).__init__()
 
+
+    def __str__(self):
+        return "<PROTO TRANSP>" + str(self.segmento) + "</PROTO TRANSP>"
+
     def setSegmento(self,segmento):
         self.segmento = segmento
     def getSegmento(self):

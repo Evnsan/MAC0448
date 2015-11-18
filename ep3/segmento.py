@@ -7,6 +7,9 @@ class Segmento(object):
 		self.tamanho = None
 		self.mensagem = None
 		super(Segmento, self).__init__()
+
+    def __str__(self):
+        return "<PROTO REDES>" + str(self.mensagem) + "</PROTO REDES>"
 	
 	def getTamanho(self):
 		return self.tamanho

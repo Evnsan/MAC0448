@@ -7,6 +7,8 @@ class Mensagem(object):
 		self.msg = None
 		super(Mensagem, self).__init__()
 		
+    def __str__(self):
+        return "<PROTO MSG>" + str(self.msg) + "</PROTO MSG>"
 
 	def getMsg(self):
 		return self.msg
