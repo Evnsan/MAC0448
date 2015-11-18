@@ -1,5 +1,6 @@
 #!/usr/bin/python
-
+from porta import Porta
+from camadaRedes import CamadaRedes
 class Router(object):
     def __init__(self, nome, numDeInterfaces):
         self.nome = nome
@@ -14,9 +15,11 @@ class Router(object):
         self.cmdaRedes = CamadaRedes()
         super(Router, self).__init__()
         for i in range(numDeInterfaces):
-            self.enlaces.append(None)
-            self.ips.append(None)
-            self.portas.append(None)
+            porta = Porta()
+            self.portas.append(porta)
+        ##    self.enlaces.append(None)
+        ##    self.ips.append(None)
+        ##    self.portas.append(None)
 
 
     def __repr__(self):
@@ -34,7 +37,7 @@ class Router(object):
 
     def setPortas(self,args):
         for i in xrange(0,2*int(self.numDeInterfaces),2):
-            self.portas[args[i]].setTamanhoBuffer(args[i+1]) 
+            self.portas[int(args[i])].setTamanhoBuffer(args[i+1]) 
 
 
 		
@@ -42,8 +45,7 @@ class Router(object):
         self.tempoPacote = tempo
     
     def passo(self, relogio):
-        if passos == 0:
-            self.cmdaRedes.
+        if self.passosRestantes == 0:
             pass
             #processarPacote
 
@@ -52,8 +54,8 @@ class Router(object):
 
         print "ROUTER(" + self.nome + "): Meu turno"
 
-    def setSniffer(self, porta, sniffer):
-        enlace = self.enlaces[porta]
+    def setSniffer(self, numporta, sniffer):
+        enlace = self.portas[numporta].getEnlace()
         enlace.setSniffer(sniffer)
     
     def setIp(self, args):
