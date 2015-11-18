@@ -9,9 +9,11 @@ class Router(object):
         self.portas = {}
         self.sniffer = None
         super(Router, self).__init__()
+        for i in range(numDeInterfaces):
+            self.enlaces.append(None)
 
-    def setEnlace(se,fposEnlace, enlace):
-        self.enlaces[posEnlace] = enlace
+    def setEnlace(self, porta, enlace):
+        self.enlaces[porta] = enlace
 
     def setPortas(self,args):
         for i in xrange(0,2*int(self.numDeInterfaces),2):
@@ -24,7 +26,7 @@ class Router(object):
         print "ROUTER(" + self.nome + "): Meu turno"
 
     def setSniffer(self, porta, sniffer):
-        enlace = enlaces[porta]
+        enlace = self.enlaces[porta]
         enlace.setSniffer(sniffer)
 ##getters e setters
 

@@ -31,7 +31,7 @@ def rotinaCmdAplicacao(args):
 ## Comandos secundarios
 def cmdRouter(args):
 	print "cmdRouter" + str(args)
-	r = Router(args[1], args[2])
+	r = Router(args[1], int(args[2]))
 	routers[args[1]] = r
 	elementos.append(r)
 
@@ -45,6 +45,7 @@ def cmdDuplexLink(args):
     print "cmdDuplexLink" + str(args)
     e = Enlace(args[1], args[2], args[3], args[4])
     elementos.append(e)
+    #colocar os enlaces nos hosts/routers
 
 def cmdIp(args):
 	print "cmdIp" + str(args)
@@ -85,7 +86,7 @@ def cmdSniffer(args):
     try:
         hosts[node].setSniffer(args[3])
     except KeyError:
-        routers[node].setSniffers(porta, arg[3])
+        routers[node].setSniffer(int(porta), args[3])
 
         
 def cmdRoute(args):
