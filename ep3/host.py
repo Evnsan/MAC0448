@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Arquivo com o codigo da classe Host do simulador de rede
+#
+
 class Host(object):
     def __init__(self, hostName):
         super(Host, self).__init__()
@@ -7,7 +10,7 @@ class Host(object):
         self.ip = ''
         self.ipRoteador = ''
         self.ipDnsServidor = ''
-        self.snifferFile = None
+        self.sniffer = None
         self.enlace = None
         self.buff = []
         self.papel = ''
@@ -32,8 +35,10 @@ class Host(object):
         self.enlace = enlace
     
     def sefSniffer(self, sniffer):
-        self.snifferFile = sniffer
+        self.sniffer = sniffer
 
     def setPapel(self, papel):
         self.papel = papel
-
+    
+    def getHostName(self):
+        return self.hostName
