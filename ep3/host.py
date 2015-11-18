@@ -20,6 +20,7 @@ class Host(object):
         self.enlace = None
         self.buff = []
         self.papel = ''
+        self.comandos = []
 
         #### funcoes das camadas
         self.cmdaRedes = CamadaRedes()
@@ -54,8 +55,16 @@ class Host(object):
     def getHostName(self):
         return self.hostName
 
-    def passo(self):
+    def passo(self, hora):
         print "HOST(" + self.hostName + "): meu turno"
+        try:    
+            while hora >= self.comandos[0][0]:
+                #PRECISA ARRUMAR AQUI#
+                print str(self.comandos[0])
+                del self.comandos[0]
+                self.printComandos()
+        except IndexError, msg:
+            pass
 
     def enviar(self):
         msgteste = "teste"
@@ -70,7 +79,14 @@ class Host(object):
         msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
         return msg
 
-
     def recebe(self, datagrama):
         self.buff.append(datagrama)
         print "Recebido"
+    
+    def addComando(self, hora, comando, args):
+        self.comandos.append([int(hora), comando, args])
+        self.comandos.sort(key = lambda comando: comando[0])
+
+    def printComandos(self):
+        print self.comandos
+

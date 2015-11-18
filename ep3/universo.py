@@ -98,10 +98,10 @@ comandosSimulate = {}
 
 ################## Rotinas do ciclo de execucao do universo ###################
 def executaSimulacoes(tmp):
-    contador = 0
-    while(contador < tmp):
+    relogio = 0
+    while(relogio < tmp):
         for elm in elementos:
-            elm.passo()
+            elm.passo(relogio)
         contador += 1
     print "Final da execucao"
 
