@@ -42,3 +42,6 @@ class Host(object):
     
     def getHostName(self):
         return self.hostName
+
+    def passo(self):
+        print "HOST(" + self.hostName + "): meu turno"

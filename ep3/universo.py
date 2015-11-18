@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import sys
+
+
 ################## Biblioteca de classes - elementos da rede ##################
 from parser import Parser
 from router import Router
@@ -8,7 +11,7 @@ from enlace import Enlace
 ###############################################################################
 
 ################## Listas Globais - Variaveis Globais #########################
-elementos = {}
+elementos = [] 
 routers = {}
 hosts = {}
 ###############################################################################
@@ -21,13 +24,13 @@ def cmdRouter(args):
 	print "cmdRouter" + str(args)
 	r = Router(args[1], args[2])
 	routers[args[1]] = r
-	elementos[args[1]] = r
+	elementos.append(r)
 
 def cmdHost(args):
 	print "cmdHost" + str(args)
 	h = Host(args[1])
 	hosts[args[1]] = h
-	elementos[args[1]] = h
+	elementos.append(h)
 
 def cmdDuplexLink(args):
 	print "cmdDuplexLink" + str(args)
@@ -77,7 +80,7 @@ comandosSet = {'host': cmdHost,
                'router': cmdRouter,
                'duplex-link': cmdDuplexLink, 
 			   'ip': cmdIp,
-               'performance': cmdPerformance,i
+               'performance': cmdPerformance,
                'ircc': cmdIrcc,
 			   'ircs': cmdIrcs,
                'dnss': cmdDnss,
@@ -88,15 +91,26 @@ comandosSimulate = {}
 ###############################################################################
 
 ################## Rotinas do ciclo de execucao do universo ###################
+def executaSimulacoes(tmp):
+    contador = 0
+    while(contador < tmp):
+        for elm in elementos:
+            elm.passo()
+        contador += 1
+    print "Final da execucao"
 
 def executaComandos(cmds):
 	for cmd,args in cmds:
 		comandos[cmd](args)
 
 def main():
-	p = Parser()
-	cmds = p.lerComandos()
-	executaComandos(cmds)
+    p = Parser()
+    if(len(sys.argv) > 1):
+        print "Arquivo de configuracao: " + str(sys.argv[1])
+        p.setArqConfiguracao(sys.argv[1])
+    cmds = p.lerComandos()
+    executaComandos(cmds)
+    executaSimulacoes(3)
 
 ###############################################################################
 
