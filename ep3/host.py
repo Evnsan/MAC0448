@@ -46,7 +46,7 @@ class Host(object):
     def setEnlace(self, enlace):
         self.enlace = enlace
     
-    def sefSniffer(self, sniffer):
+    def setSniffer(self, sniffer):
         self.sniffer = sniffer
 
     def setPapel(self, papel):
@@ -55,11 +55,11 @@ class Host(object):
     def getHostName(self):
         return self.hostName
 
-    def passo(self, hora):
+    def passo(self, relogio):
         print "HOST(" + self.hostName + "): meu turno"
         try:    
-            while hora >= self.comandos[0][0]:
-                #PRECISA ARRUMAR AQUI#
+            while relogio >= self.comandos[0][0]:
+                #PRECISA ARRUMAR AQUI <================
                 print str(self.comandos[0])
                 del self.comandos[0]
                 self.printComandos()
@@ -80,13 +80,18 @@ class Host(object):
         return msg
 
     def recebe(self, datagrama):
+        if self.sniffer:
+            self.gravaPacote(datagrama)
         self.buff.append(datagrama)
-        print "Recebido"
     
-    def addComando(self, hora, comando, args):
+    def adicionaComando(self, hora, comando, args):
         self.comandos.append([int(hora), comando, args])
         self.comandos.sort(key = lambda comando: comando[0])
 
     def printComandos(self):
         print self.comandos
+
+    def gravaPacote(self, datagrama):
+        print datagrama
+        #gravar no arquivo <================
 
