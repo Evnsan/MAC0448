@@ -19,7 +19,7 @@ class Router(object):
     def setTempoPacote(self,tempo):
         self.tempoPacote = tempo
     
-    def passo(self):
+    def passo(self, relogio):
         print "ROUTER(" + self.nome + "): Meu turno"
 
 

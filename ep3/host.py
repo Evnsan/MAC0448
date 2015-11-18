@@ -21,6 +21,7 @@ class Host(object):
         self.buff = []
         self.papel = ''
         self.comandos = []
+        self.nomeAplicacao = None
 
         #### funcoes das camadas
         self.cmdaRedes = CamadaRedes()
@@ -83,7 +84,7 @@ class Host(object):
         self.buff.append(datagrama)
         print "Recebido"
     
-    def addComando(self, hora, comando, args):
+    def adicionaComando(self, hora, comando, args):
         self.comandos.append([int(hora), comando, args])
         self.comandos.sort(key = lambda comando: comando[0])
 

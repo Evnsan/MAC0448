@@ -14,8 +14,16 @@ from enlace import Enlace
 elementos = [] 
 routers = {}
 hosts = {}
+aplicacoes = {}
 tempoDeSimulacao = 0
 ###############################################################################
+
+def rotinaCmdAplicacao(args):
+    h = hosts[args[1]]
+    nomeAplicacao = args[0]
+    aplicacoes[nomeAplicacao] = h
+    h.nomeAplicacao = nomeAplicacao
+
 
 
 ################## Rotinas de Configuracao e Execucao do universo #############
@@ -50,18 +58,21 @@ def cmdPerformance(args):
 	del args[0]
 	r.setPortas(args)
 def cmdIrcc(args):
-	print "cmdIrcc" + str(args)
+    rotinaCmdAplicacao(args)
+    print "cmdIrcc" + str(args)
 
 def cmdIrcs(args):
-	print "cmdIrcs" + str(args)
+    rotinaCmdAplicacao(args)
+    print "cmdIrcs" + str(args)
 
 def cmdDnss(args):
-	print "cmdDnss" + str(args)
+    rotinaCmdAplicacao(args)
+    print "cmdDnss" + str(args)
 
 def cmdSniffer(args):
-	print "cmdSniffer" + str(args)
+    print "cmdSniffer" + str(args)
 def cmdRoute(args):
-	print "cmdRoute" + str(args)
+    print "cmdRoute" + str(args)
 
 ## Comandos aceitos no arquivo de configuracao
 
@@ -76,6 +87,8 @@ def cmdSet(args):
 
 def cmdSimulate(args):
 	print "este e o comando cmdSimulate: " + str(args)
+
+
 
 
 comandos = {'set': cmdSet,
@@ -102,7 +115,7 @@ def executaSimulacoes(tmp):
     while(relogio < tmp):
         for elm in elementos:
             elm.passo(relogio)
-        contador += 1
+        relogio += 1
     print "Final da execucao"
 
 def executaComandos(cmds):
@@ -115,10 +128,12 @@ def main():
         print "Arquivo de configuracao: " + str(sys.argv[1])
         p.setArqConfiguracao(sys.argv[1])
     cmds = p.lerComandos()
-    print "AQUI===>" + str(cmds)
+    for c in cmds:
+        print c
+    #print "AQUI===>" + str(cmds)
     executaComandos(cmds)
-    print tempoDeSimulacao
-    executaSimulacoes(tempoDeSimulacao)
+    #print tempoDeSimulacao
+    #executaSimulacoes(tempoDeSimulacao)
 
 ###############################################################################
 

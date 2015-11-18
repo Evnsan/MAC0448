@@ -22,7 +22,7 @@ class Enlace(object):
         self.capacidade = self.mysplit(capacidade)
         self.atraso = self.mysplit(atraso)
 
-    def passo(self):
+    def passo(self, relogio):
         print ("ENLACE(" + str(self.portaA) +
                 " <-> " + str(self.portaB) +  "): Meu turno")
         print self.capacidade
