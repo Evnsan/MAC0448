@@ -20,7 +20,7 @@ tempoDeSimulacao = 0
 
 def rotinaCmdAplicacao(args):
     h = hosts[args[1]]
-    nomeAplicacao = args[0]
+    nomeAplicacao = args[2]
     aplicacoes[nomeAplicacao] = h
     h.nomeAplicacao = nomeAplicacao
 
@@ -86,7 +86,13 @@ def cmdSet(args):
 	comandosSet[args[0]](args)
 
 def cmdSimulate(args):
-	print "este e o comando cmdSimulate: " + str(args)
+    h = aplicacoes[args[1]]
+    tempo = args[0]
+    comandos = args[2]
+    for i in range(3):
+        del args[0]
+    h.adicionaComando(float(tempo)*1000, comandos, args)        
+    print "este e o comando cmdSimulate: " + str(args)
 
 
 
@@ -128,14 +134,15 @@ def main():
         print "Arquivo de configuracao: " + str(sys.argv[1])
         p.setArqConfiguracao(sys.argv[1])
     cmds = p.lerComandos()
+
+
     for c in cmds:
         print c
     #print "AQUI===>" + str(cmds)
     executaComandos(cmds)
     #print tempoDeSimulacao
     #executaSimulacoes(tempoDeSimulacao)
-
-###############################################################################
+    ###############################################################################
 
 if __name__ == '__main__':
     main()
