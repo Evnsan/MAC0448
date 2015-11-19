@@ -5,6 +5,7 @@ class cabecalhoUdp(object):
         #definicao dos campos de um segmento
         self.ipPortaOrigem = origem
         self.ipPortaDestino = destino
+        self.checksum = None
         super(Segmento, self).__init__()
 
     def __str__(self):
@@ -22,3 +23,6 @@ class cabecalhoUdp(object):
     
     def getPortaDestino(self):
 	    return self.ipPortaDestino
+
+    def setChecksum(self, valor):
+        self.checksum = valor
