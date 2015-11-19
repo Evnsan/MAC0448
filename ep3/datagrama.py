@@ -3,8 +3,8 @@
 from segmento import Segmento
 
 # Codigo fonte da Classe Datagrama
-#
-#
+# o datagrama para uma comunicacao sobre IP
+# basicamente o cabecalho IP + segmento
 
 class Datagrama(object):
     def __init__(self, numProtocolo, ipFonte, ipDestino, segmento):
@@ -64,3 +64,9 @@ class Datagrama(object):
         #fazer complemento de 1
         #self.checksum = resultado
         pass
+
+    def decrementaTTL(self):
+        self.TTL -= 1
+
+    def getTTL(sefl):
+        return self.TTL

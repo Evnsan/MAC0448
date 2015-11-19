@@ -22,6 +22,7 @@ class Host(object):
         self.papel = ''
         self.comandos = []
         self.nomeAplicacao = None
+        self.modoVerboso = False
 
         #### funcoes das camadas
         self.cmdaRedes = CamadaRedes()
@@ -67,13 +68,17 @@ class Host(object):
         return self.nome
 
     def passo(self, relogio):
-        print "HOST(" + self.nome + "): meu turno"
+        if self.modoVerboso:
+            print "HOST(" + self.nome + "): meu turno"
         try:    
             while relogio >= self.comandos[0][0]:
                 #PRECISA ARRUMAR AQUI <================
-                print str(self.comandos[0])
+                if self.modoVerboso:
+                    print "HOST: " + str(self.comandos[0])
+                #self.cmdaAplicacao.processa(comandos[0], self)
                 del self.comandos[0]
-                self.printComandos()
+                if self.modoVerboso:
+                    self.printComandos()
         except IndexError, msg:
             pass
 

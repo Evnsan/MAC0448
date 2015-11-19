@@ -3,6 +3,7 @@ from porta import Porta
 from camadaRedes import CamadaRedes
 class Router(object):
     def __init__(self, nome, numDeInterfaces):
+        self.modoVerboso = False
         self.nome = nome
         self.numDeInterfaces = numDeInterfaces
         self.enlaces = []
@@ -70,10 +71,10 @@ class Router(object):
         else:    
             passosRestantes -= 1
 
-        print "ROUTER(" + self.nome + "): Meu turno"
-        self.printBuffer()
 
-
+        if self.modoVerboso:
+            print "ROUTER(" + self.nome + "): Meu turno"
+            self.printBuffer()
 
 
     def setSniffer(self, numporta, sniffer):

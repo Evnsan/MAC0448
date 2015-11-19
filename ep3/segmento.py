@@ -4,7 +4,7 @@
 class Segmento(object):
     def __init__(self):
         #definicao dos campos de um segmento
-        self.tamanho = None
+        self.cabecalho = None
         self.mensagem = None
         self.portaOrigem = None
         self.portaDestino = None
@@ -14,10 +14,10 @@ class Segmento(object):
         return "<PROTO REDES>" + str(self.mensagem) + "</PROTO REDES>"
 	
     def getTamanho(self):
-        return self.tamanho
+        return self.cabecalho.getTamanho()
 
     def setTamanho(self,tamanho):
-        self.tamanho = tamanho
+        self.cabecalho.setTamanho(tamanho)
 
     def setMensagem(self,mensagem):
 	    self.mensagem = mensagem

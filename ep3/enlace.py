@@ -33,8 +33,9 @@ class Enlace(object):
                     " --> " + str(self.portaB) + "]")
 
     def passo(self, relogio):
-        print ("ENLACE(" + str(self.portaA) +
-                " <-> " + str(self.portaB) +  "): Meu turno")
+        if self.modoVerboso:
+            print ("ENLACE(" + str(self.portaA) +
+                   " <-> " + str(self.portaB) +  "): Meu turno")
         self.processa(self.temposA, self.buffA, self.portaB, relogio)
         self.processa(self.temposB, self.buffB, self.portaA, relogio)
    
