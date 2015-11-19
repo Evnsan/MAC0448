@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+import re
+
 from porta import Porta
 from camadaRedes import CamadaRedes
 class Router(object):
@@ -15,7 +18,7 @@ class Router(object):
         self.passosRestantes = 0
         self.cmdaRedes = CamadaRedes()
         self.datagramaProcessando = None
-        self.ultimaPortaVista = numDeInterfaces - 1
+        self.portaAtual = numDeInterfaces - 1
         super(Router, self).__init__()
         for i in range(numDeInterfaces):
             porta = Porta()
@@ -55,7 +58,8 @@ class Router(object):
         while tamanhoDestino > 1:
             destino = self.ipEstaNaRede(destino)
             tamanhoDestino = len(destino.split('.'))
-        print "ROUTER::DESCOBREDESTINO: achou destino = " + str(destino)
+        if self.modoVerboso:
+            print "ROUTER::DESCOBREDESTINO: achou destino = " + str(destino)
         return destino
    
     def setPortas(self,args):
@@ -63,7 +67,8 @@ class Router(object):
             self.portas[int(args[i])].setTamanhoBuffer(args[i+1]) 
 
     def setTempoPacote(self,tempo):
-        self.tempoPacote = tempo
+        self.tempoPacote = int(self.mysplit(tempo))
+
     
     def passo(self, relogio):
         if (self.datagramaProcessando and
@@ -79,6 +84,7 @@ class Router(object):
             if not self.portas[self.portaAtual].bufferEstaVazio():
                 datagrama = self.portas[self.portaAtual].getDoBuffer()
                 self.datagramaProcessando = datagrama
+                self.passosRestantes = self.tempoPacote
         else:
             passosRestantes -= 1
 
@@ -105,6 +111,10 @@ class Router(object):
            teste %= self.numDeInterfaces
        return teste
        
+    def mysplit(self, s):
+        r = re.compile("([0-9]+)")
+        head = r.match(s)
+        return head.group(1)
 
 ##getters e setters
 

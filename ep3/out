@@ -1,0 +1,89 @@
+Simulador de Redes - Execicio Programa 4 - MAC0448
+Carregando configuracao
+Arquivo de configuracao: modeloConfig
+['set', ['host', 'h0']]
+['set', ['host', 'h1']]
+['set', ['host', 'h2']]
+['set', ['host', 'h3']]
+['set', ['router', 'r0', '3']]
+['set', ['router', 'r1', '3']]
+['set', ['duplex-link', 'h0', 'r0.0', '10Mbps', '10ms']]
+['set', ['duplex-link', 'h1', 'r0.1', '5Mbps', '2ms']]
+['set', ['duplex-link', 'r0.2', 'r1.0', '2Mbps', '20ms']]
+['set', ['duplex-link', 'r1.1', 'h2', '10Mbps', '5ms']]
+['set', ['duplex-link', 'r1.2', 'h3', '5Mbps', '2ms']]
+['set', ['ip', 'h0', '10.0.0.1', '10.0.0.2', '192.168.1.1']]
+['set', ['ip', 'h1', '10.1.1.1', '10.1.1.2', '192.168.1.1']]
+['set', ['ip', 'h2', '192.168.2.2', '192.168.2.3', '192.168.1.1']]
+['set', ['ip', 'h3', '192.168.1.1', '192.168.1.2', '1.1.1.1']]
+['set', ['ip', 'r0', '0', '10.0.0.2', '1', '10.1.1.2', '2', '192.168.3.3']]
+['set', ['ip', 'r1', '0', '192.168.3.4', '1', '192.168.2.3', '2', '192.168.1.2']]
+['set', ['route', 'r0', '10.0.0.0', '0', '10.1.1.0', '1', '192.168.3.0', '2', '192.168.2.0', '192.168.3.4', '192.168.1.0', '192.168.3.4']]
+['set', ['route', 'r1', '192.168.3.0', '0', '192.168.2.0', '1', '192.168.1.0', '2', '10.0.0.0', '192.168.3.3', '10.1.1.0', '192.168.3.3']]
+['set', ['performance', 'r0', '100us', '0', '1000', '1', '1000', '2', '1000']]
+['set', ['performance', 'r1', '20us', '0', '1000', '1', '1000', '2', '1000']]
+['set', ['ircc', 'h0', 'irc1']]
+['set', ['ircc', 'h1', 'irc2']]
+['set', ['ircs', 'h2', 'irc3']]
+['set', ['dnss', 'h3', 'dns1']]
+['set', ['sniffer', 'r0.2', 'r1.0', '"/tmp/sniffer1"']]
+['set', ['sniffer', 'h1', 'r0.1', '"/tmp/sniffer2"']]
+['simulate', ['0.5', 'irc1', '"CONNECT', 'h2', '6667"']]
+['simulate', ['0.6', 'irc2', '"CONNECT', '192.168.2.2', '6667"']]
+['simulate', ['2.0', 'irc1', '"USER', 'usuario1"']]
+['simulate', ['4.0', 'irc2', '"USER', 'usuario2"']]
+['simulate', ['4.1', 'irc1', '"QUIT"']]
+['simulate', ['5.0', 'irc2', '"QUIT"']]
+['finish', ['5.0']]
+cmdHost['host', 'h0']
+cmdHost['host', 'h1']
+cmdHost['host', 'h2']
+cmdHost['host', 'h3']
+cmdRouter['router', 'r0', '3']
+cmdRouter['router', 'r1', '3']
+cmdDuplexLink['duplex-link', 'h0', 'r0.0', '10Mbps', '10ms']
+h0 None
+r0 0
+cmdDuplexLink['duplex-link', 'h1', 'r0.1', '5Mbps', '2ms']
+h1 None
+r0 1
+cmdDuplexLink['duplex-link', 'r0.2', 'r1.0', '2Mbps', '20ms']
+r0 2
+r1 0
+cmdDuplexLink['duplex-link', 'r1.1', 'h2', '10Mbps', '5ms']
+r1 1
+h2 None
+cmdDuplexLink['duplex-link', 'r1.2', 'h3', '5Mbps', '2ms']
+r1 2
+h3 None
+cmdIp['ip', 'h0', '10.0.0.1', '10.0.0.2', '192.168.1.1']
+cmdIp['ip', 'h1', '10.1.1.1', '10.1.1.2', '192.168.1.1']
+cmdIp['ip', 'h2', '192.168.2.2', '192.168.2.3', '192.168.1.1']
+cmdIp['ip', 'h3', '192.168.1.1', '192.168.1.2', '1.1.1.1']
+cmdIp['ip', 'r0', '0', '10.0.0.2', '1', '10.1.1.2', '2', '192.168.3.3']
+cmdIp['ip', 'r1', '0', '192.168.3.4', '1', '192.168.2.3', '2', '192.168.1.2']
+cmdRoute['10.0.0.0', '0', '10.1.1.0', '1', '192.168.3.0', '2', '192.168.2.0', '192.168.3.4', '192.168.1.0', '192.168.3.4']
+cmdRoute['192.168.3.0', '0', '192.168.2.0', '1', '192.168.1.0', '2', '10.0.0.0', '192.168.3.3', '10.1.1.0', '192.168.3.3']
+cmdPerformance['performance', 'r0', '100us', '0', '1000', '1', '1000', '2', '1000']
+100us
+100
+cmdPerformance['performance', 'r1', '20us', '0', '1000', '1', '1000', '2', '1000']
+20us
+20
+cmdIrcc['ircc', 'h0', 'irc1']
+cmdIrcc['ircc', 'h1', 'irc2']
+cmdIrcs['ircs', 'h2', 'irc3']
+cmdDnss['dnss', 'h3', 'dns1']
+cmdSniffer['sniffer', 'r0.2', 'r1.0', '"/tmp/sniffer1"']
+r0 2
+cmdSniffer['sniffer', 'h1', 'r0.1', '"/tmp/sniffer2"']
+h1 None
+este e o comando cmdSimulate: ['h2', '6667"']
+este e o comando cmdSimulate: ['192.168.2.2', '6667"']
+este e o comando cmdSimulate: ['usuario1"']
+este e o comando cmdSimulate: ['usuario2"']
+este e o comando cmdSimulate: []
+este e o comando cmdSimulate: []
+este e o comando finish: ['5.0']
+5000.0
+Executando simulacao
