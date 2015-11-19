@@ -1,5 +1,6 @@
 Assumindo que comentarios começam por '#'
-Comando primarios aceitos:
+
+Comandos primarios aceitos:
  -set
  -simulate
  -finish
@@ -14,3 +15,4 @@ Comandos secundarios aceitos:
  -set + ircs
  -set + dnss
  -set + sniffer
+
