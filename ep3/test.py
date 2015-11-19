@@ -6,7 +6,7 @@ from mensagem import Mensagem
 from router import Router
 
 # Universo
-tempo = 30
+tempo = 100
 elementos = []
 
 # __      __      __
@@ -53,7 +53,7 @@ elementos.append(e1)
 # Datagrama
 m = Mensagem()
 m.setMsg("IRC MSG")
-s = Segmento()
+s = Segmento('UDP', 8888, 6667)
 s.setMensagem(m)
 d = Datagrama(6, h0.ip, h1.ip,s)
 d.setTamanho(15)

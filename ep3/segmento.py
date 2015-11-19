@@ -1,17 +1,22 @@
 #!/usr/bin/python
 
+from cabecalhoUdp import CabecalhoUdp
+
 
 class Segmento(object):
-    def __init__(self):
+    def __init__(self, protocolo, origem, destino):
         #definicao dos campos de um segmento
         self.cabecalho = None
         self.mensagem = None
         self.portaOrigem = None
         self.portaDestino = None
         super(Segmento, self).__init__()
+        if protocolo == 'UDP':
+            self.cabecalho = CabecalhoUdp(origem, destino)
 
     def __str__(self):
-        return "<PROTO REDES>" + str(self.mensagem) + "</PROTO REDES>"
+        return ("CAMADA DE TRANSPORTE " + str(self.cabecalho) + "\n"
+                + str(self.mensagem))
 	
     def getTamanho(self):
         return self.cabecalho.getTamanho()
@@ -20,7 +25,8 @@ class Segmento(object):
         self.cabecalho.setTamanho(tamanho)
 
     def setMensagem(self,mensagem):
-	    self.mensagem = mensagem
+        self.mensagem = mensagem
+        self.cabecalho.setTamanho(mensagem.getTamanho())
 
     def getMensagem(self):
         return self.mensagem

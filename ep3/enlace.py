@@ -7,7 +7,7 @@ class Enlace(object):
     def __init__(self, portaA, portaB, capacidade, atraso):
         super(Enlace, self).__init__()
 
-        self.modoVerboso = True
+        self.modoVerboso = False 
         
         #pontaA
         self.portaA = portaA
@@ -44,7 +44,6 @@ class Enlace(object):
     def processa(self, tempos, buff, portaSaida, relogio):
         if len(tempos) > 0:
             if tempos[0] == 0 :
-                print "ENLACE::PROCESSA: Vai enviar " + str(buff[0]) + " para porta " + str(portaSaida)
                 portaSaida.receber(buff[0])
                 if self.sniffer:
                     self.gravaDatagrama(buff[0], relogio)
@@ -59,11 +58,14 @@ class Enlace(object):
 
 
     def gravaDatagrama(self, datagrama, relogio):
-        msg = "[" + str(relogio) + "]: " + str(datagrama)
+        msg =(  "___________________________\n"
+              + "[" + str(relogio) + "]: " 
+              + str(datagrama) + "\n"
+              + "___________________________" )
+
         with open(self.sniffer, 'a') as arquivo:
             arquivo.write(msg + '\n')
-        print "SNIFFER " + msg
-        #gravar no arquivo <===================
+        print "\nSNIFFER\n" + msg
 
     def setSniffer(self, sniffer):
         self.sniffer = sniffer
