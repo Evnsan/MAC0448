@@ -7,7 +7,7 @@ class Enlace(object):
     def __init__(self, portaA, portaB, capacidade, atraso):
         super(Enlace, self).__init__()
 
-        self.modoVerboso = False 
+        self.modoVerboso = True
         
         #pontaA
         self.portaA = portaA
@@ -34,26 +34,29 @@ class Enlace(object):
 
     def passo(self, relogio):
         if self.modoVerboso:
-            print ("ENLACE(" + str(self.portaA) +
-                   " <-> " + str(self.portaB) +  "): Meu turno")
-        self.processa(self.temposA, self.buffA, self.portaA, relogio)
-        self.processa(self.temposB, self.buffB, self.portaB, relogio)
+            print str(self) +  ": Meu turno"
+        self.processa(self.temposA, self.buffA, self.portaB, relogio)
+        self.processa(self.temposB, self.buffB, self.portaA, relogio)
+        if self.modoVerboso:
+           print str(self) + ": BUFF"
+           self.printBuff()
    
-    def processa(self, tempos, buff, porta, relogio):
+    def processa(self, tempos, buff, portaSaida, relogio):
         if len(tempos) > 0:
             if tempos[0] == 0 :
-                porta.recebe(buff[0])
+                print "ENLACE::PROCESSA: Vai enviar " + str(buff[0]) + " para porta " + str(portaSaida)
+                portaSaida.receber(buff[0])
                 if self.sniffer:
                     self.gravaDatagrama(buff[0], relogio)
                 tempos.popleft()
                 buff.popleft()
             else:
                 tempos[0] -= 1;
+                if self.modoVerboso:
+                    print str(self) + ": Processando"
         elif self.modoVerboso:
-               print "ENLACE::PROCESSA : Nada para processar"
-        if self.modoVerboso:
-           print str(self) 
-           self.printBuff()
+               print str(self) + ": Nada para processar"
+
 
     def gravaDatagrama(self, datagrama, relogio):
         msg = "[" + str(relogio) + "]: " + str(datagrama)
@@ -79,6 +82,8 @@ class Enlace(object):
         elif(remetente == self.portaB):
             self.buffB.append(datagrama)
             self.temposB.append(tempo)
+        else:
+            print "ENLACE::enviar: Recebeu remetente " + str(remetente)
 
     def printBuff(self):
         print "ENLACE::PRINTBUFF:______________"

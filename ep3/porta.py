@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from datagrama import Datagrama
 
 class Porta(object):
     def __init__(self):
@@ -7,6 +8,7 @@ class Porta(object):
         self.ip = None
         self.tamanhoBuffer = None
         self.buffer = []
+        self.modoVerboso = True
 
         super(Porta, self).__init__()
 
@@ -34,6 +36,13 @@ class Porta(object):
         #precis fazer
         self.buffer.append(pacote) 
 
+    def bufferEstaVazio(self):
+        try:
+            if self.buffer[0]:
+                return False
+        except IndexError:
+            return True
+
     def getDoBuffer(self):
         if self.buffer[0]:
             topoBuffer = self.buffer[0]
@@ -41,8 +50,20 @@ class Porta(object):
             return topoBuffer
 
     def printBuffer(self):
-        for d in self.buffer:
-            print d
+        print self.buffer
+        print str(self)
+#        for d in self.buffer:
+#           print d
+
+    def receber(self, datagrama):
+        print "PORTA: vai receber " + str(self)
+        self.buffer.append(datagrama)
+        print self.buffer
+
+    def enviar(self, router, datagrama):
+        if self.modoVerboso:
+            print str(self) + ": " + str(datagrama)
+        self.enlace.enviar(self, datagrama)
        
     
    

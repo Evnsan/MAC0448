@@ -53,7 +53,7 @@ class Datagrama(object):
     def setTamanho(self, tam):
         self.comprimentoTotal = tam
 	
-    def setProtocola(self, numProtocolo):
+    def setProtocolo(self, numProtocolo):
         # numProtocolo TCP = 6    
         # numProtocolo UDP = 17
         self.protocolo = numProtocolo
