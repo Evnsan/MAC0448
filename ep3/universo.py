@@ -16,33 +16,38 @@ routers = {}
 hosts = {}
 aplicacoes = {}
 tempoDeSimulacao = 0
+modoVerboso = True 
 ###############################################################################
 
+
+################## Rotinas de Configuracao e Execucao do universo #############
+
+## funcoes Auxiliares
 def rotinaCmdAplicacao(args):
     h = hosts[args[1]]
     nomeAplicacao = args[2]
     aplicacoes[nomeAplicacao] = h
     h.nomeAplicacao = nomeAplicacao
-
-
-
-################## Rotinas de Configuracao e Execucao do universo #############
+    h.setPapel(args[0])
 
 ## Comandos secundarios
 def cmdRouter(args):
-	print "cmdRouter" + str(args)
-	r = Router(args[1], int(args[2]))
-	routers[args[1]] = r
-	elementos.append(r)
+    if modoVerboso:
+        print "cmdRouter" + str(args)
+    r = Router(args[1], int(args[2]))
+    routers[args[1]] = r
+    elementos.append(r)
 
 def cmdHost(args):
-	print "cmdHost" + str(args)
-	h = Host(args[1])
-	hosts[args[1]] = h
-	elementos.append(h)
+    if modoVerboso:
+	    print "cmdHost" + str(args)
+    h = Host(args[1])
+    hosts[args[1]] = h
+    elementos.append(h)
 
 def cmdDuplexLink(args):
-    print "cmdDuplexLink" + str(args)
+    if modoVerboso:
+        print "cmdDuplexLink" + str(args)
     e = Enlace(None, None, args[3], args[4])
     elementos.append(e)
     #colocar os enlaces nos hosts/routers
@@ -65,7 +70,8 @@ def cmdDuplexLink(args):
         e.setTerminalB(routers[node].getPorta(int(porta)))
 
 def cmdIp(args):
-    print "cmdIp" + str(args)
+    if modoVerboso:
+        print "cmdIp" + str(args)
     node = args[1]
     del args[0]
     del args[0]
@@ -76,25 +82,29 @@ def cmdIp(args):
 
 
 def cmdPerformance(args):
-	print "cmdPerformance" + str(args)
-	del args[0]
-	r = routers[args[0]]
-	del args[0]
-	r.setTempoPacote(args[0])
-	del args[0]
-	r.setPortas(args)
+    if modoVerboso:
+	    print "cmdPerformance" + str(args)
+    del args[0]
+    r = routers[args[0]]
+    del args[0]
+    r.setTempoPacote(args[0])
+    del args[0]
+    r.setPortas(args)
 
 def cmdIrcc(args):
+    if modoVerboso:
+        print "cmdIrcc" + str(args)
     rotinaCmdAplicacao(args)
-    print "cmdIrcc" + str(args)
 
 def cmdIrcs(args):
+    if modoVerboso:
+        print "cmdIrcs" + str(args)
     rotinaCmdAplicacao(args)
-    print "cmdIrcs" + str(args)
 
 def cmdDnss(args):
+    if modoVerboso:
+        print "cmdDnss" + str(args)
     rotinaCmdAplicacao(args)
-    print "cmdDnss" + str(args)
 
 def parsePonto(arg):
     host = None 
@@ -103,11 +113,13 @@ def parsePonto(arg):
         host, porta =  arg.split(".")
     except ValueError:
         host = arg
-    print str(host) + " " + str(porta)
+    if modoVerboso:
+        print str(host) + " " + str(porta)
     return [host, porta]
     
 def cmdSniffer(args):
-    print "cmdSniffer" + str(args)
+    if modoVerboso:
+        print "cmdSniffer" + str(args)
     node, porta = parsePonto(args[1])
     try:
         hosts[node].setSniffer(args[3])
@@ -122,15 +134,18 @@ def cmdRoute(args):
     router = routers[nomeRouter]
     for i in xrange(0, len(args)/2,2):
         router.setRota(args[i],args[i+1])
-    print "cmdRoute" + str(args)
+    if modoVerboso:
+        print "cmdRoute" + str(args)
 
 ## Comandos aceitos no arquivo de configuracao
 
 def cmdFinish(args):
-    print "este e o comando finish: " + str(args)
+    if modoVerboso:
+        print "este e o comando finish: " + str(args)
     global tempoDeSimulacao
     tempoDeSimulacao = 1000 * float(args[0])
-    print tempoDeSimulacao
+    if modoVerboso:
+        print tempoDeSimulacao
 
 def cmdSet(args):
 	comandosSet[args[0]](args)
@@ -142,7 +157,8 @@ def cmdSimulate(args):
     for i in range(3):
         del args[0]
     h.adicionaComando(float(tempo)*1000, comandos, args)        
-    print "este e o comando cmdSimulate: " + str(args)
+    if modoVerboso:
+        print "este e o comando cmdSimulate: " + str(args)
 
 
 
@@ -179,18 +195,24 @@ def executaComandos(cmds):
 		comandos[cmd](args)
 
 def main():
+    print "Simulador de Redes - Execicio Programa 4 - MAC0448"
+    print "Carregando configuracao"
     p = Parser()
     if(len(sys.argv) > 1):
         print "Arquivo de configuracao: " + str(sys.argv[1])
         p.setArqConfiguracao(sys.argv[1])
+    else:
+        print "Arquivo de configuracao: " + str(p.getArqConfiguracao())
+
     cmds = p.lerComandos()
 
-
-    for c in cmds:
-        print c
+    if modoVerboso:
+        for c in cmds:
+            print c
     #print "AQUI===>" + str(cmds)
     executaComandos(cmds)
     #print tempoDeSimulacao
+    print "Executando simulacao"
     executaSimulacoes(tempoDeSimulacao)
     ###############################################################################
 

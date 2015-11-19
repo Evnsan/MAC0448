@@ -10,7 +10,7 @@ class Datagrama(object):
     def __init__(self, numProtocolo, ipFonte, ipDestino, segmento):
         #cabecalho
         
-        self.versão = 4 #4 bits 
+        self.versao = 4 #4 bits 
         self.IHL = 5 #4 bits
 #       self.DSCP = None #6 bits
 #       self.ECN = None #2 bits

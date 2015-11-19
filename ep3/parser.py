@@ -7,6 +7,9 @@ class Parser(object):
     
     def setArqConfiguracao(self, nome):
         self.nomeArqConfiguracao = nome
+    
+    def getArqConfiguracao(self):
+        return self.nomeArqConfiguracao
 
     def leituraDaConfiguracao(self):
 	    with open(self.nomeArqConfiguracao) as f:
