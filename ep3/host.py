@@ -85,7 +85,7 @@ class Host(object):
         if self.modoVerboso:
             print "HOST(" + self.nome + "): meu turno"
         try:    
-            print "PASSO HOST Valor do tempo: " + str(self.comandos[0][0])
+            print "PASSO HOST Valor do tempo do proximo comando: " + str(self.comandos[0][0])
             while relogio >= self.comandos[0][0]:
                 #PRECISA ARRUMAR AQUI <================
                 del self.comandos[0][0] #deleta o tempo do comando

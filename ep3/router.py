@@ -103,13 +103,13 @@ class Router(object):
             self.portas[int(args[i])].setIp(args[i+1]) 
        
     def proximaPorta(self):
-       teste = self.portaAtual + 1;
-       teste %= self.numDeInterfaces
-       while (teste != self.portaAtual and
+        teste = self.portaAtual + 1;
+        teste %= self.numDeInterfaces
+        while (teste != self.portaAtual and
               not self.portas[teste].bufferEstaVazio()):
            teste += 1
            teste %= self.numDeInterfaces
-       return teste
+        return teste
        
     def mysplit(self, s):
         r = re.compile("([0-9]+)")
