@@ -71,6 +71,10 @@ class Router(object):
 
     
     def passo(self, relogio):
+        if self.modoVerboso:
+            print "ROUTER " + str(self.datagramaProcessando)
+            print "ROUTER " + str(self.passosRestantes)
+
         if (self.datagramaProcessando and
             self.passosRestantes == 0):
             
@@ -78,15 +82,19 @@ class Router(object):
             ip = datagrama.enderecoIpDestino
             destino = int(self.descobreDestino(ip))
             self.portas[destino].enviar(self, datagrama)
+            self.datagramaProcessando = None
 
-        elif not self.datagramaProcessando:    
+        elif not self.datagramaProcessando:
+            print "ROUTER ======> ENTROU"    
             self.portaAtual = self.proximaPorta()
+            print "     PORTA = " + str(self.portaAtual)
             if not self.portas[self.portaAtual].bufferEstaVazio():
+                self.printBuffer()
                 datagrama = self.portas[self.portaAtual].getDoBuffer()
                 self.datagramaProcessando = datagrama
                 self.passosRestantes = self.tempoPacote
         else:
-            passosRestantes -= 1
+            self.passosRestantes -= 1
 
 
         if self.modoVerboso:
@@ -105,10 +113,14 @@ class Router(object):
     def proximaPorta(self):
         teste = self.portaAtual + 1;
         teste %= self.numDeInterfaces
+        print "Atual = " + str(self.portaAtual)
+        print "Antes = " + str(teste)
+        print self.portas[teste].bufferEstaVazio()
         while (teste != self.portaAtual and
-              not self.portas[teste].bufferEstaVazio()):
+              self.portas[teste].bufferEstaVazio()):
            teste += 1
            teste %= self.numDeInterfaces
+        print "Depois = " + str(teste)
         return teste
        
     def mysplit(self, s):

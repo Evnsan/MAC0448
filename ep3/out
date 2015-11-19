@@ -1,7 +1,7 @@
 ENLACE::PRINTBUFF:______________
 portaA
 deque([7.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
@@ -9,29 +9,37 @@ ________________________________
 HOST(h0): meu turno
 PASSO HOST Valor do tempo do proximo comando: 1
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Processando
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Processando
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([6.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -45,29 +53,37 @@ PASSO HOST Valor do tempo do proximo comando: 1
 PASSO::host: comando a ser executado['cmp', 'ldajk']
 [[2, 'cmp', 'sdajk'], [8, 'cmp', 'lsjk'], [10, 'cmp', 'sdaj']]
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Processando
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Processando
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([5.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -81,29 +97,37 @@ PASSO HOST Valor do tempo do proximo comando: 2
 PASSO::host: comando a ser executado['cmp', 'sdajk']
 [[8, 'cmp', 'lsjk'], [10, 'cmp', 'sdaj']]
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Processando
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Processando
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([4.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -115,29 +139,37 @@ ________________________________
 HOST(h0): meu turno
 PASSO HOST Valor do tempo do proximo comando: 8
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Processando
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Processando
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([3.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -149,29 +181,37 @@ ________________________________
 HOST(h0): meu turno
 PASSO HOST Valor do tempo do proximo comando: 8
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Processando
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Processando
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([2.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -183,29 +223,37 @@ ________________________________
 HOST(h0): meu turno
 PASSO HOST Valor do tempo do proximo comando: 8
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Processando
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Processando
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([1.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -217,29 +265,37 @@ ________________________________
 HOST(h0): meu turno
 PASSO HOST Valor do tempo do proximo comando: 8
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Processando
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Processando
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([0.0])
-deque([<datagrama.Datagrama object at 0x7fbce4a25750>])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -251,20 +307,28 @@ ________________________________
 HOST(h0): meu turno
 PASSO HOST Valor do tempo do proximo comando: 8
 HOST(h1): meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+True
+Depois = 1
+     PORTA = 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
 []
-<porta.Porta object at 0x7fbce4a25610>
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE::PROCESSA: Vai enviar <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP> para porta <porta.Porta object at 0x7fbce4a25610>
-PORTA: vai receber <porta.Porta object at 0x7fbce4a25610>
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE::PROCESSA: Vai enviar <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP> para porta <porta.Porta object at 0x7fbc1a97e5d0>
+PORTA: vai receber <porta.Porta object at 0x7fbc1a97e5d0>
+[<datagrama.Datagrama object at 0x7fbc1a97e710>]
 SNIFFER [7]: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -273,10 +337,10 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -290,17 +354,31 @@ PASSO HOST Valor do tempo do proximo comando: 8
 PASSO::host: comando a ser executado['cmp', 'lsjk']
 [[10, 'cmp', 'sdaj']]
 HOST(h1): meu turno
-ROUTER(r0): Meu turno
+ROUTER None
+ROUTER 0
+ROUTER ======> ENTROU
+Atual = 1
+Antes = 0
+False
+Depois = 0
+     PORTA = 0
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[<datagrama.Datagrama object at 0x7fbc1a97e710>]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ROUTER(r0): Meu turno
+ROUTER buffer porta: 0
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
+ROUTER buffer porta: 1
+[]
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -309,10 +387,10 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -324,17 +402,19 @@ ________________________________
 HOST(h0): meu turno
 PASSO HOST Valor do tempo do proximo comando: 10
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 2
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -343,10 +423,10 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -360,17 +440,19 @@ PASSO HOST Valor do tempo do proximo comando: 10
 PASSO::host: comando a ser executado['cmp', 'sdaj']
 []
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 1
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -379,10 +461,10 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -393,17 +475,21 @@ deque([])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -412,31 +498,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([6.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -445,31 +535,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([5.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -478,31 +572,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([4.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -511,31 +609,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([3.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -544,31 +646,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([2.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -577,31 +683,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([1.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -610,31 +720,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([0.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -643,31 +757,36 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE::PROCESSA: Vai enviar <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP> para porta HOST: h1 IP(10.1.1.1)
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+PASSO::host:h1 Recebeu mensagem: IRC MSG
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -676,31 +795,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([6.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -709,31 +832,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([5.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -742,31 +869,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([4.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -775,31 +906,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([3.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -808,31 +943,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([2.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -841,31 +980,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([1.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -874,31 +1017,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([0.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -907,31 +1054,36 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE::PROCESSA: Vai enviar <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP> para porta HOST: h1 IP(10.1.1.1)
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+PASSO::host:h1 Recebeu mensagem: IRC MSG
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -940,31 +1092,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([6.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -973,31 +1129,35 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([5.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________
 HOST(h0): meu turno
 HOST(h1): meu turno
+ROUTER <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
+ROUTER 0
+ROUTER::DESCOBREDESTINO: achou destino = 1
+<porta.Porta object at 0x7fbc1a97e610>: <PROTO TRANSP><PROTO REDES><PROTO MSG>IRC MSG</PROTO MSG></PROTO REDES></PROTO TRANSP>
 ROUTER(r0): Meu turno
 ROUTER buffer porta: 0
-[<datagrama.Datagrama object at 0x7fbce4a25750>]
-<porta.Porta object at 0x7fbce4a25610>
+[]
+<porta.Porta object at 0x7fbc1a97e5d0>
 ROUTER buffer porta: 1
 []
-<porta.Porta object at 0x7fbce4a25650>
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Meu turno
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: Nada para processar
-ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbce4a25610>]: BUFF
+<porta.Porta object at 0x7fbc1a97e610>
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Meu turno
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: Nada para processar
+ENLACE: [HOST: h0 IP(10.0.0.1) --> <porta.Porta object at 0x7fbc1a97e5d0>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
@@ -1006,15 +1166,15 @@ portaB
 deque([])
 deque([])
 ________________________________
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Meu turno
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: Nada para processar
-ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbce4a25650>]: BUFF
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Meu turno
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Nada para processar
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: Processando
+ENLACE: [HOST: h1 IP(10.1.1.1) --> <porta.Porta object at 0x7fbc1a97e610>]: BUFF
 ENLACE::PRINTBUFF:______________
 portaA
 deque([])
 deque([])
 portaB
-deque([])
-deque([])
+deque([4.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0])
+deque([<datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>, <datagrama.Datagrama object at 0x7fbc1a97e710>])
 ________________________________

@@ -42,7 +42,7 @@ h1.setEnlace(e1)
 r0.setEnlace(0, e0)
 r0.setEnlace(1, e1)
 r0.rotas = rotas
-r0.setTempoPacote('1')
+r0.setTempoPacote('2')
 elementos.append(h0)
 elementos.append(h1)
 elementos.append(r0)
