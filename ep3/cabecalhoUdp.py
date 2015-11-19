@@ -6,8 +6,6 @@ class Segmento(object):
         #definicao dos campos de um segmento
         self.cabecalho = None
         self.mensagem = None
-        self.portaOrigem = None
-        self.portaDestino = None
         super(Segmento, self).__init__()
 
     def __str__(self):
