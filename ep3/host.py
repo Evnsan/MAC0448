@@ -22,7 +22,7 @@ class Host(object):
         self.papel = ''
         self.comandos = []
         self.nomeAplicacao = None
-        self.modoVerboso = False
+        self.modoVerboso = True
 
         #### funcoes das camadas
         self.cmdaRedes = CamadaRedes()
@@ -67,30 +67,53 @@ class Host(object):
     def getHostName(self):
         return self.nome
 
+    
+    def bufferEstaVazio(self):
+        try:
+            if self.buff[0]:
+                return False
+        except IndexError:
+            return True
+
+    def getDoBuffer(self):
+        if self.buff[0]:
+            topoBuff = self.buff[0]
+            del self.buff[0]
+            return topoBuff
+
     def passo(self, relogio):
         if self.modoVerboso:
             print "HOST(" + self.nome + "): meu turno"
         try:    
+            print "PASSO HOST Valor do tempo: " + str(self.comandos[0][0])
             while relogio >= self.comandos[0][0]:
                 #PRECISA ARRUMAR AQUI <================
+                del self.comandos[0][0] #deleta o tempo do comando
                 if self.modoVerboso:
-                    print "HOST: " + str(self.comandos[0])
-                #self.cmdaAplicacao.processa(comandos[0], self)
+                    print "PASSO::host: comando a ser executado" + str(self.comandos[0])
+                #datagrama = self.processarComandoPraEnvio(self.ip, self.comandos[0])
                 del self.comandos[0]
                 if self.modoVerboso:
                     self.printComandos()
         except IndexError, msg:
             pass
+        if not self.bufferEstaVazio():
+            datagrama = self.getDoBuffer()
+            segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
+            mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
+            msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
+            print "PASSO::host:" + self.nome + " Recebeu mensagem: " + msg
 
- #   def enviar(self):
- #       msgteste = "teste"
- #      mensagem = self.cmdaAplicacao.empacotaMensagem(msgteste)
- #       segmento = self.cmdaTransporte.empacotaSegmento(mensagem)
- #       datagrama = self.cmdaRedes.empacotaDatagrama(segmento)
- #       return datagrama
+
+
+    def processarComandoPraEnvio(self, ipFonte, ipDestino,comando):
+        mensagem = self.cmdaAplicacao.empacotaMensagem(comando)
+        segmento = self.cmdaTransporte.empacotaSegmento(mensagem)
+        datagrama = self.cmdaRedes.empacotaDatagrama(segmento)
+        return datagrama
 
  #   def receber(self, datagrama):
- #      segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
+ #       segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
  #       mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
  #       msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
  #       return msg
