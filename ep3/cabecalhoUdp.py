@@ -1,24 +1,24 @@
 #!/usr/bin/python
 
-
-class Segmento(object):
-    def __init__(self):
+class cabecalhoUdp(object):
+    def __init__(self, origem, destino):
         #definicao dos campos de um segmento
-        self.cabecalho = None
-        self.mensagem = None
+        self.ipPortaOrigem = origem
+        self.ipPortaDestino = destino
         super(Segmento, self).__init__()
 
     def __str__(self):
-        return "<PROTO REDES>" + str(self.mensagem) + "</PROTO REDES>"
+        return ("<UDP-HEAD>" + str(self.portaOrigem) + " " +
+                str(self.portaOrigem) + "<UDP-HEAD>")
 	
-    def getTamanho(self):
-        return self.cabecalho.getTamanho()
+    def setPortaOrigem(self, ip):
+	    self.ipPortaOrigem = ip
+    
+    def getPortaOrigem(self):
+	    return self.ipPortaOrigem
 
-    def setTamanho(self,tamanho):
-        self.cabecalho.setTamanho(tamanho)
-
-    def setMensagem(self,mensagem):
-	    self.mensagem = mensagem
-
-    def getMensagem(self):
-        return self.mensagem
+    def setPortaDestino(self, ip):
+	    self.ipPortaDestino = ip
+    
+    def getPortaDestino(self):
+	    return self.ipPortaDestino
