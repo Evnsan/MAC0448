@@ -50,6 +50,9 @@ class Host(object):
                    + ": Argumentos devem ser listas")
             print "HOST(" + self.nome + ") Recebido:" + str(args)
 
+    def getEnlace(self):
+        return self.enlace
+
     def setEnlace(self, enlace):
         self.enlace = enlace
     

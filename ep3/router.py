@@ -33,8 +33,21 @@ class Router(object):
 
     def setEnlace(self, numporta, enlace):
         self.portas[numporta].setEnlace(enlace)
-        
-
+    
+    def ipEstaNaRede(self,ipRecebido):
+        ipRecebidoSplit = ipRecebido.split('.')
+        ipRecebidoSplit[3] = '0'
+        ip = ipRecebidoSplit
+        destino = self.rotas[ip[0]+'.'+ip[1]+'.'+ip[2]+'.'+ip[3]]
+        return destino
+    def descobreDestino(self,ipRecebido):
+        destino = self.ipEstaNaRede(ipRecebido)
+        tamanhoDestino = len(destino.split('.'))
+        while tamanhoDestino > 1:
+            destino = self.ipEstaNaRede(destino)
+            tamanhoDestino = len(destino.split('.'))
+        print "ROUTER::DESCOBREDESTINO: achou destino = " + str(destino)
+        return destino
     def setPortas(self,args):
         for i in xrange(0,2*int(self.numDeInterfaces),2):
             self.portas[int(args[i])].setTamanhoBuffer(args[i+1]) 
@@ -49,11 +62,19 @@ class Router(object):
                 #olhar destino
                 #decrementar ttl
                 #enviar para porta correspondente
-
+            for porta in self.portas:
+                if not porta.bufferEstaVazio():
+                    datagrama = porta.getDoBuffer()
+                    destino = int(self.descobreDestino(datagrama.enderecoIpDestino))
+                    self.portas[destino].getEnlace().enviar(datagrama.enderecoIpFonte,datagrama)
         else:    
             passosRestantes -= 1
 
         print "ROUTER(" + self.nome + "): Meu turno"
+        self.printBuffer()
+
+
+
 
     def setSniffer(self, numporta, sniffer):
         enlace = self.portas[numporta].getEnlace()
@@ -69,4 +90,9 @@ class Router(object):
 		return self.nomeDoRouter
 
     def	getPorta(self, numPorta):
-        return self.portas[numporta]
+        return self.portas[numPorta]
+
+    def printBuffer(self):
+        for i in range(len(self.portas)):
+            print "ROUTER buffer porta: " + str(i)
+            self.portas[i].printBuffer()

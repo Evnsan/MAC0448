@@ -35,8 +35,8 @@ class Enlace(object):
     def passo(self, relogio):
         print ("ENLACE(" + str(self.portaA) +
                 " <-> " + str(self.portaB) +  "): Meu turno")
-        self.processa(self.temposA, self.buffA, self.portaA, relogio)
-        self.processa(self.temposB, self.buffB, self.portaB, relogio)
+        self.processa(self.temposA, self.buffA, self.portaB, relogio)
+        self.processa(self.temposB, self.buffB, self.portaA, relogio)
    
     def processa(self, tempos, buff, porta, relogio):
         if len(tempos) > 0:
@@ -78,6 +78,8 @@ class Enlace(object):
         elif(remetente == self.portaB):
             self.buffB.append(datagrama)
             self.temposB.append(tempo)
+        else:
+            print "ENLACE::enviar: Recebeu remetente " + str(remetente)
 
     def printBuff(self):
         print "ENLACE::PRINTBUFF:______________"

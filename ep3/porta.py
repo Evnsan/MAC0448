@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from datagrama import Datagrama
 
 class Porta(object):
     def __init__(self):
@@ -34,6 +35,13 @@ class Porta(object):
         #precis fazer
         self.buffer.append(pacote) 
 
+    def bufferEstaVazio(self):
+        try:
+            if self.buffer[0]:
+                return False
+        except IndexError:
+            return True
+
     def getDoBuffer(self):
         if self.buffer[0]:
             topoBuffer = self.buffer[0]
@@ -43,6 +51,9 @@ class Porta(object):
     def printBuffer(self):
         for d in self.buffer:
             print d
+
+    def recebe(self, datagrama):
+        self.buffer.append(datagrama)
        
     
    
