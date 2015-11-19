@@ -8,6 +8,7 @@ class Porta(object):
         self.ip = None
         self.tamanhoBuffer = None
         self.buffer = []
+        self.modoVerboso = True
 
         super(Porta, self).__init__()
 
@@ -49,11 +50,20 @@ class Porta(object):
             return topoBuffer
 
     def printBuffer(self):
-        for d in self.buffer:
-            print d
+        print self.buffer
+        print str(self)
+#        for d in self.buffer:
+#           print d
 
-    def recebe(self, datagrama):
+    def receber(self, datagrama):
+        print "PORTA: vai receber " + str(self)
         self.buffer.append(datagrama)
+        print self.buffer
+
+    def enviar(self, router, datagrama):
+        if self.modoVerboso:
+            print str(self) + ": " + str(datagrama)
+        self.enlace.enviar(self, datagrama)
        
     
    

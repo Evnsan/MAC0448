@@ -82,20 +82,20 @@ class Host(object):
         except IndexError, msg:
             pass
 
-    def enviar(self):
-        msgteste = "teste"
-        mensagem = self.cmdaAplicacao.empacotaMensagem(msgteste)
-        segmento = self.cmdaTransporte.empacotaSegmento(mensagem)
-        datagrama = self.cmdaRedes.empacotaDatagrama(segmento)
-        return datagrama
+ #   def enviar(self):
+ #       msgteste = "teste"
+ #      mensagem = self.cmdaAplicacao.empacotaMensagem(msgteste)
+ #       segmento = self.cmdaTransporte.empacotaSegmento(mensagem)
+ #       datagrama = self.cmdaRedes.empacotaDatagrama(segmento)
+ #       return datagrama
+
+ #   def receber(self, datagrama):
+ #      segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
+ #       mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
+ #       msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
+ #       return msg
 
     def receber(self, datagrama):
-        segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
-        mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
-        msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
-        return msg
-
-    def recebe(self, datagrama):
         self.buff.append(datagrama)
     
     def adicionaComando(self, hora, comando, args):

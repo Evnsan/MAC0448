@@ -3,7 +3,7 @@ from porta import Porta
 from camadaRedes import CamadaRedes
 class Router(object):
     def __init__(self, nome, numDeInterfaces):
-        self.modoVerboso = False
+        self.modoVerboso = True
         self.nome = nome
         self.numDeInterfaces = numDeInterfaces
         self.enlaces = []
@@ -66,8 +66,9 @@ class Router(object):
             for porta in self.portas:
                 if not porta.bufferEstaVazio():
                     datagrama = porta.getDoBuffer()
+                    print "ROUTER:" + str(datagrama)
                     destino = int(self.descobreDestino(datagrama.enderecoIpDestino))
-                    self.portas[destino].getEnlace().enviar(datagrama.enderecoIpFonte,datagrama)
+                    self.portas[destino].enviar(self, datagrama)
         else:    
             passosRestantes -= 1
 
