@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+import re
+
 from porta import Porta
 from camadaRedes import CamadaRedes
 class Router(object):
@@ -14,6 +17,8 @@ class Router(object):
         self.rotas = {} 
         self.passosRestantes = 0
         self.cmdaRedes = CamadaRedes()
+        self.datagramaProcessando = None
+        self.portaAtual = numDeInterfaces - 1
         super(Router, self).__init__()
         for i in range(numDeInterfaces):
             porta = Porta()
@@ -25,6 +30,11 @@ class Router(object):
 
     def __repr__(self):
         return "ROUTER: " + str(self.nome) + " IPS(" + str(self.ips) + ")"
+    
+    def printBuffer(self):
+        for i in range(self.numDeInterfaces):
+            print "ROUTER buffer porta: " + str(i)
+            self.portas[i].printBuffer()
 
     def setRota(self, remetente, destinatario):
         self.rotas[remetente] = destinatario
@@ -41,35 +51,41 @@ class Router(object):
         ip = ipRecebidoSplit
         destino = self.rotas[ip[0]+'.'+ip[1]+'.'+ip[2]+'.'+ip[3]]
         return destino
+
     def descobreDestino(self,ipRecebido):
         destino = self.ipEstaNaRede(ipRecebido)
         tamanhoDestino = len(destino.split('.'))
         while tamanhoDestino > 1:
             destino = self.ipEstaNaRede(destino)
             tamanhoDestino = len(destino.split('.'))
-        print "ROUTER::DESCOBREDESTINO: achou destino = " + str(destino)
+        if self.modoVerboso:
+            print "ROUTER::DESCOBREDESTINO: achou destino = " + str(destino)
         return destino
+   
     def setPortas(self,args):
         for i in xrange(0,2*int(self.numDeInterfaces),2):
             self.portas[int(args[i])].setTamanhoBuffer(args[i+1]) 
 
     def setTempoPacote(self,tempo):
-        self.tempoPacote = tempo
+        self.tempoPacote = int(self.mysplit(tempo))
+
     
     def passo(self, relogio):
-        if self.passosRestantes == 0:
-            pass
-            #processarPacote:
-                #olhar destino
-                #decrementar ttl
-                #enviar para porta correspondente
-            for porta in self.portas:
-                if not porta.bufferEstaVazio():
-                    datagrama = porta.getDoBuffer()
-                    print "ROUTER:" + str(datagrama)
-                    destino = int(self.descobreDestino(datagrama.enderecoIpDestino))
-                    self.portas[destino].enviar(self, datagrama)
-        else:    
+        if (self.datagramaProcessando and
+            self.passosRestantes == 0):
+            
+            datagrama = self.datagramaProcessando
+            ip = datagrama.enderecoIpDestino
+            destino = int(self.descobreDestino(ip))
+            self.portas[destino].enviar(self, datagrama)
+
+        elif not self.datagramaProcessando:    
+            self.portaAtual = self.proximaPorta()
+            if not self.portas[self.portaAtual].bufferEstaVazio():
+                datagrama = self.portas[self.portaAtual].getDoBuffer()
+                self.datagramaProcessando = datagrama
+                self.passosRestantes = self.tempoPacote
+        else:
             passosRestantes -= 1
 
 
@@ -85,7 +101,21 @@ class Router(object):
     def setIp(self, args):
         for i in xrange(0,2*int(self.numDeInterfaces),2):
             self.portas[int(args[i])].setIp(args[i+1]) 
-        
+       
+    def proximaPorta(self):
+       teste = self.portaAtual + 1;
+       teste %= self.numDeInterfaces
+       while (teste != self.portaAtual and
+              not self.portas[teste].bufferEstaVazio()):
+           teste += 1
+           teste %= self.numDeInterfaces
+       return teste
+       
+    def mysplit(self, s):
+        r = re.compile("([0-9]+)")
+        head = r.match(s)
+        return head.group(1)
+
 ##getters e setters
 
 	def getNome(self):
@@ -93,8 +123,3 @@ class Router(object):
 
     def	getPorta(self, numPorta):
         return self.portas[numPorta]
-
-    def printBuffer(self):
-        for i in range(len(self.portas)):
-            print "ROUTER buffer porta: " + str(i)
-            self.portas[i].printBuffer()
