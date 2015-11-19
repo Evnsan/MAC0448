@@ -6,6 +6,8 @@ from collections import deque
 class Enlace(object):
     def __init__(self, portaA, portaB, capacidade, atraso):
         super(Enlace, self).__init__()
+
+        self.modoVerboso = False 
         
         #pontaA
         self.portaA = portaA
@@ -21,6 +23,14 @@ class Enlace(object):
         self.sniffer = None
         self.capacidade = self.mysplit(capacidade)
         self.atraso = self.mysplit(atraso)
+
+    def __repr__(self):
+        return ("ENLACE: [" + str(self.portaA) + 
+                    " --> " + str(self.portaB) + "]")
+    
+    def __str__(self):
+        return ("ENLACE: [" + str(self.portaA) + 
+                    " --> " + str(self.portaB) + "]")
 
     def passo(self, relogio):
         print ("ENLACE(" + str(self.portaA) +
@@ -38,8 +48,11 @@ class Enlace(object):
                 buff.popleft()
             else:
                 tempos[0] -= 1;
-        else:
-            print "ENLACE::PROCESSA : Nada para processar"
+        elif self.modoVerboso:
+               print "ENLACE::PROCESSA : Nada para processar"
+        if self.modoVerboso:
+           print str(self) 
+           self.printBuff()
 
     def gravaDatagrama(self, datagrama, relogio):
         msg = "[" + str(relogio) + "]: " + str(datagrama)
@@ -67,10 +80,15 @@ class Enlace(object):
             self.temposB.append(tempo)
 
     def printBuff(self):
+        print "ENLACE::PRINTBUFF:______________"
+        print "portaA"
         print self.temposA
         print self.buffA
+        print "portaB"
         print self.temposB
         print self.buffB
+        print "________________________________"
+
 
     def setTerminalA(self, terminal):
        self.portaA = terminal 

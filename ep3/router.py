@@ -39,15 +39,16 @@ class Router(object):
         for i in xrange(0,2*int(self.numDeInterfaces),2):
             self.portas[int(args[i])].setTamanhoBuffer(args[i+1]) 
 
-
-		
     def setTempoPacote(self,tempo):
         self.tempoPacote = tempo
     
     def passo(self, relogio):
         if self.passosRestantes == 0:
             pass
-            #processarPacote
+            #processarPacote:
+                #olhar destino
+                #decrementar ttl
+                #enviar para porta correspondente
 
         else:    
             passosRestantes -= 1
@@ -66,4 +67,6 @@ class Router(object):
 
 	def getNome(self):
 		return self.nomeDoRouter
-	
+
+    def	getPorta(self, numPorta):
+        return self.portas[numporta]
