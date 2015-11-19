@@ -32,13 +32,17 @@ class Porta(object):
 
     def addNoBuffer(self,pacote):
         #precis fazer
-        self.tamanhoBuffer = tamanhoBuffer 
+        self.buffer.append(pacote) 
 
     def getDoBuffer(self):
         if self.buffer[0]:
-            topoBuffer = self.Buffer()
+            topoBuffer = self.buffer[0]
             del self.buffer[0]
             return topoBuffer
+
+    def printBuffer(self):
+        for d in self.buffer:
+            print d
        
     
    
