@@ -188,7 +188,7 @@ def executaSimulacoes(tmp):
         for elm in elementos:
             elm.passo(relogio)
         relogio += 1
-    print "Final da execucao"
+    print "Fim da simulacao"
 
 def executaComandos(cmds):
 	for cmd,args in cmds:

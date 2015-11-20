@@ -33,8 +33,8 @@ class Porta(object):
         return self.tamanhoBuffer
 
     def addNoBuffer(self,pacote):
-        #precis fazer
-        self.buffer.append(pacote) 
+        if len(self.buffer) < self.tamanhoBuffer:
+            self.buffer.append(pacote) 
 
     def bufferEstaVazio(self):
         try:
@@ -58,7 +58,7 @@ class Porta(object):
     def receber(self, datagrama):
         if self.modoVerboso:
             print "PORTA: vai receber " + str(self)
-        self.buffer.append(datagrama)
+        self.addNoBuffer(datagrama)
         if self.modoVerboso:
             print self.buffer
 
