@@ -30,6 +30,6 @@ class CamadaRedes(object):
 	def desempacotaDatagrama(self,datagrama):
 	   	return datagrama.getSegmento() 
 
-   	def enviaSegmento(protocolo, ipServidor, seg):
+   	def enviaSegmento(self,protocolo, ipServidor, seg):
    		datagrama = Datagrama(protocolo, self.ip, ipServidor, seg)
    		self.enlace.enviar(self.hst,datagrama)

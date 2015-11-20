@@ -21,7 +21,7 @@ class CamadaTransporte(object):
 	def desempacotaSegmento(self,segmento):
 		return segmento.getMensagem()
 
-	def enviaMensagem(m, protocolo,portaOrigem, portaDestino, ipServidor):
+	def enviaMensagem(self,m, protocolo,portaOrigem, portaDestino, ipServidor):
 		seg = Segmento(protocolo, portaOrigem, portaDestino)
 		seg.setMensagem(m)
 		self.camadaRede.enviaSegmento(protocolo, ipServidor, seg)

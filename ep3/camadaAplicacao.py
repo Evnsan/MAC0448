@@ -31,13 +31,16 @@ class CamadaAplicacao(object):
 		self.portas['6688'] = ircc 
 
 	def rotinaIrcs(self):
-		print "RotinaIRcs"
+		#print "RotinaIRcs"
+		pass
 
 	def rotinaDnss(self):
-		print "RotinaDnss"
+		#print "RotinaDnss"
+		pass
 
 	def rotinaDnsc(self):
-		print "RotinaDnsc"
+		#print "RotinaDnsc"
+		pass
 
 	def getNoBuffer(self):
 		topoBuffer = self.buffer[0]

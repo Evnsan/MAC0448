@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-
+from mensagem import Mensagem
 class Ircc(object):
     def __init__(self, camadaTransporte, portaOrigem):
         self.servidorIp = None
@@ -20,7 +20,13 @@ class Ircc(object):
             del self.buffer[0]
             cmd = args[0]
             del args[0]
-            self.comandos[cmd](args)
+            if 'CONNECT' == cmd:
+                self.cmdConnect(args[0])
+            if 'USER' == cmd:
+                self.cmdUser(args[0])
+            if 'QUIT' == cmd:
+                self.cmdQuit(args[0])
+           
 
 
     estado = {'CONECTADO' ,'NAOCONECTADO', 'LOGADO'}
@@ -35,25 +41,23 @@ class Ircc(object):
             #fazer chamada DNS
             self.bloqueado = True
         self.servidorPorta = args[1]
-        self.envia(m)
+       
 
     def cmdUser(self, args):
         m = Mensagem()
-        m.setMsg(args+ " 8 *")
+        m.setMsg("USER " + str(args[0]) + " 8 *")
         self.envia(m)
     
     def cmdQuit(self, args):
         m = Mensagem()
-        m.setMsg(args)
+        m.setMsg(args[0])
         self.envia(m)
 
     def envia(self,m):
-        self.camadaTransporte.enviaMensagem(m,'UDP',self.portaOrigem, self.servidorPorta)
+        self.camadaTransporte.enviaMensagem(m,'UDP',self.portaOrigem, self.servidorPorta, self.servidorIp)
 
 
-    comandos = {'CONNECT': cmdConnect,
-                'USER': cmdUser,
-                'QUIT': cmdQuit}
+   
 
     def realizaRotina(self, comando):
         comando = comandos[0]

@@ -132,7 +132,7 @@ def cmdRoute(args):
     del args[0]
     del args[0]
     router = routers[nomeRouter]
-    for i in xrange(0, len(args)/2,2):
+    for i in xrange(0, len(args) - 1,2):
         router.setRota(args[i],args[i+1])
     if modoVerboso:
         print "cmdRoute" + str(args)

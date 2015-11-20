@@ -23,9 +23,11 @@ rotas ={'10.0.0.0': '0', '10.1.1.0': '1'}
 #-hosts
 h0 = Host("h0")
 h0.ip = '10.0.0.1'
+h0.setPapel('ircc')
 h0
 h1 = Host("h1")
 h1.ip = '10.1.1.1'
+h1.setPapel('ircc')
 h1
 #-roteadores
 r0 = Router("r0", 2)
@@ -74,4 +76,4 @@ t = 0
 while t < tempo:
     for elm in elementos:
         elm.passo(t)
- >   t += 1
+    t += 1

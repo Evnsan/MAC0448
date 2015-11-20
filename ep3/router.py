@@ -48,7 +48,10 @@ class Router(object):
         ipRecebidoSplit = ipRecebido.split('.')
         ipRecebidoSplit[3] = '0'
         ip = ipRecebidoSplit
-        destino = self.rotas[ip[0]+'.'+ip[1]+'.'+ip[2]+'.'+ip[3]]
+        ip = ip[0] + '.' + ip[1] + '.' + ip[2] + '.0'
+        destino = self.rotas[ip]
+        #destino = self.rotas[ip[0]+'.'+ip[1]+'.'+ip[2]+'.'+ip[3]]
+
         return destino
 
     def descobreDestino(self,ipRecebido):

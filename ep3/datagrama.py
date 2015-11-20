@@ -7,7 +7,7 @@ from segmento import Segmento
 # basicamente o cabecalho IP + segmento
 
 class Datagrama(object):
-    def __init__(self, Protocolo, ipFonte, ipDestino, segmento):
+    def __init__(self, protocolo, ipFonte, ipDestino, segmento):
         
         #cabecalho
 

@@ -1,8 +1,0 @@
-set host h0
-set host h1
-set host h2
-set host h3
-set router r0 2
-set duplex-link h0 r0.1 10Mbps 10ms
-set duplex-link h0 h1 10Mbps 15ms
-finish 0.003 

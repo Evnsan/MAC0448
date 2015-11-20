@@ -107,3 +107,17 @@ Tamanho do cabecalho UDP + mensagem: 11
 CAMADA DE APLICACAO:
 IRC MSG
 ___________________________
+___________________________
+[7]: CAMADA DE REDE:
+Endereco IP de origem: 10.0.0.1
+Endereco IP de destino: 10.1.1.1
+Protocolo: None
+Tamanho total: 15
+TTL: 64
+CAMADA DE TRANSPORTE (UDP):
+Porta fonte: 8888
+Porta destino: 6667
+Tamanho do cabecalho UDP + mensagem: 11
+CAMADA DE APLICACAO:
+IRC MSG
+___________________________

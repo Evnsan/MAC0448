@@ -105,10 +105,12 @@ class Host(object):
         except IndexError, msg:
             pass
         if not self.bufferEstaVazio():
-            datagrama = self.getDoBuffer()
-            segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
-            mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
-            msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
+            #datagrama = self.getDoBuffer()
+            #segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
+            #mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
+            #msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
+            if self.modoVerboso:
+                print "HOST " + str(self.nome) + ": Tem mensagem no buffer"
         self.cmdaAplicacao.passo3()
 
 
