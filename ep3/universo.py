@@ -16,7 +16,7 @@ routers = {}
 hosts = {}
 aplicacoes = {}
 tempoDeSimulacao = 0
-modoVerboso = True 
+modoVerboso = False 
 ###############################################################################
 
 

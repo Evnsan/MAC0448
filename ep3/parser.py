@@ -49,10 +49,21 @@ class Parser(object):
             saida.append(cmd)
         return saida
 
+    def filtraAspas(self, conteudo):
+        saida = []
+        for linha in conteudo:
+            tmp = linha.split("\"")
+            if len(tmp) > 1:
+                saida.append(tmp[0] + tmp[1])
+            else:
+                saida.append(tmp[0])
+        return saida
+
     def lerComandos(self):
         self.leituraDaConfiguracao()
         leituraCfg = self.leituraDaConfiguracao()
         leituraSemComentarios = self.filtraComentarios(leituraCfg)
         leituraSemQuebraLinha = self.filtraQuebraLinha(leituraSemComentarios)
-        leituraComArgumentosFormatados = self.filtraArg(leituraSemQuebraLinha)
+        leituraSemAspas = self.filtraAspas(leituraSemQuebraLinha)
+        leituraComArgumentosFormatados = self.filtraArg(leituraSemAspas)
         return leituraComArgumentosFormatados

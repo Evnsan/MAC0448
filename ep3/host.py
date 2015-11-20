@@ -126,5 +126,5 @@ class Host(object):
         self.comandos.sort(key = lambda comando: comando[0])
 
     def printComandos(self):
-        print self.comandos
+        print "HOST::PRINTCOMANDOS: " + str(self.comandos)
 
