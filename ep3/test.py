@@ -74,4 +74,4 @@ t = 0
 while t < tempo:
     for elm in elementos:
         elm.passo(t)
-    t += 1
+ >   t += 1
