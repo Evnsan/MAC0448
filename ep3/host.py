@@ -69,6 +69,7 @@ class Host(object):
 
     def setPapel(self, papel):
         self.papel = papel
+        self.cmdaAplicacao.setAplicacao(papel)
     
     def getHostName(self):
         return self.nome
@@ -97,7 +98,7 @@ class Host(object):
                 if self.modoVerboso:
                     print ("PASSO::host: comando a ser executado" 
                            + str(self.comandos[0]))
-                #datagrama = self.processarComandoPraEnvio(self.ip, self.comandos[0])
+                self.cmdaAplicacao.novoComando(self.papel,self.comandos[0])
                 del self.comandos[0]
                 if self.modoVerboso:
                     self.printComandos()
@@ -111,11 +112,7 @@ class Host(object):
         self.cmdaAplicacao.passo3()
 
 
-    def processarComandoPraEnvio(self, ipFonte, ipDestino,comando):
-        mensagem = self.cmdaAplicacao.empacotaMensagem(comando, self.papel)
-        segmento = self.cmdaTransporte.empacotaSegmento(mensagem)
-        datagrama = self.cmdaRedes.empacotaDatagrama(segmento)
-        return datagrama
+    
 
  #   def receber(self, datagrama):
  #       segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from mensagem import Mensagem
-
+from ircc import Ircc
 
 class CamadaAplicacao(object):
 	def __init__(self):
@@ -16,18 +16,19 @@ class CamadaAplicacao(object):
 
 	#protocolosAplicacao = {'dns': processaDNS, 'irc': processaIRC}
 	def passo3(self):
-		for app in self.aplicacao:
+		for key,app in self.aplicacao.items():
 			app.passo3()
 	def setCamadaTransporte(self, camadaTransporte):
 		self.camadaTransporte = camadaTransporte
 
 
-   
+	def novoComando(self, aplicacao, comando):
+		self.aplicacao[aplicacao].novoComando(comando)
 
 	def rotinaIrcc(self):
 		ircc = Ircc(self.camadaTransporte, '6688')
-		aplicacao['ircc'] = ircc
-		portas['6688'] = ircc 
+		self.aplicacao['ircc'] = ircc
+		self.portas['6688'] = ircc 
 
 	def rotinaIrcs(self):
 		print "RotinaIRcs"
@@ -48,14 +49,13 @@ class CamadaAplicacao(object):
 
 	def setAplicacao(self,aplicacao):
 		if aplicacao == 'ircc':
-			rotinaIrcc()	
+			self.rotinaIrcc()	
 		if aplicacao == 'ircs':
-			rotinaIrcs()
+			self.rotinaIrcs()
 		if aplicacao == 'dnss':
-			rotinaDnss()	
+			self.rotinaDnss()	
 		if aplicacao == 'dnsc':
-			rotinaDnsc()	
-		self.aplicacao = aplicacao
+			self.rotinaDnsc()	
 
 	
 

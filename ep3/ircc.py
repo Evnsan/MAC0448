@@ -1,5 +1,4 @@
 #!/usr/bin/python
-from ircc import Ircc
 
 
 class Ircc(object):
@@ -16,16 +15,17 @@ class Ircc(object):
 
 
     def passo3(self):
-        while len(self.buffer > 0) and not self.bloqueado:
+        while len(self.buffer) > 0 and not self.bloqueado:
             args = self.buffer[0]
             del self.buffer[0]
             cmd = args[0]
             del args[0]
-            comandos[cmd](args)
+            self.comandos[cmd](args)
 
 
     estado = {'CONECTADO' ,'NAOCONECTADO', 'LOGADO'}
-
+    def novoComando(self,comando):
+        self.buffer.append(comando)
     
     def cmdConnect(self,args):
         temp = args[0].split(".")
@@ -61,17 +61,4 @@ class Ircc(object):
         retorno = comandos[comando](comandos[0])
         return retorno  
 
-    def recebeMensagem(self, )   
-        
-
-
-    def cmdConnect(args):
-        retorno.append(args[0])
-        retorno.append(args[1])
-        retorno.append(args[2])
-        return retorno
-        
-    def cmdUser(args):
-        self.args[1] = 
-
-    def cmdFinish(args):
+   
