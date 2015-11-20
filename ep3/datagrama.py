@@ -7,13 +7,13 @@ from segmento import Segmento
 # basicamente o cabecalho IP + segmento
 
 class Datagrama(object):
-    def __init__(self, numProtocolo, ipFonte, ipDestino, segmento):
+    def __init__(self, Protocolo, ipFonte, ipDestino, segmento):
         
         #cabecalho
 
         self.comprimentoTotal = segmento.getTamanho() + 14 #16 bits
         self.TTL = 64 #8 bits
-        self.protocolo = numProtocolo #8 bits
+        self.protocolo = self.traduzProtocolo(protocolo) #8 bits
         self.enderecoIpFonte = ipFonte #32 bits
         self.enderecoIpDestino = ipDestino #32 bits
         
@@ -50,3 +50,9 @@ class Datagrama(object):
 
     def getTTL(self):
         return self.TTL
+
+    def traduzProtocolo(self, protocolo):
+        if protocolo == 'UDP':
+            return 17
+        elif protocolo == 'TCP':
+            return 6

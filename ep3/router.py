@@ -16,7 +16,6 @@ class Router(object):
         self.sniffer = None
         self.rotas = {} 
         self.passosRestantes = 0
-        self.cmdaRedes = CamadaRedes()
         self.datagramaProcessando = None
         self.portaAtual = numDeInterfaces - 1
         super(Router, self).__init__()

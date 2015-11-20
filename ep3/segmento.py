@@ -8,8 +8,8 @@ class Segmento(object):
         #definicao dos campos de um segmento
         self.cabecalho = None
         self.mensagem = None
-        self.portaOrigem = None
-        self.portaDestino = None
+        self.portaOrigem = origem
+        self.portaDestino = destino
         super(Segmento, self).__init__()
         if protocolo == 'UDP':
             self.cabecalho = CabecalhoUdp(origem, destino)
