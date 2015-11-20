@@ -6,7 +6,7 @@ from porta import Porta
 from camadaRedes import CamadaRedes
 class Router(object):
     def __init__(self, nome, numDeInterfaces):
-        self.modoVerboso = True
+        self.modoVerboso = False 
         self.nome = nome
         self.numDeInterfaces = numDeInterfaces
         self.enlaces = []
@@ -79,17 +79,18 @@ class Router(object):
             self.passosRestantes == 0):
             
             datagrama = self.datagramaProcessando
-            ip = datagrama.enderecoIpDestino
-            destino = int(self.descobreDestino(ip))
-            self.portas[destino].enviar(self, datagrama)
+            if datagrama.getTTL() > 0:
+                datagrama.decrementaTTL()
+                ip = datagrama.enderecoIpDestino
+                destino = int(self.descobreDestino(ip))
+                self.portas[destino].enviar(self, datagrama)
             self.datagramaProcessando = None
 
         elif not self.datagramaProcessando:
-            print "ROUTER ======> ENTROU"    
             self.portaAtual = self.proximaPorta()
-            print "     PORTA = " + str(self.portaAtual)
             if not self.portas[self.portaAtual].bufferEstaVazio():
-                self.printBuffer()
+                if self.modoVerboso:
+                    self.printBuffer()
                 datagrama = self.portas[self.portaAtual].getDoBuffer()
                 self.datagramaProcessando = datagrama
                 self.passosRestantes = self.tempoPacote
@@ -113,14 +114,10 @@ class Router(object):
     def proximaPorta(self):
         teste = self.portaAtual + 1;
         teste %= self.numDeInterfaces
-        print "Atual = " + str(self.portaAtual)
-        print "Antes = " + str(teste)
-        print self.portas[teste].bufferEstaVazio()
         while (teste != self.portaAtual and
               self.portas[teste].bufferEstaVazio()):
            teste += 1
            teste %= self.numDeInterfaces
-        print "Depois = " + str(teste)
         return teste
        
     def mysplit(self, s):

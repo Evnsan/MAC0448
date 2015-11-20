@@ -12,6 +12,8 @@ from datagrama import Datagrama
 class Host(object):
     def __init__(self, nome):
         super(Host, self).__init__()
+        self.modoVerboso = False 
+
         self.nome = nome
         self.ip = ''
         self.ipRoteador = ''
@@ -22,7 +24,6 @@ class Host(object):
         self.papel = ''
         self.comandos = []
         self.nomeAplicacao = None
-        self.modoVerboso = True
 
         #### funcoes das camadas
         self.cmdaRedes = CamadaRedes()
@@ -85,12 +86,12 @@ class Host(object):
         if self.modoVerboso:
             print "HOST(" + self.nome + "): meu turno"
         try:    
-            print "PASSO HOST Valor do tempo do proximo comando: " + str(self.comandos[0][0])
             while relogio >= self.comandos[0][0]:
                 #PRECISA ARRUMAR AQUI <================
                 del self.comandos[0][0] #deleta o tempo do comando
                 if self.modoVerboso:
-                    print "PASSO::host: comando a ser executado" + str(self.comandos[0])
+                    print ("PASSO::host: comando a ser executado" 
+                           + str(self.comandos[0]))
                 #datagrama = self.processarComandoPraEnvio(self.ip, self.comandos[0])
                 del self.comandos[0]
                 if self.modoVerboso:
@@ -102,7 +103,6 @@ class Host(object):
             segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
             mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
             msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
-            print "PASSO::host:" + self.nome + " Recebeu mensagem: " + msg
 
 
 
