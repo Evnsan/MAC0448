@@ -26,9 +26,12 @@ class Host(object):
         self.nomeAplicacao = None
 
         #### funcoes das camadas
-        self.cmdaRedes = CamadaRedes()
-        self.cmdaTransporte = CamadaTransporte()
+        self.cmdaRedes = CamadaRedes(self)
         self.cmdaAplicacao = CamadaAplicacao()
+        self.cmdaTransporte = CamadaTransporte( self.cmdaRedes, self.cmdaAplicacao)
+        self.cmdaRedes.setCamadaTransporte(self.cmdaTransporte)
+        self.cmdaAplicacao.setCamadaTransporte(self.cmdaTransporte)
+
     
     def __str__(self):
         return "HOST: " + str(self.nome) + " IP(" + str(self.ip) + ")"
@@ -43,6 +46,7 @@ class Host(object):
                 self.ipDnsServidor = args[2]
                 self.ipRoteador = args[1]
                 self.ip = args[0]
+                self.cmdaRedes.setIp(self.ip)
             except IndexError, msg:
                 print ("HOST(SETIP) - Hostname = " + self.nome 
                        + ": Argumentos Insuficientes.")
@@ -57,6 +61,7 @@ class Host(object):
 
     def setEnlace(self, enlace):
         self.enlace = enlace
+        self.cmdaRedes.setEnlace(enlace)
     
     def setSniffer(self, sniffer):
         #self.sniffer = sniffe0r
@@ -103,7 +108,7 @@ class Host(object):
             segmento = self.cmdaRedes.desempacotaDatagrama(datagrama)
             mensagem = self.cmdaTransporte.desempacotaSegmento(segmento)
             msg = self.cmdaAplicacao.desempacotaMensagem(mensagem)
-
+        self.cmdaAplicacao.passo3()
 
 
     def processarComandoPraEnvio(self, ipFonte, ipDestino,comando):

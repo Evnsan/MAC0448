@@ -2,8 +2,10 @@
 from segmento import Segmento
 
 class CamadaTransporte(object):
-	def __init__(self):
+	def __init__(self, camadaRede, camadaAplicacao):
 		self.nomeCamada = 'Transporte'	
+		self.camadaRede = camadaRede
+		self.camadaAplicacao = camadaAplicacao
 		super(CamadaTransporte, self).__init__()
 
 
@@ -18,3 +20,9 @@ class CamadaTransporte(object):
 		return seg
 	def desempacotaSegmento(self,segmento):
 		return segmento.getMensagem()
+
+	def enviaMensagem(m, protocolo,portaOrigem, portaDestino, ipServidor):
+		seg = Segmento(protocolo, portaOrigem, portaDestino)
+		seg.setMensagem(m)
+		self.camadaRede.enviaSegmento(protocolo, ipServidor, seg)
+	

@@ -48,7 +48,7 @@ class Ircc(object):
         self.envia(m)
 
     def envia(self,m):
-        self.camadaTransporte.empacotaSegmento(m)
+        self.camadaTransporte.enviaMensagem(m,'UDP',self.portaOrigem, self.servidorPorta)
 
 
     comandos = {'CONNECT': cmdConnect,
