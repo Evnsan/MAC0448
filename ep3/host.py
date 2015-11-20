@@ -107,7 +107,7 @@ class Host(object):
 
 
     def processarComandoPraEnvio(self, ipFonte, ipDestino,comando):
-        mensagem = self.cmdaAplicacao.empacotaMensagem(comando)
+        mensagem = self.cmdaAplicacao.empacotaMensagem(comando, self.papel)
         segmento = self.cmdaTransporte.empacotaSegmento(mensagem)
         datagrama = self.cmdaRedes.empacotaDatagrama(segmento)
         return datagrama
